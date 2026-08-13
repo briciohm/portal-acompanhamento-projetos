@@ -1,33 +1,28 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { ArrowUpRight, BarChart3, FolderKanban, Gauge, Images, Loader2, Plus, Settings2 } from "lucide-react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { InstitutionalHeader, AdminLink, StatusBadge, NavigationBar } from "@/components/PortalShell";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
-
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+  const { data, isLoading, error } = trpc.dashboard.summary.useQuery();
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-[#e30613]" /></div>;
+  if (error) return <div className="p-10 text-center"><p className="font-semibold">Não foi possível carregar o painel.</p><p className="mt-2 text-sm text-neutral-500">Verifique a conexão com o banco e tente novamente.</p></div>;
+  const totals = data?.totals ?? { projects: 0, active: 0, completed: 0, averageProgress: 0 };
+  return <div className="min-h-screen bg-white institutional-pattern">
+    <section className="relative overflow-hidden bg-[#171717] text-white">
+      <div className="hero-overlay absolute inset-0" />
+      <div className="relative z-10"><InstitutionalHeader section="SU​​COR · SUBSECRETARIA DE GESTÃO CORPORATIVA" /><div className="grid min-h-[330px] items-center gap-10 px-6 py-12 md:grid-cols-[1.2fr_.8fr] md:px-16"><div><div className="mb-7 h-2 w-24 bg-[#e30613]" /><p className="mb-3 text-xs font-bold uppercase tracking-[.28em] text-[#e30613]">Portal executivo</p><h1 className="max-w-3xl text-4xl font-black uppercase leading-[.98] tracking-tight md:text-6xl">Acompanhamento de projetos</h1><p className="mt-6 max-w-xl text-sm leading-6 text-white/70 md:text-base">Visão consolidada da evolução, movimentações, entregas e próximos passos das áreas responsáveis.</p></div><div className="hidden justify-self-end border-l border-white/20 pl-8 md:block"><p className="text-xs uppercase tracking-[.24em] text-white/50">Atualização em tempo real</p><p className="mt-3 text-5xl font-black text-[#e30613]">{totals.averageProgress}%</p><p className="text-sm text-white/70">progresso médio dos projetos</p></div></div></div>
+    </section>
+    <main className="mx-auto max-w-[1500px] px-5 py-10 md:px-10"><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#e30613]">Visão macro</p><h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">Painel consolidado.</h2></div><AdminLink /></div>
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><MetricCard icon={<FolderKanban />} label="Projetos cadastrados" value={totals.projects} /><MetricCard icon={<Gauge />} label="Projetos ativos" value={totals.active} /><MetricCard icon={<BarChart3 />} label="Concluídos" value={totals.completed} /><MetricCard icon={<Images />} label="Áreas monitoradas" value={data?.areas.length ?? 0} /></section>
+      <section className="mt-12"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#e30613]">Nível 1</p><h3 className="mt-1 text-2xl font-black">Áreas e departamentos</h3></div><span className="text-xs text-neutral-500">Selecione uma área para abrir o dashboard.</span></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{data?.areas.length ? data.areas.map((area, index) => <Link key={area.id} href={`/area/${area.id}`}><Card className="group h-full cursor-pointer border-black/10 bg-white transition-all hover:-translate-y-1 hover:border-[#e30613]/50 hover:shadow-xl"><CardContent className="p-6"><div className="flex items-start justify-between"><span className="text-3xl font-black text-neutral-200">{String(index + 1).padStart(2, "0")}</span><ArrowUpRight className="h-5 w-5 text-neutral-300 transition group-hover:text-[#e30613]" /></div><h4 className="mt-10 text-lg font-black uppercase">{area.name}</h4><p className="mt-3 line-clamp-3 text-sm leading-6 text-neutral-500">{area.description || "Área responsável pelo acompanhamento e execução de projetos estratégicos."}</p></CardContent></Card></Link>) : <EmptyState title="Nenhuma área cadastrada" text="Acesse o back-office para cadastrar o primeiro departamento e iniciar o acompanhamento." />}</div></section>
+      <section id="carteira" className="mt-12"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#e30613]">Carteira atual</p><h3 className="mt-1 text-2xl font-black">Projetos em andamento</h3></div><Link href="/admin"><Button variant="outline" className="hidden border-black/20 sm:flex"><Plus className="mr-2 h-4 w-4" />Gerenciar conteúdo</Button></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{data?.projects.length ? data.projects.slice(0, 9).map(project => <Link key={project.id} href={`/projeto/${project.id}`}><Card className="h-full border-black/10 bg-white transition hover:border-[#e30613]/40 hover:shadow-lg"><CardContent className="p-5"><div className="flex items-start justify-between gap-3"><span className="text-xs font-bold tracking-widest text-neutral-400">{project.code}</span><StatusBadge status={project.status} /></div><h4 className="mt-5 text-lg font-black uppercase">{project.name}</h4><p className="mt-2 line-clamp-2 text-sm leading-6 text-neutral-500">{project.summary || "Projeto sem resumo cadastrado."}</p><div className="mt-6"><div className="mb-2 flex justify-between text-xs font-bold"><span>Progresso</span><span>{project.progress}%</span></div><div className="h-2 overflow-hidden rounded-full bg-neutral-100"><div className="h-full bg-[#e30613]" style={{ width: `${project.progress}%` }} /></div></div></CardContent></Card></Link>) : <EmptyState title="Nenhum projeto cadastrado" text="Os projetos cadastrados pelo back-office aparecerão aqui automaticamente." />}</div></section>
+      <footer className="mt-16 border-t border-black/10 pt-6 text-xs text-neutral-500"><strong className="text-black">Secretaria da Educação · Governo do Estado de São Paulo</strong><span className="ml-2">Portal institucional de acompanhamento e transparência executiva.</span></footer>
+    </main><NavigationBar nextHref="#carteira" backLabel="Ir para a carteira" />
+  </div>;
 }
+
+function MetricCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) { return <Card className="border-black/10 bg-white"><CardContent className="flex items-center gap-4 p-5"><span className="flex h-11 w-11 items-center justify-center bg-[#fff0f1] text-[#e30613]">{icon}</span><div><p className="text-3xl font-black">{value}</p><p className="text-xs uppercase tracking-wider text-neutral-500">{label}</p></div></CardContent></Card>; }
+function EmptyState({ title, text }: { title: string; text: string }) { return <Card className="border-dashed border-black/20 bg-white md:col-span-2 xl:col-span-4"><CardContent className="flex flex-col items-center justify-center px-6 py-14 text-center"><Settings2 className="h-8 w-8 text-[#e30613]" /><h4 className="mt-4 font-black">{title}</h4><p className="mt-2 max-w-md text-sm text-neutral-500">{text}</p><Link href="/admin" className="mt-5"><Button className="bg-[#e30613] hover:bg-[#c80511]">Abrir back-office</Button></Link></CardContent></Card>; }
