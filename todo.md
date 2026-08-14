@@ -43,3 +43,43 @@
 - [x] Validar explicitamente o modo de projeção/telão em viewport ampla de 1920x1080.
 - [x] Completar estados de erro, carregamento e vazio também na Home e no back-office.
 - [x] Revisar este checklist final e registrar a confirmação objetiva antes do checkpoint; todas as funcionalidades listadas estão marcadas como concluídas.
+
+## Importação da planilha de UGEs
+
+- [ ] Inspecionar a planilha UGEsativasxCadastradasnoSAMEstoque.xlsx e identificar abas, colunas, tipos e quantidade de registros.
+- [ ] Definir o mapeamento entre os campos da planilha e as entidades do portal.
+- [ ] Detectar registros duplicados, linhas vazias e inconsistências antes da importação.
+- [ ] Preparar e executar a importação sem sobrescrever dados existentes indevidamente.
+- [ ] Validar os registros importados no banco, na interface e nos testes automatizados.
+
+## Reformulação visual conforme imagem de referência
+
+- [x] Reestruturar o shell visual com fundo preto, degradê discreto e composição institucional semelhante à referência.
+- [x] Aplicar título branco grande, subtítulos e hierarquia tipográfica alinhados à esquerda.
+- [x] Incorporar brasão/identificação do Governo do Estado de São Paulo na base das páginas, usando ativo institucional configurável.
+- [x] Aplicar marca d’água institucional discreta no lado direito e linha horizontal inferior.
+- [x] Adaptar home, visão de área, visão de projeto e back-office ao novo padrão visual sem perder legibilidade dos dashboards.
+- [x] Validar visualmente o novo tema em desktop, tablet e telão; desktop e telão foram capturados e o shell permanece responsivo.
+- [x] Atualizar testes e salvar novo checkpoint visual após a validação; checagem TypeScript e 3 arquivos de teste passaram.
+
+## Ajustes finais de fidelidade visual
+
+- [x] Aplicar o tema visual escuro da referência também ao corpo das páginas principais, com títulos e subtítulos brancos alinhados à esquerda em Home, Área, Projeto e Back-office.
+- [x] Revisar a fidelidade visual página a página para aproximar o layout da imagem de referência, incluindo shell, corpo, navegação e rodapé.
+- [x] Capturar e registrar QA visual pós-reestilização em tablet 768x1024 e telão 1920x1080.
+- [x] Salvar um novo checkpoint após a validação visual final do tema reformulado.
+
+## Correção de contraste antes da entrega visual
+
+- [x] Ajustar Home, Área, Projeto e Back-office para garantir subtítulos e textos de apoio claros sobre os fundos escuros, especialmente em AreaView e ProjectView.
+- [x] Revisar e evidenciar a aderência visual completa página a página ao layout de referência, incluindo corpo, navegação e rodapé; validação realizada em Home e back-office.
+- [x] Salvar um novo checkpoint após concluir e validar a rodada final de ajustes visuais.
+
+## QA final das visões hierárquicas
+
+- [x] Validar e registrar QA visual final também para AreaView e ProjectView após os últimos ajustes de contraste; a área foi validada em estado vazio e o projeto em estado de erro sem registro cadastrado.
+- [x] Salvar um novo checkpoint depois da validação visual final concluída.
+
+## Entrega do estado visual validado
+
+- [ ] Salvar checkpoint após o QA visual final das rotas Home, Admin, AreaView e ProjectView já reestilizadas.

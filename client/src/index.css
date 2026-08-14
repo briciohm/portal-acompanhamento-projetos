@@ -55,11 +55,47 @@ button { transition: transform 160ms ease-out, background-color 180ms ease-out, 
 button:active { transform: scale(.97); }
 
 .institutional-pattern {
+  background-color: #fff;
   background-image: radial-gradient(circle at 15% 15%, rgba(227,6,19,.05) 0 1px, transparent 1px), linear-gradient(135deg, transparent 0 48%, rgba(27,27,27,.025) 48% 50%, transparent 50% 100%);
   background-size: 24px 24px, 120px 120px;
 }
 
-.hero-overlay { background: linear-gradient(90deg, rgba(10,10,10,.98) 0%, rgba(10,10,10,.91) 47%, rgba(10,10,10,.52) 100%); }
+.hero-overlay { background: linear-gradient(90deg, rgba(8,8,8,.99) 0%, rgba(8,8,8,.94) 47%, rgba(8,8,8,.58) 100%); }
+
+.institutional-header, .institutional-footer {
+  background-image: linear-gradient(105deg, #383838 0%, #141414 42%, #050505 100%);
+}
+
+.institutional-header::after, .institutional-footer::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: .42;
+  background: linear-gradient(120deg, transparent 0 63%, rgba(255,255,255,.045) 63.1%, transparent 63.3%), linear-gradient(90deg, transparent 0 80%, rgba(255,255,255,.04) 80.1%, transparent 80.3%);
+}
+
+.institutional-watermark {
+  position: absolute;
+  right: -18px;
+  top: -44px;
+  z-index: 0;
+  color: transparent;
+  font-family: Georgia, serif;
+  font-size: 220px;
+  font-weight: 700;
+  line-height: 1;
+  -webkit-text-stroke: 1px rgba(255,255,255,.11);
+  opacity: .75;
+  transform: rotate(-4deg);
+}
+
+.institutional-watermark-footer { top: -58px; right: 4%; font-size: 230px; opacity: .36; }
+
+@media (max-width: 640px) {
+  .institutional-watermark { right: -42px; font-size: 145px; }
+  .institutional-watermark-footer { font-size: 150px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
