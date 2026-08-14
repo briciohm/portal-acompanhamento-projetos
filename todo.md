@@ -83,3 +83,32 @@
 ## Entrega do estado visual validado
 
 - [x] Salvar checkpoint após o QA visual final das rotas Home, Admin, AreaView e ProjectView já reestilizadas; checkpoint 5e345230.
+
+## Cadastro dos projetos da referência visual
+
+- [x] Cadastrar os oito projetos apresentados nas imagens na aba de projetos.
+- [x] Preservar nomes, status e descrições conforme a referência fornecida, com os textos estruturados no banco.
+- [x] Configurar a ordenação numérica dos cartões de 01 a 08 por código SECED-001 a SECED-008.
+- [x] Destacar o aviso de treinamento associado ao SAM Estoque no campo de próximos passos do projeto.
+- [x] Validar os cartões na Home/aba de projetos; os oito projetos aparecem com status e acesso ao drill-down.
+- [x] Executar os testes Vitest existentes e a checagem TypeScript; 3 arquivos de teste passaram e não há erros de tipos.
+- [x] Salvar checkpoint após a validação do cadastro.
+
+## Verificação auditável do cadastro dos projetos
+
+- [x] Conferir e registrar explicitamente os nomes, status e descrições dos oito projetos em relação às imagens de referência; consulta do banco retornou os oito códigos SECED-001 a SECED-008 com os textos e status correspondentes.
+- [x] Garantir por consulta e código que a listagem seja ordenada na sequência 01–08; a Home aplica ordenação numérica por código e a consulta SQL foi validada em ordem crescente.
+- [x] Validar a Home/aba de projetos com os oito cartões e testar o acesso ao drill-down; Home exibiu 8 cartões e /projeto/7 abriu SAM Estoque Treinamento com status e próximos passos.
+- [x] Salvar novo checkpoint após concluir a validação do cadastro dos projetos.
+
+## Auditoria final baseada nas imagens de projetos
+
+- [x] Registrar em arquivo a transcrição auditável dos oito cartões das imagens, incluindo nome, status e descrição, em docs/auditoria_projetos_referencia.md.
+- [x] Comparar a transcrição auditável com os oito registros do banco e documentar eventuais diferenças textuais; nomes, status e descrições conferem, com normalização apenas dos valores de enum.
+- [x] Validar observavelmente a carteira com oito cartões e complementar o teste de drill-down; Home exibiu oito cartões em ordem e foram abertos Imobiliário, SAM Estoque Treinamento e SAM Patrimônio.
+- [x] Salvar checkpoint após a validação final do cadastro dos projetos.
+
+## Evidência objetiva da carteira
+
+- [x] Registrar em arquivo a sequência visível dos oito cartões na Home: SECED-001 a SECED-008, em docs/qa_carteira_projetos.md.
+- [x] Salvar checkpoint final após a evidência objetiva e a auditoria do cadastro.
