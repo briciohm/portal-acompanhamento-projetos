@@ -112,3 +112,25 @@
 
 - [x] Registrar em arquivo a sequência visível dos oito cartões na Home: SECED-001 a SECED-008, em docs/qa_carteira_projetos.md.
 - [x] Salvar checkpoint final após a evidência objetiva e a auditoria do cadastro.
+
+## Cronograma do SAM Patrimônio — implantação 2026
+
+- [x] Estruturar as seis etapas do cronograma como etapas/marcos editáveis do projeto SECED-008.
+- [x] Registrar datas, títulos e descrições conforme a imagem de referência.
+- [x] Atualizar o resumo/próximos passos do SAM Patrimônio com o contexto do cronograma.
+- [x] Registrar o aviso operacional sobre materiais e contato com o DPAT.
+- [x] Validar o cronograma no drill-down do SAM Patrimônio; a página exibiu seis etapas, datas, linha do tempo e aviso em “Próximos passos”.
+- [x] Executar testes e salvar checkpoint após a atualização.
+
+## Auditoria final do cronograma SAM Patrimônio
+
+- [x] Criar transcrição auditável da imagem do cronograma, com seis etapas, datas, títulos, descrições e aviso operacional, em docs/auditoria_cronograma_sam_patrimonio.md.
+- [x] Comparar a transcrição item a item com os registros de etapas, marcos e próximos passos do projeto SECED-008; os títulos, datas, descrições e aviso foram conferidos.
+- [x] Registrar QA objetivo da rota /projeto/8 confirmando seis etapas, seis datas/marcos e o aviso em “Próximos passos”.
+- [x] Executar pnpm test e pnpm check após a atualização do SAM Patrimônio; 3 arquivos e 3 testes passaram, e a checagem TypeScript terminou sem erros.
+- [x] Salvar novo checkpoint após concluir a auditoria e a checagem técnica.
+
+## Evidência visual final do cronograma
+
+- [x] Registrar a observação visual da captura da rota /projeto/8: seis itens numerados no cronograma, seis datas na linha do tempo e o aviso operacional visível ao final, em docs/auditoria_cronograma_sam_patrimonio.md.
+- [x] Salvar checkpoint final após a auditoria e os testes do SAM Patrimônio.
