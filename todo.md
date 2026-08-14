@@ -134,3 +134,18 @@
 
 - [x] Registrar a observação visual da captura da rota /projeto/8: seis itens numerados no cronograma, seis datas na linha do tempo e o aviso operacional visível ao final, em docs/auditoria_cronograma_sam_patrimonio.md.
 - [x] Salvar checkpoint final após a auditoria e os testes do SAM Patrimônio.
+
+## Galeria do Almoxarifado Órgão Central
+
+- [x] Catalogar as 16 fotos enviadas e preservar seus nomes de arquivo.
+- [x] Fazer upload das fotos para o armazenamento do projeto; 16 arquivos enviados com sucesso.
+- [x] Criar os 16 registros de fotos vinculados ao projeto Almoxarifado Órgão Central, código SECED-006.
+- [x] Validar a galeria no drill-down do projeto, incluindo carregamento e visualização expandida; a rota /projeto/6 exibiu as 16 imagens em grid.
+- [x] Executar testes/checagem e salvar checkpoint após a atualização; 3 testes passaram e pnpm check terminou sem erros.
+
+## Evidência final da galeria do Almoxarifado
+
+- [x] Criar registro auditável da captura de /projeto/6 confirmando as 16 imagens visíveis e seus nomes, em docs/auditoria_galeria_almoxarifado.md.
+- [x] Validar a abertura ampliada de uma imagem da galeria e registrar o resultado; o código usa Dialog e imagem selecionada para visualização ampliada.
+- [x] Registrar a validação do carregamento lazy-loaded conforme implementação existente; as imagens usam loading="lazy".
+- [x] Salvar checkpoint final após a inclusão das fotos e a checagem técnica.
