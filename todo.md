@@ -46,11 +46,11 @@
 
 ## Importação da planilha de UGEs
 
-- [ ] Inspecionar a planilha UGEsativasxCadastradasnoSAMEstoque.xlsx e identificar abas, colunas, tipos e quantidade de registros.
-- [ ] Definir o mapeamento entre os campos da planilha e as entidades do portal.
-- [ ] Detectar registros duplicados, linhas vazias e inconsistências antes da importação.
-- [ ] Preparar e executar a importação sem sobrescrever dados existentes indevidamente.
-- [ ] Validar os registros importados no banco, na interface e nos testes automatizados.
+- [x] Adiar a inspeção operacional da planilha UGEsativasxCadastradasnoSAMEstoque.xlsx conforme solicitação do usuário; análise preliminar já registrada, sem importação.
+- [x] Adiar a definição do mapeamento da planilha conforme solicitação do usuário; recomendação de entidade própria UGE já registrada para retomada futura.
+- [x] Adiar a detecção de duplicidades e inconsistências da planilha até a retomada da importação, sem alterar os dados atuais.
+- [x] Adiar a preparação e execução da importação conforme solicitação do usuário; nenhuma sobrescrita foi realizada.
+- [x] Adiar a validação de registros importados porque a importação foi postergada; o portal permanece com os dados anteriores intactos.
 
 ## Reformulação visual conforme imagem de referência
 
@@ -82,4 +82,4 @@
 
 ## Entrega do estado visual validado
 
-- [ ] Salvar checkpoint após o QA visual final das rotas Home, Admin, AreaView e ProjectView já reestilizadas.
+- [x] Salvar checkpoint após o QA visual final das rotas Home, Admin, AreaView e ProjectView já reestilizadas; checkpoint 5e345230.
