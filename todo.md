@@ -194,3 +194,4 @@
 - [x] Validar a exibição dos materiais no drill-down do ONR após a atualização do endpoint e da seção Documentos e materiais.
 - [x] Executar testes/checagem e salvar checkpoint após a atualização; 4 testes Vitest passaram e `pnpm check` terminou sem erros.
 - [x] Registrar que `1. Informação.docx` e `3. Despacho.docx` estavam com tamanho zero no ZIP e não foram cadastrados como documentos clicáveis.
+- [x] Excluir do projeto ONR os documentos `Documento Marcelo - CPF` e `Exoneração Mara Ruzza`; a listagem foi validada com 13 materiais restantes e o checkpoint será salvo nesta atualização.
