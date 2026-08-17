@@ -211,3 +211,14 @@
 - [x] Vincular `PLANO DE AÇÃO COGESPA - ALMOXARIFADO` ao projeto Almoxarifado Órgão Central (SECED-006) e `PLANO DE AÇÃO COGESPA - SAM ESTOQUE` ao projeto SAM Estoque Treinamento (SECED-007).
 - [x] Validar a exibição nos dois drill-downs e executar testes/checagem; os dois documentos aparecem nas rotas `/projeto/6` e `/projeto/7`, com 6 testes Vitest passando e `pnpm check` sem erros.
 - [x] Salvar checkpoint após a inclusão dos documentos; checkpoint `da85466a` publicado.
+
+## Materiais adicionais — Portal DPAT e projetos relacionados
+
+- [x] Catalogar os 21 arquivos enviados, incluindo 19 DOCX, 1 PDF e 1 imagem JPG, sem executar conteúdos.
+- [x] Extrair texto e metadados dos documentos para identificar projeto, área e eventual necessidade de novo cadastro; DOCX e PDF foram processados somente como texto.
+- [x] Definir o vínculo de cada material com projeto existente ou novo projeto, evitando duplicidades e preservando os nomes originais; três novos projetos foram criados (SECED-013 a SECED-015).
+- [x] Armazenar os arquivos válidos de forma persistente e vincular os documentos aos projetos definidos; os 21 uploads foram concluídos e os materiais já existentes não foram duplicados.
+- [x] Associar a imagem `FOTOAntesPortalDPAT06.2026.jpg` ao contexto visual adequado, como foto de referência no projeto Site Educação DPAT, sem substituir a identidade institucional atual.
+- [x] Validar os projetos, documentos e imagem no portal, atualizar testes e executar `pnpm check`; 7 testes Vitest passaram e a checagem TypeScript terminou sem erros.
+- [x] Corrigir o teste de contrato do SAM Patrimônio, que ainda esperava 17 materiais após a reclassificação de um documento para SECED-013.
+- [ ] Registrar a conclusão e salvar checkpoint antes de 18/08/2026 às 08h30.

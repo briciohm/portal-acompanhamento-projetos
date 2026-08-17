@@ -27,7 +27,7 @@ describe("dashboard contracts", () => {
     const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 8 });
     expect(result?.project.code).toBe("SECED-008");
     expect(result?.documents).toEqual(expect.any(Array));
-    expect(result?.documents.length).toBeGreaterThanOrEqual(17);
+    expect(result?.documents.length).toBeGreaterThanOrEqual(16);
   });
 
   it("returns the Almoxarifado and SAM Estoque action plans", async () => {
@@ -38,5 +38,21 @@ describe("dashboard contracts", () => {
     expect(almoxarifado?.documents.some((document) => document.title.includes("Almoxarifado"))).toBe(true);
     expect(samEstoque?.project.code).toBe("SECED-007");
     expect(samEstoque?.documents.some((document) => document.title.includes("SAM Estoque"))).toBe(true);
+  });
+
+  it("returns the new project classifications and Portal DPAT evidence", async () => {
+    const deposits = await appRouter.createCaller(publicContext).dashboard.project({ id: 60001 });
+    const pops = await appRouter.createCaller(publicContext).dashboard.project({ id: 60002 });
+    const pills = await appRouter.createCaller(publicContext).dashboard.project({ id: 60003 });
+    const portal = await appRouter.createCaller(publicContext).dashboard.project({ id: 5 });
+
+    expect(deposits?.project.code).toBe("SECED-013");
+    expect(deposits?.documents.some((document) => document.title.includes("Depósitos"))).toBe(true);
+    expect(pops?.project.code).toBe("SECED-014");
+    expect(pops?.documents.some((document) => document.title.includes("Procedimentos Operacionais"))).toBe(true);
+    expect(pills?.project.code).toBe("SECED-015");
+    expect(pills?.documents.some((document) => document.title.includes("Pílulas"))).toBe(true);
+    expect(portal?.documents.some((document) => document.title.includes("Atualização Portal DPAT"))).toBe(true);
+    expect(portal?.photos.some((photo) => photo.title?.includes("referência visual anterior"))).toBe(true);
   });
 });
