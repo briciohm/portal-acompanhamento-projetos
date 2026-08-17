@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
-import { areas, InsertUser, projectMetrics, projectMilestones, projectPhotos, projectStages, projects, users } from "../drizzle/schema";
+import { areas, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStages, projects, users } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -70,13 +70,14 @@ export async function getProjectDetail(id: number) {
   if (!db) return undefined;
   const project = await getProjectById(id);
   if (!project) return undefined;
-  const [metrics, stages, milestones, photos] = await Promise.all([
+  const [metrics, stages, milestones, photos, documents] = await Promise.all([
     db.select().from(projectMetrics).where(eq(projectMetrics.projectId, id)).orderBy(asc(projectMetrics.recordedAt)),
     db.select().from(projectStages).where(eq(projectStages.projectId, id)).orderBy(asc(projectStages.orderIndex)),
     db.select().from(projectMilestones).where(eq(projectMilestones.projectId, id)).orderBy(asc(projectMilestones.milestoneDate)),
     db.select().from(projectPhotos).where(eq(projectPhotos.projectId, id)).orderBy(desc(projectPhotos.createdAt)),
+    db.select().from(projectDocuments).where(eq(projectDocuments.projectId, id)).orderBy(desc(projectDocuments.createdAt)),
   ]);
-  return { project, metrics, stages, milestones, photos };
+  return { project, metrics, stages, milestones, photos, documents };
 }
 
 export async function getExecutiveSummary() {
@@ -135,5 +136,12 @@ export async function createPhoto(input: typeof projectPhotos.$inferInsert) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
   const result = await db.insert(projectPhotos).values(input);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function createDocument(input: typeof projectDocuments.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const result = await db.insert(projectDocuments).values(input);
   return { id: Number(result[0].insertId) };
 }

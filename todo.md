@@ -184,3 +184,13 @@
 - [x] Registrar em arquivo os 12 cartões observados na Home após a remoção do limite, na ordem SECED-001 a SECED-012, em docs/qa_carteira_completa_pos_correcao.md.
 - [x] Registrar em arquivo a observação do drill-down SECED-009, incluindo título, status, progresso e ausência de erro, em docs/qa_carteira_completa_pos_correcao.md.
 - [x] Salvar checkpoint após a correção da carteira completa e as validações finais.
+
+## Materiais do projeto ONR — 8.ONR.zip
+
+- [x] Inspecionar o ZIP sem executar arquivos e catalogar pastas, nomes, formatos e tamanhos; foram catalogados 17 arquivos no total, sendo 15 válidos e dois DOCX vazios.
+- [x] Definir o mapeamento de documentos, imagens e demais materiais para o projeto ONR; os materiais foram classificados como Documentos iniciais e Instrução ONR.
+- [x] Fazer upload dos arquivos aprovados para o armazenamento persistente; 15 arquivos foram enviados com sucesso.
+- [x] Vincular os materiais ao projeto ONR sem duplicidades; os 15 registros foram associados ao projeto SECED-003.
+- [x] Validar a exibição dos materiais no drill-down do ONR após a atualização do endpoint e da seção Documentos e materiais.
+- [x] Executar testes/checagem e salvar checkpoint após a atualização; 4 testes Vitest passaram e `pnpm check` terminou sem erros.
+- [x] Registrar que `1. Informação.docx` e `3. Despacho.docx` estavam com tamanho zero no ZIP e não foram cadastrados como documentos clicáveis.

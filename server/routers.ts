@@ -6,7 +6,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { storagePut } from "./storage";
 import { areas, projectMetrics, projectMilestones, projectPhotos, projectStages, projects } from "../drizzle/schema";
-import { createArea, createMetric, createMilestone, createPhoto, createProject, createStage, getExecutiveSummary, getProjectDetail, listAreas, listProjects, updateProject } from "./db";
+import { createArea, createDocument, createMetric, createMilestone, createPhoto, createProject, createStage, getExecutiveSummary, getProjectDetail, listAreas, listProjects, updateProject } from "./db";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito ao back-office." });
@@ -44,6 +44,13 @@ export const appRouter = router({
       const buffer = Buffer.from(input.data.split(",")[1] ?? input.data, "base64");
       const stored = await storagePut(key, buffer, input.mimeType);
       return createPhoto({ projectId: input.projectId, storageKey: stored.key, url: stored.url, title: input.title, description: input.description });
+    }),
+    uploadDocument: adminProcedure.input(z.object({ projectId: z.number(), fileName: z.string().min(1), mimeType: z.string().min(1), data: z.string().min(10), title: z.string().min(1), category: z.string().optional(), sizeBytes: z.number().optional() })).mutation(async ({ input }) => {
+      const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
+      const key = `project-documents/${input.projectId}/${Date.now()}-${safeName}`;
+      const buffer = Buffer.from(input.data.split(",")[1] ?? input.data, "base64");
+      const stored = await storagePut(key, buffer, input.mimeType);
+      return createDocument({ projectId: input.projectId, title: input.title, fileName: input.fileName, mimeType: input.mimeType, category: input.category, sizeBytes: input.sizeBytes, storageKey: stored.key, url: stored.url });
     }),
   }),
 });

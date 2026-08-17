@@ -15,6 +15,13 @@
       "when": 1786651376655,
       "tag": "0001_organic_phantom_reporter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786997194163,
+      "tag": "0002_fat_fixer",
+      "breakpoints": true
     }
   ]
 }

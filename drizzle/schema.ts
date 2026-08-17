@@ -77,6 +77,19 @@ export const projectPhotos = mysqlTable("project_photos", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const projectDocuments = mysqlTable("project_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  fileName: varchar("fileName", { length: 240 }).notNull(),
+  mimeType: varchar("mimeType", { length: 120 }).notNull(),
+  category: varchar("category", { length: 80 }),
+  sizeBytes: int("sizeBytes"),
+  storageKey: varchar("storageKey", { length: 500 }).notNull(),
+  url: varchar("url", { length: 700 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Area = typeof areas.$inferSelect;
@@ -85,3 +98,4 @@ export type ProjectMetric = typeof projectMetrics.$inferSelect;
 export type ProjectStage = typeof projectStages.$inferSelect;
 export type ProjectMilestone = typeof projectMilestones.$inferSelect;
 export type ProjectPhoto = typeof projectPhotos.$inferSelect;
+export type ProjectDocument = typeof projectDocuments.$inferSelect;
