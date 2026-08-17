@@ -195,3 +195,11 @@
 - [x] Executar testes/checagem e salvar checkpoint após a atualização; 4 testes Vitest passaram e `pnpm check` terminou sem erros.
 - [x] Registrar que `1. Informação.docx` e `3. Despacho.docx` estavam com tamanho zero no ZIP e não foram cadastrados como documentos clicáveis.
 - [x] Excluir do projeto ONR os documentos `Documento Marcelo - CPF` e `Exoneração Mara Ruzza`; a listagem foi validada com 13 materiais restantes e o checkpoint será salvo nesta atualização.
+
+## Materiais do SAM Patrimônio — 2.AjustenoscontrolesPatrimoniais(SAMPatrimônio).zip
+
+- [x] Inspecionar o ZIP e catalogar nomes, formatos e tamanhos sem executar arquivos; foram identificados 18 arquivos de conteúdo, sendo 17 válidos e 1 temporário do Office (`~$...`).
+- [x] Fazer upload dos materiais válidos para o armazenamento persistente; 17 arquivos enviados com sucesso.
+- [x] Vincular os materiais ao projeto SAM Patrimônio (SECED-008) sem duplicidades; 17 registros associados.
+- [x] Validar a exibição dos materiais no drill-down do SAM Patrimônio; a rota `/projeto/8` exibiu os 17 documentos organizados por categoria.
+- [x] Executar testes/checagem e salvar checkpoint após a atualização; 5 testes Vitest passaram e `pnpm check` terminou sem erros.

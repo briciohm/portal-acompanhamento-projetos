@@ -20,6 +20,13 @@ describe("dashboard contracts", () => {
     const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 3 });
     expect(result?.project.code).toBe("SECED-003");
     expect(result?.documents).toEqual(expect.any(Array));
-    expect(result?.documents.length).toBeGreaterThanOrEqual(15);
+    expect(result?.documents.length).toBeGreaterThanOrEqual(13);
+  });
+
+  it("returns the SAM Patrimônio materials", async () => {
+    const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 8 });
+    expect(result?.project.code).toBe("SECED-008");
+    expect(result?.documents).toEqual(expect.any(Array));
+    expect(result?.documents.length).toBeGreaterThanOrEqual(17);
   });
 });
