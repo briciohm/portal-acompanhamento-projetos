@@ -203,3 +203,11 @@
 - [x] Vincular os materiais ao projeto SAM Patrimônio (SECED-008) sem duplicidades; 17 registros associados.
 - [x] Validar a exibição dos materiais no drill-down do SAM Patrimônio; a rota `/projeto/8` exibiu os 17 documentos organizados por categoria.
 - [x] Executar testes/checagem e salvar checkpoint após a atualização; 5 testes Vitest passaram e `pnpm check` terminou sem erros.
+
+## Planos de ação — Almoxarifado Órgão Central e SAM Estoque
+
+- [x] Inspecionar os dois arquivos DOCX e confirmar tamanho e formato; ambos são Microsoft Word 2007+, com 36.320 e 36.580 bytes.
+- [x] Fazer upload dos dois planos para o armazenamento persistente; ambos foram enviados com sucesso.
+- [x] Vincular `PLANO DE AÇÃO COGESPA - ALMOXARIFADO` ao projeto Almoxarifado Órgão Central (SECED-006) e `PLANO DE AÇÃO COGESPA - SAM ESTOQUE` ao projeto SAM Estoque Treinamento (SECED-007).
+- [x] Validar a exibição nos dois drill-downs e executar testes/checagem; os dois documentos aparecem nas rotas `/projeto/6` e `/projeto/7`, com 6 testes Vitest passando e `pnpm check` sem erros.
+- [ ] Salvar checkpoint após a inclusão dos documentos.

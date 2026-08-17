@@ -29,4 +29,14 @@ describe("dashboard contracts", () => {
     expect(result?.documents).toEqual(expect.any(Array));
     expect(result?.documents.length).toBeGreaterThanOrEqual(17);
   });
+
+  it("returns the Almoxarifado and SAM Estoque action plans", async () => {
+    const almoxarifado = await appRouter.createCaller(publicContext).dashboard.project({ id: 6 });
+    const samEstoque = await appRouter.createCaller(publicContext).dashboard.project({ id: 7 });
+
+    expect(almoxarifado?.project.code).toBe("SECED-006");
+    expect(almoxarifado?.documents.some((document) => document.title.includes("Almoxarifado"))).toBe(true);
+    expect(samEstoque?.project.code).toBe("SECED-007");
+    expect(samEstoque?.documents.some((document) => document.title.includes("SAM Estoque"))).toBe(true);
+  });
 });
