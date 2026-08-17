@@ -210,4 +210,4 @@
 - [x] Fazer upload dos dois planos para o armazenamento persistente; ambos foram enviados com sucesso.
 - [x] Vincular `PLANO DE AÇÃO COGESPA - ALMOXARIFADO` ao projeto Almoxarifado Órgão Central (SECED-006) e `PLANO DE AÇÃO COGESPA - SAM ESTOQUE` ao projeto SAM Estoque Treinamento (SECED-007).
 - [x] Validar a exibição nos dois drill-downs e executar testes/checagem; os dois documentos aparecem nas rotas `/projeto/6` e `/projeto/7`, com 6 testes Vitest passando e `pnpm check` sem erros.
-- [ ] Salvar checkpoint após a inclusão dos documentos.
+- [x] Salvar checkpoint após a inclusão dos documentos; checkpoint `da85466a` publicado.
