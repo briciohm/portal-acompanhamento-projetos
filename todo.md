@@ -149,3 +149,38 @@
 - [x] Validar a abertura ampliada de uma imagem da galeria e registrar o resultado; o código usa Dialog e imagem selecionada para visualização ampliada.
 - [x] Registrar a validação do carregamento lazy-loaded conforme implementação existente; as imagens usam loading="lazy".
 - [x] Salvar checkpoint final após a inclusão das fotos e a checagem técnica.
+
+## Inclusão de novos projetos
+
+- [x] Incluir Fluxo de Solicitação, Entrega e Controle de Notebooks como novo projeto, código SECED-009.
+- [x] Incluir Manual de Gestão Patrimonial como novo projeto, código SECED-010.
+- [x] Incluir Manual de Gestão Patrimonial Imobiliária como novo projeto, código SECED-011, sem renomear nenhum cadastro existente.
+- [x] Incluir Manual de Almoxarifado como novo projeto, código SECED-012.
+- [x] Preservar os oito projetos existentes e verificar ausência de duplicidades; a consulta retornou os oito originais intactos e quatro novos registros.
+- [x] Validar a carteira, a ordenação e o drill-down dos novos projetos; Home exibiu 12 projetos e /projeto/30001 abriu SECED-009.
+- [x] Executar testes/checagem e salvar checkpoint após a inclusão; 3 testes passaram e pnpm check terminou sem erros.
+
+## Auditoria da nova carteira de projetos
+
+- [x] Registrar em arquivo a lista auditável dos 12 projetos, com os oito originais e os quatro novos códigos SECED-009 a SECED-012, em docs/auditoria_novos_projetos.md.
+- [x] Documentar que os oito registros originais permaneceram inalterados em docs/auditoria_novos_projetos.md.
+- [x] Registrar a captura da Home com 12 projetos e o drill-down de SECED-009.
+- [x] Executar testes/checagem após a inserção e salvar checkpoint final.
+
+## Evidência final da inclusão dos quatro projetos
+
+- [x] Confirmar visualmente na Home os 12 projetos em ordem SECED-001 a SECED-012; a captura full-page exibiu os quatro novos cartões SECED-009 a SECED-012 após os oito originais.
+- [x] Confirmar visualmente no drill-down SECED-009 o título “Fluxo de Solicitação, Entrega e Controle de Notebooks”, status “estruturação”, progresso 0% e ausência de erro.
+- [x] Salvar checkpoint após a inclusão dos quatro projetos e a auditoria final da carteira.
+
+## Correção da carteira completa
+
+- [x] Remover o limite `slice(0, 9)` da carteira da Home para exibir todos os 12 projetos cadastrados.
+- [x] Validar visualmente a Home com SECED-001 a SECED-012 e o drill-down SECED-009 após a correção.
+- [x] Executar testes/checagem e salvar checkpoint atualizado; 3 testes passaram e pnpm check terminou sem erros.
+
+## Evidência auditável pós-correção da carteira
+
+- [x] Registrar em arquivo os 12 cartões observados na Home após a remoção do limite, na ordem SECED-001 a SECED-012, em docs/qa_carteira_completa_pos_correcao.md.
+- [x] Registrar em arquivo a observação do drill-down SECED-009, incluindo título, status, progresso e ausência de erro, em docs/qa_carteira_completa_pos_correcao.md.
+- [x] Salvar checkpoint após a correção da carteira completa e as validações finais.
