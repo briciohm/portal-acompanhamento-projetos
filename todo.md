@@ -276,4 +276,11 @@
 ## Desativação do card Áreas monitoradas
 
 - [x] Remover o card “Áreas monitoradas” da visão macro sem alterar os demais indicadores.
-- [ ] Validar layout, progresso, testes e salvar checkpoint; 8 testes Vitest passaram, TypeScript sem erros e validação desktop/mobile concluída.
+- [x] Validar layout, progresso, testes e salvar checkpoint; 8 testes Vitest passaram, TypeScript sem erros, validação desktop/mobile concluída e checkpoint `c294015c` publicado.
+
+## Progresso individual nos cards da carteira
+
+- [x] Exibir o percentual de progresso de cada projeto no respectivo card da carteira.
+- [x] Destacar em verde o indicador e o estado visual quando o progresso atingir 100%.
+- [x] Apresentar automaticamente o projeto como “Concluído” quando o progresso atingir 100%, preservando filtros e identidade institucional.
+- [x] Validar carteira em desktop/mobile, executar Vitest e TypeScript e publicar checkpoint.

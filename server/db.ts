@@ -84,9 +84,9 @@ export async function getExecutiveSummary() {
   const db = await getDb();
   if (!db) return { areas: [], projects: [], totals: { projects: 0, active: 0, completed: 0, averageProgress: 0 } };
   const [areaRows, allProjectRows] = await Promise.all([listAreas(), listProjects()]);
-  const projectRows = allProjectRows.filter((p) => p.status !== "pausado");
-  const active = projectRows.filter((p) => p.status !== "concluído").length;
-  const completed = projectRows.filter((p) => p.status === "concluído").length;
+  const projectRows = allProjectRows.filter((p) => p.status !== "pausado").map((project) => project.progress >= 100 && project.status !== "concluído" ? { ...project, status: "concluído" as const } : project);
+  const active = projectRows.filter((p) => p.progress < 100 && p.status !== "concluído").length;
+  const completed = projectRows.filter((p) => p.progress >= 100 || p.status === "concluído").length;
   const averageProgress = projectRows.length ? Math.round(projectRows.reduce((sum, p) => sum + p.progress, 0) / projectRows.length) : 0;
   return { areas: areaRows, projects: projectRows, totals: { projects: projectRows.length, active, completed, averageProgress } };
 }
@@ -108,7 +108,8 @@ export async function createProject(input: typeof projects.$inferInsert) {
 export async function updateProject(id: number, input: Partial<typeof projects.$inferInsert>) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  await db.update(projects).set(input).where(eq(projects.id, id));
+  const normalizedInput = input.progress !== undefined && input.progress >= 100 && input.status === undefined ? { ...input, status: "concluído" as const } : input;
+  await db.update(projects).set(normalizedInput).where(eq(projects.id, id));
   return getProjectById(id);
 }
 
