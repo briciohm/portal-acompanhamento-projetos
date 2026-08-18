@@ -284,3 +284,11 @@
 - [x] Destacar em verde o indicador e o estado visual quando o progresso atingir 100%.
 - [x] Apresentar automaticamente o projeto como “Concluído” quando o progresso atingir 100%, preservando filtros e identidade institucional.
 - [x] Validar carteira em desktop/mobile, executar Vitest e TypeScript e publicar checkpoint.
+
+## Análise e consolidação dos Planos de Ação
+
+- [x] Inventariar os Planos de Ação disponíveis e separar projetos ativos dos concluídos; 10 projetos ativos analisados e DPAT-006, com 100%, omitido do escopo executivo.
+- [x] Analisar tecnicamente os planos dos projetos ativos e mapear informações para os campos estruturados; consolidação documental registrada em `docs/consolidacao_planos_acao_2026-08-18.md`.
+- [x] Elaborar e aplicar resumos executivos alinhados aos respectivos Planos de Ação; resumos e próximos passos aplicados aos projetos com evidência documental.
+- [x] Revisar consistência, confirmar que projetos concluídos foram omitidos e validar os dados no portal; DPAT-006 foi marcado como concluído e DPAT-011 recebeu oito etapas e um marco documentados.
+- [x] Executar Vitest e TypeScript, validar visualmente e publicar a consolidação; 8 testes Vitest passaram, `pnpm check` terminou sem erros e Home/detalhe DPAT-011 foram validados.
