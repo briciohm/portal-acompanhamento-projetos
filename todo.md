@@ -264,4 +264,11 @@
 - [x] Identificar o componente ou portal React que causa a remoção duplicada de elemento; o ponto afetado era o `UpdateForm` reutilizado entre projetos durante refetch/invalidação.
 - [x] Corrigir o fluxo de edição sem alterar a lógica de progresso ou os dados persistidos; `UpdateForm` agora usa `key={project.id}` para remontagem isolada por projeto.
 - [x] Validar atualização, testes, TypeScript e responsividade; `pnpm check` sem erros e 8 testes Vitest passaram.
+- [x] Salvar checkpoint da correção; checkpoint `f7e79e1c` publicado.
+
+## Correção do aviso ResizeObserver
+
+- [x] Reproduzir e localizar a origem de `ResizeObserver loop completed with undelivered notifications` em `/area/1` e `/admin`; o aviso era promovido indevidamente pelo overlay de erro do navegador.
+- [x] Corrigir o tratamento do aviso ou o componente de layout responsável, sem alterar dados ou progresso; o listener global agora suprime somente essa mensagem conhecida e preserva as demais exceções.
+- [x] Validar área, back-office, testes, TypeScript e responsividade; `/area/1` e `/admin` renderizaram, `pnpm check` terminou sem erros e 8 testes Vitest passaram.
 - [ ] Salvar checkpoint da correção.

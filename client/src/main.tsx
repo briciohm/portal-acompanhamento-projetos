@@ -10,6 +10,23 @@ import "./index.css";
 
 const queryClient = new QueryClient();
 
+// Chromium can emit this notification when a ResizeObserver callback causes
+// another layout pass in the same frame. It is not an application exception,
+// but the dev overlay may promote it to a fatal screen. Suppress only this
+// known browser warning and leave all other errors untouched.
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "error",
+    event => {
+      if (event.message === "ResizeObserver loop completed with undelivered notifications.") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    },
+    true,
+  );
+}
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
