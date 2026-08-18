@@ -271,4 +271,9 @@
 - [x] Reproduzir e localizar a origem de `ResizeObserver loop completed with undelivered notifications` em `/area/1` e `/admin`; o aviso era promovido indevidamente pelo overlay de erro do navegador.
 - [x] Corrigir o tratamento do aviso ou o componente de layout responsável, sem alterar dados ou progresso; o listener global agora suprime somente essa mensagem conhecida e preserva as demais exceções.
 - [x] Validar área, back-office, testes, TypeScript e responsividade; `/area/1` e `/admin` renderizaram, `pnpm check` terminou sem erros e 8 testes Vitest passaram.
-- [ ] Salvar checkpoint da correção.
+- [x] Salvar checkpoint da correção; checkpoint `c7bfb793` publicado.
+
+## Desativação do card Áreas monitoradas
+
+- [x] Remover o card “Áreas monitoradas” da visão macro sem alterar os demais indicadores.
+- [ ] Validar layout, progresso, testes e salvar checkpoint; 8 testes Vitest passaram, TypeScript sem erros e validação desktop/mobile concluída.
