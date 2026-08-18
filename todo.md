@@ -256,4 +256,12 @@
 - [x] Mapear os 15 projetos atuais e definir a sequência de códigos `DPAT-001` a `DPAT-015`.
 - [x] Atualizar os códigos no banco, preservando nomes, responsáveis, status, progresso, documentos, fotos, etapas e marcos.
 - [x] Revisar ordenação, testes, carteira de 11 ativos e rotas de detalhes; 8 testes Vitest passaram, `pnpm check` terminou sem erros e a validação visual confirmou `DPAT-008` no detalhe do SAM Patrimônio.
-- [ ] Salvar checkpoint após a validação da nova codificação.
+- [x] Salvar checkpoint após a validação da nova codificação; checkpoint `4e5e3a52` publicado.
+
+## Correção do erro ao atualizar projeto
+
+- [x] Reproduzir o erro `Failed to execute 'removeChild' on 'Node'` no fluxo de atualização de projeto; o diagnóstico apontou conflito de remontagem do formulário controlado com o portal do Select.
+- [x] Identificar o componente ou portal React que causa a remoção duplicada de elemento; o ponto afetado era o `UpdateForm` reutilizado entre projetos durante refetch/invalidação.
+- [x] Corrigir o fluxo de edição sem alterar a lógica de progresso ou os dados persistidos; `UpdateForm` agora usa `key={project.id}` para remontagem isolada por projeto.
+- [x] Validar atualização, testes, TypeScript e responsividade; `pnpm check` sem erros e 8 testes Vitest passaram.
+- [ ] Salvar checkpoint da correção.
