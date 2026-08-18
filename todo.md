@@ -221,4 +221,12 @@
 - [x] Associar a imagem `FOTOAntesPortalDPAT06.2026.jpg` ao contexto visual adequado, como foto de referência no projeto Site Educação DPAT, sem substituir a identidade institucional atual.
 - [x] Validar os projetos, documentos e imagem no portal, atualizar testes e executar `pnpm check`; 7 testes Vitest passaram e a checagem TypeScript terminou sem erros.
 - [x] Corrigir o teste de contrato do SAM Patrimônio, que ainda esperava 17 materiais após a reclassificação de um documento para SECED-013.
-- [ ] Registrar a conclusão e salvar checkpoint antes de 18/08/2026 às 08h30.
+- [x] Registrar a conclusão e salvar checkpoint antes de 18/08/2026 às 08h30; checkpoint `e8620cb8` publicado.
+
+## Análise de progresso dos Planos de Ação
+
+- [x] Inventariar os Planos de Ação anexados e confirmar seus projetos de destino.
+- [x] Extrair objetivos, etapas, prazos, responsáveis, metas, marcos e indicadores informados nos documentos; lacunas foram preservadas como `A definir` ou `Não informado`.
+- [x] Atualizar os projetos apenas com dados verificáveis, mantendo lacunas como `A definir` ou `Não informado`; foram preenchidos objetivos, períodos, próximos passos, etapas e marcos com prazo explícito.
+- [x] Validar o painel, atualizar testes e executar `pnpm check`; 7 testes Vitest passaram e a checagem TypeScript terminou sem erros.
+- [ ] Salvar checkpoint após a atualização dos dados de progresso.
