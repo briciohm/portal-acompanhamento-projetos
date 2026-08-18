@@ -229,4 +229,15 @@
 - [x] Extrair objetivos, etapas, prazos, responsáveis, metas, marcos e indicadores informados nos documentos; lacunas foram preservadas como `A definir` ou `Não informado`.
 - [x] Atualizar os projetos apenas com dados verificáveis, mantendo lacunas como `A definir` ou `Não informado`; foram preenchidos objetivos, períodos, próximos passos, etapas e marcos com prazo explícito.
 - [x] Validar o painel, atualizar testes e executar `pnpm check`; 7 testes Vitest passaram e a checagem TypeScript terminou sem erros.
-- [ ] Salvar checkpoint após a atualização dos dados de progresso.
+- [x] Salvar checkpoint após a atualização dos dados de progresso; checkpoint `60a9c858` publicado.
+
+## Escopo de melhoria — página inicial, carteira e detalhes
+
+- [x] Atualizar o título institucional da página inicial para “Divisão de Patrimônio (DPAT) - Portal de acompanhamento de Projetos”.
+- [x] Transformar os indicadores Projetos Cadastrados, Projetos em Andamento e Projetos Concluídos em filtros/abas rápidas da carteira.
+- [x] Manter o Nível 1 e a estrutura visual da carteira, adicionando o Nome do Responsável em cada card.
+- [x] Padronizar os cards externos para exibir somente código, nome, responsável e resumo do tema nessa ordem.
+- [x] Padronizar a página interna com cabeçalho, responsabilidade, linha do tempo, cronograma, fotos e documentos.
+- [x] Preservar integralmente a lógica e a exibição atual do progresso percentual em todas as telas; foi incluído teste de contrato para faixa de 0 a 100%.
+- [x] Validar navegação, responsividade, testes e executar `pnpm check`; 8 testes Vitest passaram, TypeScript sem erros e QA desktop/mobile concluído.
+- [ ] Salvar checkpoint após a implementação do escopo de melhoria.

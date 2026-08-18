@@ -30,6 +30,14 @@ describe("dashboard contracts", () => {
     expect(result?.documents.length).toBeGreaterThanOrEqual(16);
   });
 
+  it("preserves owner and percentage progress in the project detail", async () => {
+    const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 8 });
+    expect(result?.project.owner).toEqual(expect.any(String));
+    expect(result?.project.progress).toEqual(expect.any(Number));
+    expect(result?.project.progress).toBeGreaterThanOrEqual(0);
+    expect(result?.project.progress).toBeLessThanOrEqual(100);
+  });
+
   it("returns the Almoxarifado and SAM Estoque action plans", async () => {
     const almoxarifado = await appRouter.createCaller(publicContext).dashboard.project({ id: 6 });
     const samEstoque = await appRouter.createCaller(publicContext).dashboard.project({ id: 7 });
