@@ -240,4 +240,13 @@
 - [x] Padronizar a página interna com cabeçalho, responsabilidade, linha do tempo, cronograma, fotos e documentos.
 - [x] Preservar integralmente a lógica e a exibição atual do progresso percentual em todas as telas; foi incluído teste de contrato para faixa de 0 a 100%.
 - [x] Validar navegação, responsividade, testes e executar `pnpm check`; 8 testes Vitest passaram, TypeScript sem erros e QA desktop/mobile concluído.
-- [ ] Salvar checkpoint após a implementação do escopo de melhoria.
+- [x] Salvar checkpoint após a implementação do escopo de melhoria; checkpoint `b17bc276` publicado.
+
+## Ajuste da carteira para 11 projetos e responsáveis
+
+- [x] Mapear os 11 projetos, responsáveis e datas da imagem de referência.
+- [x] Definir quais quatro cadastros deixarão de aparecer na carteira principal, preservando seus dados sem exclusão destrutiva; SECED-001, SECED-013, SECED-014 e SECED-015 foram marcados como pausados.
+- [x] Atualizar os nomes, responsáveis, datas iniciais e datas finais conforme a referência.
+- [x] Ajustar a carteira e a linha do tempo para exibir exatamente 11 projetos; a consulta de carteira confirmou 11 registros ativos.
+- [x] Validar o progresso percentual, os responsáveis, os filtros, os detalhes e a responsividade em desktop e mobile; o percentual do Almoxarifado permaneceu em 89% e o SAM Patrimônio em 0%.
+- [ ] Executar testes e `pnpm check`, revisar o TODO e salvar checkpoint.

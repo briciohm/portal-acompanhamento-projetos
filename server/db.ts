@@ -83,8 +83,9 @@ export async function getProjectDetail(id: number) {
 export async function getExecutiveSummary() {
   const db = await getDb();
   if (!db) return { areas: [], projects: [], totals: { projects: 0, active: 0, completed: 0, averageProgress: 0 } };
-  const [areaRows, projectRows] = await Promise.all([listAreas(), listProjects()]);
-  const active = projectRows.filter((p) => !["concluído", "pausado"].includes(p.status)).length;
+  const [areaRows, allProjectRows] = await Promise.all([listAreas(), listProjects()]);
+  const projectRows = allProjectRows.filter((p) => p.status !== "pausado");
+  const active = projectRows.filter((p) => p.status !== "concluído").length;
   const completed = projectRows.filter((p) => p.status === "concluído").length;
   const averageProgress = projectRows.length ? Math.round(projectRows.reduce((sum, p) => sum + p.progress, 0) / projectRows.length) : 0;
   return { areas: areaRows, projects: projectRows, totals: { projects: projectRows.length, active, completed, averageProgress } };
