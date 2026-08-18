@@ -249,4 +249,11 @@
 - [x] Atualizar os nomes, responsáveis, datas iniciais e datas finais conforme a referência.
 - [x] Ajustar a carteira e a linha do tempo para exibir exatamente 11 projetos; a consulta de carteira confirmou 11 registros ativos.
 - [x] Validar o progresso percentual, os responsáveis, os filtros, os detalhes e a responsividade em desktop e mobile; o percentual do Almoxarifado permaneceu em 89% e o SAM Patrimônio em 0%.
-- [ ] Executar testes e `pnpm check`, revisar o TODO e salvar checkpoint.
+- [x] Executar testes e `pnpm check`, revisar o TODO e salvar checkpoint; 8 testes Vitest passaram, TypeScript sem erros e checkpoint `11228139` publicado.
+
+## Padronização dos códigos para DPAT
+
+- [x] Mapear os 15 projetos atuais e definir a sequência de códigos `DPAT-001` a `DPAT-015`.
+- [x] Atualizar os códigos no banco, preservando nomes, responsáveis, status, progresso, documentos, fotos, etapas e marcos.
+- [x] Revisar ordenação, testes, carteira de 11 ativos e rotas de detalhes; 8 testes Vitest passaram, `pnpm check` terminou sem erros e a validação visual confirmou `DPAT-008` no detalhe do SAM Patrimônio.
+- [ ] Salvar checkpoint após a validação da nova codificação.

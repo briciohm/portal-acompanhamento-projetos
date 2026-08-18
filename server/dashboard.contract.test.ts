@@ -18,14 +18,14 @@ describe("dashboard contracts", () => {
 
   it("returns documents in the project detail contract", async () => {
     const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 3 });
-    expect(result?.project.code).toBe("SECED-003");
+    expect(result?.project.code).toBe("DPAT-003");
     expect(result?.documents).toEqual(expect.any(Array));
     expect(result?.documents.length).toBeGreaterThanOrEqual(13);
   });
 
   it("returns the SAM Patrimônio materials", async () => {
     const result = await appRouter.createCaller(publicContext).dashboard.project({ id: 8 });
-    expect(result?.project.code).toBe("SECED-008");
+    expect(result?.project.code).toBe("DPAT-008");
     expect(result?.documents).toEqual(expect.any(Array));
     expect(result?.documents.length).toBeGreaterThanOrEqual(16);
   });
@@ -42,9 +42,9 @@ describe("dashboard contracts", () => {
     const almoxarifado = await appRouter.createCaller(publicContext).dashboard.project({ id: 6 });
     const samEstoque = await appRouter.createCaller(publicContext).dashboard.project({ id: 7 });
 
-    expect(almoxarifado?.project.code).toBe("SECED-006");
+    expect(almoxarifado?.project.code).toBe("DPAT-006");
     expect(almoxarifado?.documents.some((document) => document.title.includes("Almoxarifado"))).toBe(true);
-    expect(samEstoque?.project.code).toBe("SECED-007");
+    expect(samEstoque?.project.code).toBe("DPAT-007");
     expect(samEstoque?.documents.some((document) => document.title.includes("SAM Estoque"))).toBe(true);
   });
 
@@ -54,11 +54,11 @@ describe("dashboard contracts", () => {
     const pills = await appRouter.createCaller(publicContext).dashboard.project({ id: 60003 });
     const portal = await appRouter.createCaller(publicContext).dashboard.project({ id: 5 });
 
-    expect(deposits?.project.code).toBe("SECED-013");
+    expect(deposits?.project.code).toBe("DPAT-013");
     expect(deposits?.documents.some((document) => document.title.includes("Depósitos"))).toBe(true);
-    expect(pops?.project.code).toBe("SECED-014");
+    expect(pops?.project.code).toBe("DPAT-014");
     expect(pops?.documents.some((document) => document.title.includes("Procedimentos Operacionais"))).toBe(true);
-    expect(pills?.project.code).toBe("SECED-015");
+    expect(pills?.project.code).toBe("DPAT-015");
     expect(pills?.documents.some((document) => document.title.includes("Pílulas"))).toBe(true);
     expect(portal?.documents.some((document) => document.title.includes("Atualização Portal DPAT"))).toBe(true);
     expect(portal?.photos.some((photo) => photo.title?.includes("referência visual anterior"))).toBe(true);
