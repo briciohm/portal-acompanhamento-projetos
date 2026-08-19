@@ -385,5 +385,5 @@
 
 ## Pendências futuras
 
-- [ ] Adicionar cobertura Vitest específica para serialização/exportação CSV e regras de alertas recorrentes.
-- [ ] Validar no uso operacional real os fluxos de criação e alteração de usuários com contas autorizadas.
+- [x] Adicionar cobertura Vitest específica para serialização/exportação CSV e regras de alertas recorrentes.
+- [x] Validar no uso operacional real os fluxos de criação e alteração de usuários com contas autorizadas.
