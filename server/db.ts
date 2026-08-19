@@ -65,6 +65,28 @@ export async function getProjectById(id: number) {
   return project[0];
 }
 
+const STAGE_WEIGHTS = [0, 50, 100] as const;
+
+export function stageStatusToProgress(status: number) {
+  return STAGE_WEIGHTS[Math.max(0, Math.min(2, Math.round(status)))];
+}
+
+export function calculateStageProgress(stages: Array<{ progressStatus: number }>) {
+  if (!stages.length) return 0;
+  return Math.round(stages.reduce((sum, stage) => sum + stageStatusToProgress(stage.progressStatus), 0) / stages.length);
+}
+
+export async function syncProjectProgressFromStages(projectId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const project = await getProjectById(projectId);
+  if (!project || project.isManual) return project;
+  const stages = await db.select({ progressStatus: projectStages.progressStatus }).from(projectStages).where(eq(projectStages.projectId, projectId));
+  const progress = calculateStageProgress(stages);
+  await db.update(projects).set({ progress, status: progress >= 100 ? "concluído" : project.status === "concluído" ? "andamento" : project.status }).where(eq(projects.id, projectId));
+  return getProjectById(projectId);
+}
+
 export async function getProjectDetail(id: number) {
   const db = await getDb();
   if (!db) return undefined;
@@ -77,7 +99,7 @@ export async function getProjectDetail(id: number) {
     db.select().from(projectPhotos).where(eq(projectPhotos.projectId, id)).orderBy(desc(projectPhotos.createdAt)),
     db.select().from(projectDocuments).where(eq(projectDocuments.projectId, id)).orderBy(desc(projectDocuments.createdAt)),
   ]);
-  return { project, metrics, stages, milestones, photos, documents };
+  return { project, metrics, stages: stages.map(stage => ({ ...stage, progressStatus: stage.progressStatus ?? (stage.status === "concluída" ? 2 : stage.status === "em andamento" ? 1 : 0) })), milestones, photos, documents };
 }
 
 export async function getExecutiveSummary() {
@@ -108,9 +130,14 @@ export async function createProject(input: typeof projects.$inferInsert) {
 export async function updateProject(id: number, input: Partial<typeof projects.$inferInsert>) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const normalizedInput = input.progress !== undefined && input.progress >= 100 && input.status === undefined ? { ...input, status: "concluído" as const } : input;
+  if (input.isManual && !input.manualObservation?.trim()) throw new Error("A observação é obrigatória para o progresso manual.");
+  const normalizedInput = input.isManual === false
+    ? { ...input, manualObservation: null }
+    : input.progress !== undefined && input.progress >= 100 && input.status === undefined
+      ? { ...input, status: "concluído" as const }
+      : input;
   await db.update(projects).set(normalizedInput).where(eq(projects.id, id));
-  return getProjectById(id);
+  return normalizedInput.isManual === false ? syncProjectProgressFromStages(id) : getProjectById(id);
 }
 
 export async function createMetric(input: typeof projectMetrics.$inferInsert) {
@@ -123,8 +150,21 @@ export async function createMetric(input: typeof projectMetrics.$inferInsert) {
 export async function createStage(input: typeof projectStages.$inferInsert) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const result = await db.insert(projectStages).values(input);
+  const progressStatus = input.progressStatus ?? (input.status === "concluída" ? 2 : input.status === "em andamento" ? 1 : 0);
+  const result = await db.insert(projectStages).values({ ...input, progressStatus });
+  await syncProjectProgressFromStages(input.projectId);
   return { id: Number(result[0].insertId) };
+}
+
+export async function updateStage(id: number, input: Partial<typeof projectStages.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const current = await db.select().from(projectStages).where(eq(projectStages.id, id)).limit(1);
+  if (!current[0]) throw new Error("Etapa não encontrada");
+  const progressStatus = input.progressStatus ?? (input.status === "concluída" ? 2 : input.status === "em andamento" ? 1 : undefined);
+  await db.update(projectStages).set({ ...input, ...(progressStatus === undefined ? {} : { progressStatus, status: progressStatus === 2 ? "concluída" : progressStatus === 1 ? "em andamento" : "pendente" }) }).where(eq(projectStages.id, id));
+  await syncProjectProgressFromStages(current[0].projectId);
+  return db.select().from(projectStages).where(eq(projectStages.id, id)).limit(1).then(rows => rows[0]);
 }
 
 export async function createMilestone(input: typeof projectMilestones.$inferInsert) {

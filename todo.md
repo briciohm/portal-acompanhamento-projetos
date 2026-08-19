@@ -335,3 +335,11 @@
 - [x] Gerar resumos executivos alinhados às evidências disponíveis para cada projeto ativo; campos sem Plano de Ação específico foram explicitamente sinalizados como pendentes.
 - [x] Preencher objetivos, escopo, próximos passos, etapas, marcos, responsáveis, prazos e progresso somente quando houver suporte documental; DPAT-003, DPAT-010 e DPAT-012 receberam os complementos documentados.
 - [x] Revisar consistência, executar testes e publicar a atualização no portal; 14 testes Vitest passaram, `pnpm check` terminou sem erros e Home/Área foram validadas visualmente.
+
+## Módulo de acompanhamento de progresso
+
+- [x] Adicionar status selecionável a cada etapa: Em branco (0%), Em andamento (50%) e Concluído (100%); controles integrados ao back-office e pesos persistidos no banco.
+- [x] Implementar cálculo automático do progresso global pela média dos status das etapas; sincronização automática aplicada ao criar/alterar etapas e cobertura unitária adicionada.
+- [x] Implementar alternância entre cálculo automático e inserção manual de percentual; modo manual preservado no projeto e cálculo automático restaura a média das etapas.
+- [x] Exigir observação na inserção manual e exibir asterisco com acesso à justificativa nos cards, relatórios e detalhes; tooltip acessível por foco e mouse implementado.
+- [x] Migrar banco, atualizar contratos, testar regras, validar desktop/mobile e publicar checkpoint; 17 testes Vitest passaram, `pnpm check` terminou sem erros e QA visual desktop/mobile foi concluído.

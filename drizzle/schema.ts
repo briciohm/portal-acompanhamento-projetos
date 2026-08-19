@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -31,6 +31,8 @@ export const projects = mysqlTable("projects", {
   status: mysqlEnum("status", ["estruturação", "andamento", "execução", "concluído", "pausado"]).default("andamento").notNull(),
   owner: varchar("owner", { length: 160 }),
   progress: int("progress").default(0).notNull(),
+  isManual: boolean("isManual").default(false).notNull(),
+  manualObservation: text("manualObservation"),
   nextSteps: text("nextSteps"),
   startDate: timestamp("startDate"),
   targetDate: timestamp("targetDate"),
@@ -54,6 +56,7 @@ export const projectStages = mysqlTable("project_stages", {
   title: varchar("title", { length: 180 }).notNull(),
   description: text("description"),
   status: mysqlEnum("status", ["pendente", "em andamento", "concluída"]).default("pendente").notNull(),
+  progressStatus: int("progressStatus").default(0).notNull(),
   orderIndex: int("orderIndex").default(0).notNull(),
   dueDate: timestamp("dueDate"),
 });
