@@ -325,9 +325,9 @@
 
 ## Verificação operacional pós-correção
 
-- [x] Reabrir `/admin?from_webdev=1` e confirmar a renderização; a rota abriu, mas a sessão persistida disponível está autenticada como `role=user`, não como administrador.
-- [ ] Editar e salvar um projeto, confirmando persistência e ausência de erro de DOM; pendente porque a sessão atual não tem permissão administrativa e exige login do administrador.
-- [x] Revisar logs do servidor e do navegador; as ocorrências de ResizeObserver e `[Client Error] undefined` são anteriores à correção publicada, sem nova ocorrência após o ajuste.
+- [x] Reabrir `/admin?from_webdev=1` e confirmar a renderização; o acesso administrativo foi liberado e o formulário de atualização carregou corretamente.
+- [x] Editar e salvar um projeto, confirmando persistência e ausência de erro de DOM; DPAT-016 foi salvo com marca temporária, restaurado imediatamente ao texto original e salvo novamente com confirmação “Projeto atualizado”.
+- [x] Revisar logs do servidor e do navegador; não houve saída no console durante os dois salvamentos e as ocorrências históricas de ResizeObserver/`[Client Error] undefined` permanecem anteriores à correção.
 
 ## Resumos executivos e campos de controle
 
