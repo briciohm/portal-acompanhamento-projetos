@@ -10,11 +10,11 @@ export function InstitutionalHeader({ section = "PORTAL EXECUTIVO" }: { section?
   return (
     <header className="institutional-header relative flex min-h-[78px] items-center justify-between gap-4 overflow-hidden border-b border-white/10 bg-[#080808] px-5 py-4 text-white md:px-10">
       <div className="institutional-watermark" aria-hidden="true">SP</div>
-      <Link href="/" className="relative z-10 flex items-center gap-3" aria-label="Ir para a home executiva">
-        {logo ? <img src={logo} alt="Logotipo institucional" className="h-11 w-11 object-contain" /> : <span className="flex h-11 w-11 items-center justify-center border border-white/30 bg-white/5 text-sm font-black tracking-tight text-white">SP</span>}
-        <span className="leading-tight"><strong className="block text-sm">Governo do Estado</strong><strong className="block text-sm">de São Paulo</strong></span>
+      <Link href="/" className="relative z-10 flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Ir para a home executiva">
+        {logo ? <img src={logo} alt="Brasão institucional de São Paulo" className="h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11" /> : <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-white/30 bg-white/5 text-sm font-black tracking-tight text-white sm:h-11 sm:w-11">SP</span>}
+        <span className="min-w-0 leading-tight"><strong className="block text-xs sm:text-sm">Governo do Estado</strong><strong className="block text-xs sm:text-sm">de São Paulo</strong></span>
       </Link>
-      <div className="relative z-10 text-center leading-tight"><span className="block text-[10px] font-bold uppercase tracking-[.24em] text-[#e30613]">{section}</span><span className="text-xs font-semibold text-white/50">Acompanhamento de Projetos</span></div>
+      <div className="relative z-10 max-w-[145px] text-center leading-tight sm:max-w-none"><span className="block text-[9px] font-bold uppercase tracking-[.16em] text-[#e30613] sm:text-[10px] sm:tracking-[.24em]">{section}</span><span className="text-[10px] font-semibold text-white/50 sm:text-xs">Acompanhamento de Projetos</span></div>
       <div className="relative z-10 flex items-center gap-3 text-right"><div className="hidden sm:block"><span className="block text-xs font-bold">SÃO PAULO</span><span className="block text-[9px] uppercase tracking-widest text-white/40">Governo do Estado</span></div>{user ? <UserRound className="h-5 w-5 text-white/60" aria-label="Usuário autenticado" /> : null}</div>
     </header>
   );

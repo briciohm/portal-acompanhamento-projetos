@@ -400,3 +400,8 @@
 ## Correção da Carteira Atual
 
 - [x] Corrigir a exibição de DPAT-002 na Home e na Carteira Atual para “Zeladoria”, removendo a versão “ZELATORIA”.
+
+## Identidade visual
+
+- [x] Adicionar o brasão de São Paulo fornecido pelo usuário ao armazenamento do projeto.
+- [x] Aplicar o brasão no cabeçalho institucional do portal e validar desktop/mobile.
