@@ -322,3 +322,16 @@
 - [x] Investigar por que `ResizeObserver loop completed with undelivered notifications` ainda chega ao monitoramento em `/admin?from_webdev=1`; o stack indicou emissão pelo `console.error` interceptado pelo coletor.
 - [x] Ajustar a interceptação global para bloquear a promoção do aviso benigno sem ocultar erros reais; o filtro agora cobre eventos globais e argumentos de `console.error`.
 - [x] Validar o admin, adicionar/atualizar testes, executar TypeScript e publicar checkpoint; `/admin?from_webdev=1` renderizou, 14 testes Vitest passaram e `pnpm check` terminou sem erros.
+
+## Verificação operacional pós-correção
+
+- [x] Reabrir `/admin?from_webdev=1` e confirmar a renderização; a rota abriu, mas a sessão persistida disponível está autenticada como `role=user`, não como administrador.
+- [ ] Editar e salvar um projeto, confirmando persistência e ausência de erro de DOM; pendente porque a sessão atual não tem permissão administrativa e exige login do administrador.
+- [x] Revisar logs do servidor e do navegador; as ocorrências de ResizeObserver e `[Client Error] undefined` são anteriores à correção publicada, sem nova ocorrência após o ajuste.
+
+## Resumos executivos e campos de controle
+
+- [x] Revisar a consolidação documental dos Planos de Ação e separar projetos ativos de concluídos; 11 projetos ativos foram considerados e o DPAT-006, com 100%, permaneceu fora do escopo.
+- [x] Gerar resumos executivos alinhados às evidências disponíveis para cada projeto ativo; campos sem Plano de Ação específico foram explicitamente sinalizados como pendentes.
+- [x] Preencher objetivos, escopo, próximos passos, etapas, marcos, responsáveis, prazos e progresso somente quando houver suporte documental; DPAT-003, DPAT-010 e DPAT-012 receberam os complementos documentados.
+- [x] Revisar consistência, executar testes e publicar a atualização no portal; 14 testes Vitest passaram, `pnpm check` terminou sem erros e Home/Área foram validadas visualmente.
