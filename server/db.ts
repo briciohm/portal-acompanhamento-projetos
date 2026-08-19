@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
 import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, users } from "../drizzle/schema";
@@ -173,15 +173,67 @@ export async function updateStage(id: number, input: Partial<typeof projectStage
 }
 
 export async function listStageStatusHistory(projectId: number) {
+  return listFilteredStageStatusHistory({ projectId, limit: 500 });
+}
+
+export async function listFilteredStageStatusHistory(input: { projectId?: number; changedBy?: number; from?: Date; to?: Date; limit?: number }) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(projectStageStatusHistory).where(eq(projectStageStatusHistory.projectId, projectId)).orderBy(desc(projectStageStatusHistory.changedAt));
+  const filters = [
+    input.projectId === undefined ? undefined : eq(projectStageStatusHistory.projectId, input.projectId),
+    input.changedBy === undefined ? undefined : eq(projectStageStatusHistory.changedBy, input.changedBy),
+    input.from === undefined ? undefined : gte(projectStageStatusHistory.changedAt, input.from),
+    input.to === undefined ? undefined : lte(projectStageStatusHistory.changedAt, input.to),
+  ].filter(Boolean) as any[];
+  return db.select().from(projectStageStatusHistory).where(filters.length ? and(...filters) : undefined).orderBy(desc(projectStageStatusHistory.changedAt)).limit(Math.min(Math.max(input.limit ?? 500, 1), 500));
+}
+
+export async function listUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, isActive: users.isActive, createdAt: users.createdAt, lastSignedIn: users.lastSignedIn }).from(users).orderBy(asc(users.name));
+}
+
+export async function createManagedUser(input: { openId: string; name?: string; email?: string; role?: "user" | "admin" }) {
+  await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: input.role ?? "user" });
+  return getUserByOpenId(input.openId);
+}
+
+export async function updateManagedUser(id: number, input: { role?: "user" | "admin"; isActive?: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  await db.update(users).set(input).where(eq(users.id, id));
+  return db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, isActive: users.isActive }).from(users).where(eq(users.id, id)).limit(1).then(rows => rows[0]);
 }
 
 export async function listClientDiagnosticEvents(limit = 100) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(clientDiagnosticEvents).orderBy(desc(clientDiagnosticEvents.createdAt)).limit(Math.min(Math.max(limit, 1), 500));
+}
+
+export async function listFilteredClientDiagnosticEvents(input: { type?: string; route?: string; from?: Date; to?: Date; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  const filters = [
+    input.type ? eq(clientDiagnosticEvents.type, input.type) : undefined,
+    input.route ? eq(clientDiagnosticEvents.route, input.route) : undefined,
+    input.from === undefined ? undefined : gte(clientDiagnosticEvents.createdAt, input.from),
+    input.to === undefined ? undefined : lte(clientDiagnosticEvents.createdAt, input.to),
+  ].filter(Boolean) as any[];
+  return db.select().from(clientDiagnosticEvents).where(filters.length ? and(...filters) : undefined).orderBy(desc(clientDiagnosticEvents.createdAt)).limit(Math.min(Math.max(input.limit ?? 500, 1), 500));
+}
+
+export async function getRecurringDiagnosticAlerts(input: { days?: number; threshold?: number } = {}) {
+  const events = await listFilteredClientDiagnosticEvents({ from: new Date(Date.now() - (input.days ?? 7) * 86400000), limit: 500 });
+  const groups = new Map<string, { type: string; message: string; route: string | null; count: number; lastSeen: Date }>();
+  for (const event of events) {
+    if (/resizeobserver/i.test(event.type) || /resizeobserver/i.test(event.message)) continue;
+    const key = `${event.type}|${event.message}|${event.route ?? ""}`;
+    const current = groups.get(key);
+    groups.set(key, { type: event.type, message: event.message, route: event.route, count: (current?.count ?? 0) + 1, lastSeen: current?.lastSeen ?? event.createdAt });
+  }
+  return Array.from(groups.values()).filter(item => item.count >= (input.threshold ?? 3)).sort((a, b) => b.count - a.count);
 }
 
 export async function createClientDiagnosticEvent(input: typeof clientDiagnosticEvents.$inferInsert) {

@@ -364,3 +364,26 @@
 - [x] Criar painel administrativo de diagnóstico para erros reais do cliente, distinguindo ResizeObserver e eventos benignos; aba Diagnóstico protegida integrada ao back-office.
 - [x] Registrar e consultar eventos de erro com mensagem, rota, data, tipo e contexto técnico, sem coletar dados sensíveis desnecessários; endpoint e consulta protegidos implementados.
 - [x] Testar a rotina de progresso em outros projetos ativos e validar histórico, diagnóstico, responsividade, Vitest, TypeScript e publicação; QA desktop/mobile concluído, 18 testes Vitest aprovados e `pnpm check` sem erros.
+
+## Expansão administrativa: filtros, exportação, alertas e usuários
+
+- [ ] Adicionar filtros do histórico por projeto, usuário e período, com consulta segura e paginação adequada.
+- [ ] Implementar exportação CSV do histórico de alterações e dos eventos de diagnóstico, respeitando os filtros aplicados.
+- [ ] Criar alertas para erros reais recorrentes, com limiar configurável e exclusão explícita de ResizeObserver/eventos benignos.
+- [ ] Criar área protegida para listar, adicionar, promover/rebaixar e desativar usuários e administradores, com validações de segurança.
+- [ ] Validar permissões, privacidade, responsividade, Vitest, TypeScript e publicar checkpoint.
+
+## Ferramentas administrativas avançadas
+
+- [x] Adicionar filtros por projeto, usuário e período no histórico de alterações de status.
+- [x] Implementar exportação CSV do histórico de status.
+- [x] Adicionar consulta e alertas para erros reais recorrentes no painel de diagnóstico.
+- [x] Implementar filtros por tipo e rota e exportação CSV dos eventos de diagnóstico.
+- [x] Criar área protegida de gestão de usuários e administradores, com cadastro, promoção/rebaixamento e ativação/desativação.
+- [x] Validar o back-office em desktop e mobile mantendo a identidade preta, branca e vermelha.
+- [x] Executar a suíte Vitest: 18 testes aprovados; executar `pnpm check` sem erros TypeScript.
+
+## Pendências futuras
+
+- [ ] Adicionar cobertura Vitest específica para serialização/exportação CSV e regras de alertas recorrentes.
+- [ ] Validar no uso operacional real os fluxos de criação e alteração de usuários com contas autorizadas.
