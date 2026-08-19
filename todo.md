@@ -349,3 +349,10 @@
 - [x] Investigar por que `ResizeObserver loop completed with undelivered notifications` voltou a aparecer na Home e no `/admin` após a atualização do módulo de progresso; os logs mostraram `UncaughtError` capturado antes do listener React.
 - [x] Ajustar o tratamento global para cobrir o novo caminho do evento sem ocultar erros reais; filtro de captura antecipada foi instalado no HTML e o guard passou a reconhecer Error/objetos com `message`.
 - [x] Validar `/`, `/admin`, testes, TypeScript e publicar checkpoint; ambas as rotas renderizaram, 17 testes Vitest passaram e `pnpm check` terminou sem erros.
+
+## Verificação operacional do ResizeObserver e coletor
+
+- [x] Reabrir a Home e o `/admin` na sessão disponível e confirmar o carregamento em uso real; ambas as telas carregaram na sessão administrativa.
+- [x] Redimensionar a janela e usar controles de etapas, monitorando o console e os logs; o DPAT-007 foi alterado temporariamente para 50%, confirmou atualização e foi restaurado para 0%, sem erro registrado.
+- [x] Adicionar teste automatizado de carregamento inicial com o coletor de diagnóstico ativo; o teste verifica o filtro antecipado no HTML e a presença do coletor publicado.
+- [x] Executar QA final e registrar o resultado da verificação; 18 testes Vitest passaram, `pnpm check` terminou sem erros e a evidência foi registrada em `docs/verificacao_resizeobserver_2026-08-19.md`.
