@@ -7,7 +7,7 @@ import superjson from "superjson";
 import App from "./App";
 import { startLogin } from "./const";
 import "./index.css";
-import { isResizeObserverWarning } from "./_core/resizeObserverGuard";
+import { containsResizeObserverWarning, isResizeObserverWarning } from "./_core/resizeObserverGuard";
 import { normalizeClientError } from "./_core/clientErrorGuard";
 
 const queryClient = new QueryClient();
@@ -17,6 +17,12 @@ const queryClient = new QueryClient();
 // but the dev overlay may promote it to a fatal screen. Suppress only this
 // known browser warning and leave all other errors untouched.
 if (typeof window !== "undefined") {
+  const originalConsoleError = console.error.bind(console);
+  console.error = (...args: unknown[]) => {
+    if (containsResizeObserverWarning(args)) return;
+    originalConsoleError(...args);
+  };
+
   window.addEventListener(
     "error",
     event => {

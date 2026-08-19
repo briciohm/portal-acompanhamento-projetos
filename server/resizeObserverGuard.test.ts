@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isResizeObserverWarning } from "../client/src/_core/resizeObserverGuard";
+import { containsResizeObserverWarning, isResizeObserverWarning } from "../client/src/_core/resizeObserverGuard";
 import { normalizeClientError } from "../client/src/_core/clientErrorGuard";
 
 describe("isResizeObserverWarning", () => {
@@ -11,6 +11,11 @@ describe("isResizeObserverWarning", () => {
   it("does not suppress unrelated errors", () => {
     expect(isResizeObserverWarning("TypeError: failed to render admin form")).toBe(false);
     expect(isResizeObserverWarning(undefined)).toBe(false);
+  });
+
+  it("recognizes the warning when it arrives as a console argument", () => {
+    expect(containsResizeObserverWarning(["ResizeObserver loop completed with undelivered notifications."])).toBe(true);
+    expect(containsResizeObserverWarning(["TypeError: failed to render admin form"])).toBe(false);
   });
 });
 

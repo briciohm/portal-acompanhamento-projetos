@@ -316,3 +316,9 @@
 - [x] Diagnosticar por que o listener global registra `[Client Error] undefined` no `/admin`; `event.error` e `event.message` podiam chegar vazios.
 - [x] Normalizar o valor reportado e evitar logs sem mensagem útil, preservando erros reais; criada a função `normalizeClientError` para Error, string, objeto serializável e eventos vazios.
 - [x] Adicionar cobertura de teste, validar `/admin`, TypeScript e publicar checkpoint; 13 testes Vitest passaram, `pnpm check` terminou sem erros e a tela administrativa foi validada.
+
+## Recorrência do aviso ResizeObserver no admin
+
+- [x] Investigar por que `ResizeObserver loop completed with undelivered notifications` ainda chega ao monitoramento em `/admin?from_webdev=1`; o stack indicou emissão pelo `console.error` interceptado pelo coletor.
+- [x] Ajustar a interceptação global para bloquear a promoção do aviso benigno sem ocultar erros reais; o filtro agora cobre eventos globais e argumentos de `console.error`.
+- [x] Validar o admin, adicionar/atualizar testes, executar TypeScript e publicar checkpoint; `/admin?from_webdev=1` renderizou, 14 testes Vitest passaram e `pnpm check` terminou sem erros.

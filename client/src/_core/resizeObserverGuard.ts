@@ -5,3 +5,7 @@ export function isResizeObserverWarning(message: string | null | undefined) {
     normalized.startsWith("ResizeObserver loop limit exceeded")
   );
 }
+
+export function containsResizeObserverWarning(values: unknown[]) {
+  return values.some(value => isResizeObserverWarning(typeof value === "string" ? value : String(value ?? "")));
+}
