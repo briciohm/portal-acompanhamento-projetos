@@ -392,3 +392,11 @@
 
 - [x] Elaborar matriz de KPIs por projeto, distinguindo indicadores documentados de metas propostas.
 - [x] Cadastrar os KPIs aprovados no portal e validar sua exibição no detalhe dos projetos.
+
+## Correção de nomenclatura
+
+- [x] Confirmar o nome do projeto DPAT-002 como “Zeladoria”, preservando código, responsável, progresso, KPIs e demais dados; nenhuma alteração de banco foi necessária.
+
+## Correção da Carteira Atual
+
+- [x] Corrigir a exibição de DPAT-002 na Home e na Carteira Atual para “Zeladoria”, removendo a versão “ZELATORIA”.
