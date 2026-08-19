@@ -6,7 +6,18 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Portal de Acompanhamento de Projetos</title>    
+    <title>Portal de Acompanhamento de Projetos</title>
+    <script>
+      // Chromium emits this benign notification outside the React tree. Register
+      // before application/diagnostic scripts so it cannot become a fatal overlay.
+      window.addEventListener("error", function (event) {
+        var message = event && event.message;
+        if (typeof message === "string" && message.indexOf("ResizeObserver loop") === 0) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }, true);
+    </script>
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

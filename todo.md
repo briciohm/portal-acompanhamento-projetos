@@ -343,3 +343,9 @@
 - [x] Implementar alternância entre cálculo automático e inserção manual de percentual; modo manual preservado no projeto e cálculo automático restaura a média das etapas.
 - [x] Exigir observação na inserção manual e exibir asterisco com acesso à justificativa nos cards, relatórios e detalhes; tooltip acessível por foco e mouse implementado.
 - [x] Migrar banco, atualizar contratos, testar regras, validar desktop/mobile e publicar checkpoint; 17 testes Vitest passaram, `pnpm check` terminou sem erros e QA visual desktop/mobile foi concluído.
+
+## Nova recorrência do ResizeObserver na Home
+
+- [x] Investigar por que `ResizeObserver loop completed with undelivered notifications` voltou a aparecer na Home e no `/admin` após a atualização do módulo de progresso; os logs mostraram `UncaughtError` capturado antes do listener React.
+- [x] Ajustar o tratamento global para cobrir o novo caminho do evento sem ocultar erros reais; filtro de captura antecipada foi instalado no HTML e o guard passou a reconhecer Error/objetos com `message`.
+- [x] Validar `/`, `/admin`, testes, TypeScript e publicar checkpoint; ambas as rotas renderizaram, 17 testes Vitest passaram e `pnpm check` terminou sem erros.
