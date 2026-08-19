@@ -405,3 +405,10 @@
 
 - [x] Adicionar o brasão de São Paulo fornecido pelo usuário ao armazenamento do projeto.
 - [x] Aplicar o brasão no cabeçalho institucional do portal e validar desktop/mobile.
+
+## Dashboards e gráficos executivos
+
+- [x] Definir arquitetura dos dashboards com base nos dados reais já cadastrados.
+- [x] Implementar dashboard executivo da carteira na Home.
+- [x] Implementar comparativos de projetos por área e visões gráficas no detalhe.
+- [x] Validar filtros, cálculos, responsividade e testes dos dashboards.
