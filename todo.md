@@ -367,11 +367,11 @@
 
 ## Expansão administrativa: filtros, exportação, alertas e usuários
 
-- [ ] Adicionar filtros do histórico por projeto, usuário e período, com consulta segura e paginação adequada.
-- [ ] Implementar exportação CSV do histórico de alterações e dos eventos de diagnóstico, respeitando os filtros aplicados.
-- [ ] Criar alertas para erros reais recorrentes, com limiar configurável e exclusão explícita de ResizeObserver/eventos benignos.
-- [ ] Criar área protegida para listar, adicionar, promover/rebaixar e desativar usuários e administradores, com validações de segurança.
-- [ ] Validar permissões, privacidade, responsividade, Vitest, TypeScript e publicar checkpoint.
+- [x] Adicionar filtros do histórico por projeto, usuário e período, com consulta segura e paginação adequada.
+- [x] Implementar exportação CSV do histórico de alterações e dos eventos de diagnóstico, respeitando os filtros aplicados.
+- [x] Criar alertas para erros reais recorrentes, com limiar configurável e exclusão explícita de ResizeObserver/eventos benignos.
+- [x] Criar área protegida para listar, adicionar, promover/rebaixar e desativar usuários e administradores, com validações de segurança.
+- [x] Validar permissões, privacidade, responsividade, Vitest, TypeScript e publicar checkpoint.
 
 ## Ferramentas administrativas avançadas
 
