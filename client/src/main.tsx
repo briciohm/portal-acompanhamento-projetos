@@ -7,6 +7,7 @@ import superjson from "superjson";
 import App from "./App";
 import { startLogin } from "./const";
 import "./index.css";
+import { isResizeObserverWarning } from "./_core/resizeObserverGuard";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,7 @@ if (typeof window !== "undefined") {
   window.addEventListener(
     "error",
     event => {
-      if (event.message === "ResizeObserver loop completed with undelivered notifications.") {
+      if (isResizeObserverWarning(event.message)) {
         event.preventDefault();
         event.stopImmediatePropagation();
       }

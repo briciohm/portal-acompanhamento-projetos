@@ -297,3 +297,9 @@
 
 - [x] Cadastrar o projeto “Municipalizações de São Paulo (2024–2025–2027)” com o código DPAT-016, progresso inicial tratado como 0% e status de estruturação; responsável, prazo e Plano de Ação permanecem pendentes.
 - [x] Validar a exibição do novo card, o detalhe do projeto, testes e publicação; QA desktop/mobile concluído, 8 testes Vitest aprovados e `pnpm check` sem erros.
+
+## Correção do aviso ResizeObserver no back-office
+
+- [x] Investigar o tratamento global do aviso `ResizeObserver loop completed with undelivered notifications` na rota `/admin`; o navegador emitia um aviso benigno que o overlay promovia a erro fatal.
+- [x] Corrigir somente a promoção desse aviso conhecido a erro fatal, preservando demais exceções; o guard reconhece as duas variantes do Chromium e foi extraído para função testável.
+- [x] Validar `/admin`, testes, TypeScript e publicar checkpoint; `/admin` renderizou sem erro, 10 testes Vitest passaram no total e `pnpm check` terminou sem erros.
