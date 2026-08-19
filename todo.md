@@ -292,3 +292,8 @@
 - [x] Elaborar e aplicar resumos executivos alinhados aos respectivos Planos de Ação; resumos e próximos passos aplicados aos projetos com evidência documental.
 - [x] Revisar consistência, confirmar que projetos concluídos foram omitidos e validar os dados no portal; DPAT-006 foi marcado como concluído e DPAT-011 recebeu oito etapas e um marco documentados.
 - [x] Executar Vitest e TypeScript, validar visualmente e publicar a consolidação; 8 testes Vitest passaram, `pnpm check` terminou sem erros e Home/detalhe DPAT-011 foram validados.
+
+## Inclusão de Municipalizações de São Paulo
+
+- [x] Cadastrar o projeto “Municipalizações de São Paulo (2024–2025–2027)” com o código DPAT-016, progresso inicial tratado como 0% e status de estruturação; responsável, prazo e Plano de Ação permanecem pendentes.
+- [x] Validar a exibição do novo card, o detalhe do projeto, testes e publicação; QA desktop/mobile concluído, 8 testes Vitest aprovados e `pnpm check` sem erros.
