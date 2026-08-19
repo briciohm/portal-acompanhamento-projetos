@@ -310,3 +310,9 @@
 - [x] Validar a navegação e renderização da rota `/area/1`; a visão da área carregou com 16 projetos e 11 ativos, sem erro visual.
 - [x] Reforçar a separação entre avisos benignos do navegador e erros reais do cliente, com guard do ResizeObserver, logs `[Client Error]`/`[Unhandled Promise Rejection]` e cobertura unitária.
 - [x] Executar QA final, Vitest, TypeScript e publicar checkpoint; 11 testes passaram, `pnpm check` terminou sem erros e `/admin`/`/area/1` foram validados.
+
+## Correção do log Client Error undefined
+
+- [x] Diagnosticar por que o listener global registra `[Client Error] undefined` no `/admin`; `event.error` e `event.message` podiam chegar vazios.
+- [x] Normalizar o valor reportado e evitar logs sem mensagem útil, preservando erros reais; criada a função `normalizeClientError` para Error, string, objeto serializável e eventos vazios.
+- [x] Adicionar cobertura de teste, validar `/admin`, TypeScript e publicar checkpoint; 13 testes Vitest passaram, `pnpm check` terminou sem erros e a tela administrativa foi validada.

@@ -8,6 +8,7 @@ import App from "./App";
 import { startLogin } from "./const";
 import "./index.css";
 import { isResizeObserverWarning } from "./_core/resizeObserverGuard";
+import { normalizeClientError } from "./_core/clientErrorGuard";
 
 const queryClient = new QueryClient();
 
@@ -28,13 +29,15 @@ if (typeof window !== "undefined") {
       // Preserve real client errors in the console with a clear diagnostic prefix.
       // The event is intentionally not canceled, so the development overlay still
       // reports the original exception to the administrator.
-      console.error("[Client Error]", event.error ?? event.message);
+      const clientError = normalizeClientError(event.error, event.message);
+      if (clientError) console.error("[Client Error]", clientError);
     },
     true,
   );
 
   window.addEventListener("unhandledrejection", event => {
-    console.error("[Unhandled Promise Rejection]", event.reason);
+    const rejection = normalizeClientError(event.reason);
+    if (rejection) console.error("[Unhandled Promise Rejection]", rejection);
   });
 }
 
