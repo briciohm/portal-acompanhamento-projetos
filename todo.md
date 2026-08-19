@@ -387,3 +387,8 @@
 
 - [x] Adicionar cobertura Vitest específica para serialização/exportação CSV e regras de alertas recorrentes.
 - [x] Validar no uso operacional real os fluxos de criação e alteração de usuários com contas autorizadas.
+
+## Definição e cadastro de KPIs
+
+- [x] Elaborar matriz de KPIs por projeto, distinguindo indicadores documentados de metas propostas.
+- [x] Cadastrar os KPIs aprovados no portal e validar sua exibição no detalhe dos projetos.
