@@ -22,10 +22,20 @@ if (typeof window !== "undefined") {
       if (isResizeObserverWarning(event.message)) {
         event.preventDefault();
         event.stopImmediatePropagation();
+        return;
       }
+
+      // Preserve real client errors in the console with a clear diagnostic prefix.
+      // The event is intentionally not canceled, so the development overlay still
+      // reports the original exception to the administrator.
+      console.error("[Client Error]", event.error ?? event.message);
     },
     true,
   );
+
+  window.addEventListener("unhandledrejection", event => {
+    console.error("[Unhandled Promise Rejection]", event.reason);
+  });
 }
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

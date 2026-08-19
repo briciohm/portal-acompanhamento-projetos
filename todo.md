@@ -303,3 +303,10 @@
 - [x] Investigar o tratamento global do aviso `ResizeObserver loop completed with undelivered notifications` na rota `/admin`; o navegador emitia um aviso benigno que o overlay promovia a erro fatal.
 - [x] Corrigir somente a promoção desse aviso conhecido a erro fatal, preservando demais exceções; o guard reconhece as duas variantes do Chromium e foi extraído para função testável.
 - [x] Validar `/admin`, testes, TypeScript e publicar checkpoint; `/admin` renderizou sem erro, 10 testes Vitest passaram no total e `pnpm check` terminou sem erros.
+
+## Validações pós-correção do ResizeObserver
+
+- [x] Testar o fluxo de atualização de projeto no back-office e confirmar que o procedimento administrativo atualiza um projeto existente; cobertura automatizada adicionada para DPAT-016.
+- [x] Validar a navegação e renderização da rota `/area/1`; a visão da área carregou com 16 projetos e 11 ativos, sem erro visual.
+- [x] Reforçar a separação entre avisos benignos do navegador e erros reais do cliente, com guard do ResizeObserver, logs `[Client Error]`/`[Unhandled Promise Rejection]` e cobertura unitária.
+- [x] Executar QA final, Vitest, TypeScript e publicar checkpoint; 11 testes passaram, `pnpm check` terminou sem erros e `/admin`/`/area/1` foram validados.

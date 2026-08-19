@@ -25,4 +25,17 @@ describe("admin access control", () => {
     const caller = appRouter.createCaller(contextWithRole("user"));
     await expect(caller.admin.createArea({ name: "Área teste", code: "TESTE" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
+
+  it("allows an administrator to update an existing project without remount errors", async () => {
+    const caller = appRouter.createCaller(contextWithRole("admin"));
+    const result = await caller.admin.updateProject({
+      id: 90001,
+      data: {
+        summary: "Projeto cadastrado na carteira. O resumo executivo será elaborado após o recebimento ou localização do Plano de Ação correspondente.",
+      },
+    });
+
+    expect(result?.id).toBe(90001);
+    expect(result?.code).toBe("DPAT-016");
+  });
 });
