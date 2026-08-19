@@ -12,6 +12,21 @@ import { normalizeClientError } from "./_core/clientErrorGuard";
 
 const queryClient = new QueryClient();
 
+const reportClientDiagnostic = (type: string, message: string, context?: unknown) => {
+  if (typeof window === "undefined") return;
+  try {
+    const safeContext = context === undefined ? undefined : JSON.stringify(context, (_key, value) => typeof value === "string" && value.length > 800 ? value.slice(0, 800) : value).slice(0, 4000);
+    void fetch("/api/trpc/dashboard.reportClientDiagnostic?batch=1", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ 0: { json: { type, message: message.slice(0, 4000), route: window.location.pathname, context: safeContext } } }),
+    }).catch(() => undefined);
+  } catch {
+    // Diagnostics must never interfere with the application.
+  }
+};
+
 // Chromium can emit this notification when a ResizeObserver callback causes
 // another layout pass in the same frame. It is not an application exception,
 // but the dev overlay may promote it to a fatal screen. Suppress only this
@@ -36,14 +51,20 @@ if (typeof window !== "undefined") {
       // The event is intentionally not canceled, so the development overlay still
       // reports the original exception to the administrator.
       const clientError = normalizeClientError(event.error, event.message);
-      if (clientError) console.error("[Client Error]", clientError);
+      if (clientError) {
+        originalConsoleError("[Client Error]", clientError);
+        reportClientDiagnostic("client-error", clientError instanceof Error ? clientError.message : clientError);
+      }
     },
     true,
   );
 
   window.addEventListener("unhandledrejection", event => {
     const rejection = normalizeClientError(event.reason);
-    if (rejection) console.error("[Unhandled Promise Rejection]", rejection);
+    if (rejection) {
+      originalConsoleError("[Unhandled Promise Rejection]", rejection);
+      reportClientDiagnostic("unhandled-rejection", rejection instanceof Error ? rejection.message : rejection);
+    }
   });
 }
 
@@ -63,6 +84,7 @@ queryClient.getQueryCache().subscribe(event => {
     const error = event.query.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Query Error]", error);
+    reportClientDiagnostic("api-query-error", error instanceof Error ? error.message : String(error));
   }
 });
 
@@ -71,6 +93,7 @@ queryClient.getMutationCache().subscribe(event => {
     const error = event.mutation.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Mutation Error]", error);
+    reportClientDiagnostic("api-mutation-error", error instanceof Error ? error.message : String(error));
   }
 });
 

@@ -61,6 +61,25 @@ export const projectStages = mysqlTable("project_stages", {
   dueDate: timestamp("dueDate"),
 });
 
+export const projectStageStatusHistory = mysqlTable("project_stage_status_history", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  stageId: int("stageId").notNull(),
+  previousStatus: int("previousStatus").notNull(),
+  nextStatus: int("nextStatus").notNull(),
+  changedBy: int("changedBy"),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+});
+
+export const clientDiagnosticEvents = mysqlTable("client_diagnostic_events", {
+  id: int("id").autoincrement().primaryKey(),
+  type: varchar("type", { length: 64 }).notNull(),
+  message: text("message").notNull(),
+  route: varchar("route", { length: 240 }),
+  context: text("context"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const projectMilestones = mysqlTable("project_milestones", {
   id: int("id").autoincrement().primaryKey(),
   projectId: int("projectId").notNull(),
@@ -99,6 +118,8 @@ export type Area = typeof areas.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ProjectMetric = typeof projectMetrics.$inferSelect;
 export type ProjectStage = typeof projectStages.$inferSelect;
+export type ProjectStageStatusHistory = typeof projectStageStatusHistory.$inferSelect;
+export type ClientDiagnosticEvent = typeof clientDiagnosticEvents.$inferSelect;
 export type ProjectMilestone = typeof projectMilestones.$inferSelect;
 export type ProjectPhoto = typeof projectPhotos.$inferSelect;
 export type ProjectDocument = typeof projectDocuments.$inferSelect;

@@ -356,3 +356,11 @@
 - [x] Redimensionar a janela e usar controles de etapas, monitorando o console e os logs; o DPAT-007 foi alterado temporariamente para 50%, confirmou atualização e foi restaurado para 0%, sem erro registrado.
 - [x] Adicionar teste automatizado de carregamento inicial com o coletor de diagnóstico ativo; o teste verifica o filtro antecipado no HTML e a presença do coletor publicado.
 - [x] Executar QA final e registrar o resultado da verificação; 18 testes Vitest passaram, `pnpm check` terminou sem erros e a evidência foi registrada em `docs/verificacao_resizeobserver_2026-08-19.md`.
+
+## Histórico, diagnóstico e validação ampliada
+
+- [x] Criar histórico auditável das alterações de status das etapas, com projeto, etapa, status anterior, novo status, usuário e data; tabela persistida e registro automático implementados.
+- [x] Exibir o histórico de alterações de status no back-office, com leitura clara e preservação da identidade institucional; histórico integrado ao detalhe administrativo do projeto.
+- [x] Criar painel administrativo de diagnóstico para erros reais do cliente, distinguindo ResizeObserver e eventos benignos; aba Diagnóstico protegida integrada ao back-office.
+- [x] Registrar e consultar eventos de erro com mensagem, rota, data, tipo e contexto técnico, sem coletar dados sensíveis desnecessários; endpoint e consulta protegidos implementados.
+- [x] Testar a rotina de progresso em outros projetos ativos e validar histórico, diagnóstico, responsividade, Vitest, TypeScript e publicação; QA desktop/mobile concluído, 18 testes Vitest aprovados e `pnpm check` sem erros.

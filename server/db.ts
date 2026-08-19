@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
-import { areas, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStages, projects, users } from "../drizzle/schema";
+import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, users } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -92,14 +92,15 @@ export async function getProjectDetail(id: number) {
   if (!db) return undefined;
   const project = await getProjectById(id);
   if (!project) return undefined;
-  const [metrics, stages, milestones, photos, documents] = await Promise.all([
+  const [metrics, stages, milestones, photos, documents, statusHistory] = await Promise.all([
     db.select().from(projectMetrics).where(eq(projectMetrics.projectId, id)).orderBy(asc(projectMetrics.recordedAt)),
     db.select().from(projectStages).where(eq(projectStages.projectId, id)).orderBy(asc(projectStages.orderIndex)),
     db.select().from(projectMilestones).where(eq(projectMilestones.projectId, id)).orderBy(asc(projectMilestones.milestoneDate)),
     db.select().from(projectPhotos).where(eq(projectPhotos.projectId, id)).orderBy(desc(projectPhotos.createdAt)),
     db.select().from(projectDocuments).where(eq(projectDocuments.projectId, id)).orderBy(desc(projectDocuments.createdAt)),
+    db.select().from(projectStageStatusHistory).where(eq(projectStageStatusHistory.projectId, id)).orderBy(desc(projectStageStatusHistory.changedAt)),
   ]);
-  return { project, metrics, stages: stages.map(stage => ({ ...stage, progressStatus: stage.progressStatus ?? (stage.status === "concluída" ? 2 : stage.status === "em andamento" ? 1 : 0) })), milestones, photos, documents };
+  return { project, metrics, stages: stages.map(stage => ({ ...stage, progressStatus: stage.progressStatus ?? (stage.status === "concluída" ? 2 : stage.status === "em andamento" ? 1 : 0) })), milestones, photos, documents, statusHistory };
 }
 
 export async function getExecutiveSummary() {
@@ -156,15 +157,38 @@ export async function createStage(input: typeof projectStages.$inferInsert) {
   return { id: Number(result[0].insertId) };
 }
 
-export async function updateStage(id: number, input: Partial<typeof projectStages.$inferInsert>) {
+export async function updateStage(id: number, input: Partial<typeof projectStages.$inferInsert>, changedBy?: number) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
   const current = await db.select().from(projectStages).where(eq(projectStages.id, id)).limit(1);
   if (!current[0]) throw new Error("Etapa não encontrada");
   const progressStatus = input.progressStatus ?? (input.status === "concluída" ? 2 : input.status === "em andamento" ? 1 : undefined);
+  const nextProgressStatus = progressStatus ?? current[0].progressStatus;
   await db.update(projectStages).set({ ...input, ...(progressStatus === undefined ? {} : { progressStatus, status: progressStatus === 2 ? "concluída" : progressStatus === 1 ? "em andamento" : "pendente" }) }).where(eq(projectStages.id, id));
+  if (nextProgressStatus !== current[0].progressStatus) {
+    await db.insert(projectStageStatusHistory).values({ projectId: current[0].projectId, stageId: id, previousStatus: current[0].progressStatus, nextStatus: nextProgressStatus, changedBy: changedBy ?? null });
+  }
   await syncProjectProgressFromStages(current[0].projectId);
   return db.select().from(projectStages).where(eq(projectStages.id, id)).limit(1).then(rows => rows[0]);
+}
+
+export async function listStageStatusHistory(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectStageStatusHistory).where(eq(projectStageStatusHistory.projectId, projectId)).orderBy(desc(projectStageStatusHistory.changedAt));
+}
+
+export async function listClientDiagnosticEvents(limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(clientDiagnosticEvents).orderBy(desc(clientDiagnosticEvents.createdAt)).limit(Math.min(Math.max(limit, 1), 500));
+}
+
+export async function createClientDiagnosticEvent(input: typeof clientDiagnosticEvents.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const result = await db.insert(clientDiagnosticEvents).values(input);
+  return { id: Number(result[0].insertId) };
 }
 
 export async function createMilestone(input: typeof projectMilestones.$inferInsert) {
