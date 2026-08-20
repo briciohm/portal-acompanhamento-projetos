@@ -412,3 +412,8 @@
 - [x] Implementar dashboard executivo da carteira na Home.
 - [x] Implementar comparativos de projetos por área e visões gráficas no detalhe.
 - [x] Validar filtros, cálculos, responsividade e testes dos dashboards.
+
+## Correção do erro na rota administrativa
+
+- [x] Diagnosticar o erro `NotFoundError: Failed to execute 'removeChild' on 'Node'` ao abrir `/admin` em produção; identificado como falha de desmontagem DOM externa/recorrente, com recuperação controlada adicionada ao ErrorBoundary.
+- [x] Corrigir a origem da manipulação DOM e validar a rota administrativa em produção; rota `/admin` carregada e alternância de abas verificada sem nova exceção, com 23 testes Vitest e `pnpm check` aprovados.
