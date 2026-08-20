@@ -417,3 +417,17 @@
 
 - [x] Diagnosticar o erro `NotFoundError: Failed to execute 'removeChild' on 'Node'` ao abrir `/admin` em produção; identificado como falha de desmontagem DOM externa/recorrente, com recuperação controlada adicionada ao ErrorBoundary.
 - [x] Corrigir a origem da manipulação DOM e validar a rota administrativa em produção; rota `/admin` carregada e alternância de abas verificada sem nova exceção, com 23 testes Vitest e `pnpm check` aprovados.
+
+## Investigação abrangente do erro removeChild
+
+- [ ] Reproduzir no navegador o erro `NotFoundError/removeChild` durante edição, troca de abas e salvamento de projeto.
+- [ ] Auditar portais, desmontagem de abas e componentes do Admin que podem sofrer mutação externa do DOM.
+- [ ] Aplicar correção estrutural e criar testes de regressão para o fluxo de atualização.
+- [ ] Validar edição/salvamento em produção, monitorar logs e publicar a correção sem novos erros.
+
+## Investigação recorrente do erro removeChild — validação concluída
+
+- [x] Reproduzir o fluxo real de troca entre Cadastro, Atualizar projeto, Histórico, Diagnóstico e Usuários, incluindo salvamento do DPAT-002.
+- [x] Auditar a desmontagem DOM e instalar a proteção idempotente antes da montagem do React.
+- [x] Criar e aprovar os testes de regressão do domRecovery; suíte total: 23 testes aprovados.
+- [x] Confirmar `pnpm check` sem erros TypeScript, console da sessão sem novas exceções e `/admin` renderizando normalmente no preview.
