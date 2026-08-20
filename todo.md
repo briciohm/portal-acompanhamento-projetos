@@ -453,3 +453,17 @@
 - [x] Remover o import residual do Toaster no App para manter a árvore de dependências consistente.
 - [x] Validar a versão publicada com carregamento do `/admin`, seleção do DPAT-002, formulário e salvamento; não houve novo `removeChild` no console nem exceção DOM nos logs de produção.
 - [x] Executar a regressão completa: 25 testes Vitest aprovados e `pnpm check` concluído sem erros TypeScript.
+
+## Documentos e materiais do projeto
+
+- [ ] Criar campo de cadastro “Documentos e materiais do projeto” no back-office, vinculado ao projeto selecionado.
+- [ ] Implementar upload seguro com nome, descrição, tipo, tamanho e referência de armazenamento.
+- [ ] Exibir, baixar e organizar os materiais na página de detalhe do projeto.
+- [ ] Validar permissões administrativas, tipos de arquivo, responsividade e testes de regressão.
+
+## Documentos e materiais do projeto — validação concluída
+
+- [x] Campo “Documentos e materiais do projeto” adicionado ao back-office e vinculado ao projeto selecionado.
+- [x] Upload implementado com título, categoria, tipo, tamanho e armazenamento seguro; limite de 20 MB aplicado no cliente e no servidor.
+- [x] Documentos exibidos e baixáveis na página de detalhe do projeto, com estado vazio institucional.
+- [x] Permissão administrativa, formatos aceitos, responsividade desktop/mobile e regressão técnica validados; 25 testes Vitest aprovados e `pnpm check` sem erros.

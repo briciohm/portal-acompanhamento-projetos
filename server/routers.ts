@@ -54,7 +54,7 @@ export const appRouter = router({
       const stored = await storagePut(key, buffer, input.mimeType);
       return createPhoto({ projectId: input.projectId, storageKey: stored.key, url: stored.url, title: input.title, description: input.description });
     }),
-    uploadDocument: adminProcedure.input(z.object({ projectId: z.number(), fileName: z.string().min(1), mimeType: z.string().min(1), data: z.string().min(10), title: z.string().min(1), category: z.string().optional(), sizeBytes: z.number().optional() })).mutation(async ({ input }) => {
+    uploadDocument: adminProcedure.input(z.object({ projectId: z.number(), fileName: z.string().min(1).max(255), mimeType: z.enum(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "text/plain", "text/csv", "image/jpeg", "image/png", "image/webp", "application/zip"]).or(z.string().startsWith("application/")), data: z.string().min(10), title: z.string().min(1).max(200), category: z.string().max(80).optional(), sizeBytes: z.number().int().positive().max(20 * 1024 * 1024) })).mutation(async ({ input }) => {
       const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
       const key = `project-documents/${input.projectId}/${Date.now()}-${safeName}`;
       const buffer = Buffer.from(input.data.split(",")[1] ?? input.data, "base64");
