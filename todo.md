@@ -446,3 +446,10 @@
 - [x] Manter Select inline, painéis de abas montados e ausência do monkey patch/reload automático de `removeChild`.
 - [x] Adicionar teste de regressão para impedir o retorno do Toaster global; suíte total: 25 testes aprovados e `pnpm check` sem erros.
 - [ ] Validar a correção na URL publicada após o novo checkpoint, incluindo salvamento real e monitoramento de logs.
+
+## Correção definitiva do removeChild — entrega efetiva
+
+- [x] Remover a contenção global anterior e corrigir a arquitetura de desmontagem: Select inline, abas com montagem persistente e Toaster isolado no Admin.
+- [x] Remover o import residual do Toaster no App para manter a árvore de dependências consistente.
+- [x] Validar a versão publicada com carregamento do `/admin`, seleção do DPAT-002, formulário e salvamento; não houve novo `removeChild` no console nem exceção DOM nos logs de produção.
+- [x] Executar a regressão completa: 25 testes Vitest aprovados e `pnpm check` concluído sem erros TypeScript.
