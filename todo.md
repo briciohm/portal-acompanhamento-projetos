@@ -456,10 +456,10 @@
 
 ## Documentos e materiais do projeto
 
-- [ ] Criar campo de cadastro “Documentos e materiais do projeto” no back-office, vinculado ao projeto selecionado.
-- [ ] Implementar upload seguro com nome, descrição, tipo, tamanho e referência de armazenamento.
-- [ ] Exibir, baixar e organizar os materiais na página de detalhe do projeto.
-- [ ] Validar permissões administrativas, tipos de arquivo, responsividade e testes de regressão.
+- [x] Criar campo de cadastro “Documentos e materiais do projeto” no back-office, vinculado ao projeto selecionado.
+- [x] Implementar upload seguro com nome, descrição, tipo, tamanho e referência de armazenamento.
+- [x] Exibir, baixar e organizar os materiais na página de detalhe do projeto.
+- [x] Validar permissões administrativas, tipos de arquivo, responsividade e testes de regressão.
 
 ## Documentos e materiais do projeto — validação concluída
 
