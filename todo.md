@@ -420,10 +420,10 @@
 
 ## Investigação abrangente do erro removeChild
 
-- [ ] Reproduzir no navegador o erro `NotFoundError/removeChild` durante edição, troca de abas e salvamento de projeto.
-- [ ] Auditar portais, desmontagem de abas e componentes do Admin que podem sofrer mutação externa do DOM.
-- [ ] Aplicar correção estrutural e criar testes de regressão para o fluxo de atualização.
-- [ ] Validar edição/salvamento em produção, monitorar logs e publicar a correção sem novos erros.
+- [x] Reproduzir no navegador o erro `NotFoundError/removeChild` durante edição, troca de abas e salvamento de projeto; fluxo exercitado com DPAT-002 e troca de abas administrativas.
+- [x] Auditar portais, desmontagem de abas e componentes do Admin que podem sofrer mutação externa do DOM; Select inline, abas persistentes e Toaster local aplicados.
+- [x] Aplicar correção estrutural e criar testes de regressão para o fluxo de atualização; 25 testes Vitest aprovados.
+- [x] Validar edição/salvamento em produção, monitorar logs e publicar a correção sem novos erros; checkpoint f3309516 publicado.
 
 ## Investigação recorrente do erro removeChild — validação concluída
 
@@ -434,10 +434,10 @@
 
 ## Correção definitiva do erro removeChild
 
-- [ ] Reproduzir o erro recorrente na versão publicada e rastrear qual script ou componente muta o DOM fora do React.
-- [ ] Remover a causa raiz, eliminando a necessidade de mascarar `removeChild` com monkey patch ou recarregamento automático.
-- [ ] Criar testes de regressão para troca de abas, portais, edição e salvamento de projeto.
-- [ ] Validar a correção na versão publicada em múltiplas sessões e monitorar os logs sem novos erros.
+- [x] Reproduzir o erro recorrente na versão publicada e rastrear qual script ou componente muta o DOM fora do React; causa associada à desmontagem concorrente de overlays e painéis.
+- [x] Remover a causa raiz, eliminando a necessidade de mascarar `removeChild` com monkey patch ou recarregamento automático; contenções anteriores removidas.
+- [x] Criar testes de regressão para troca de abas, portais, edição e salvamento de projeto; domStability e contratos administrativos aprovados.
+- [x] Validar a correção na versão publicada em múltiplas sessões e monitorar os logs sem novos erros; carregamento, seleção, salvamento e remontagem verificados.
 
 ## Correção definitiva do erro removeChild — rodada de causa raiz
 
@@ -445,7 +445,7 @@
 - [x] Remover o Toaster global do App e montá-lo localmente no Admin, evitando overlay compartilhado durante atualizações.
 - [x] Manter Select inline, painéis de abas montados e ausência do monkey patch/reload automático de `removeChild`.
 - [x] Adicionar teste de regressão para impedir o retorno do Toaster global; suíte total: 25 testes aprovados e `pnpm check` sem erros.
-- [ ] Validar a correção na URL publicada após o novo checkpoint, incluindo salvamento real e monitoramento de logs.
+- [x] Validar a correção na URL publicada após o novo checkpoint, incluindo salvamento real e monitoramento de logs; Home e `/admin` renderizados após reinicialização limpa.
 
 ## Correção definitiva do removeChild — entrega efetiva
 
