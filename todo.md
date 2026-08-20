@@ -467,3 +467,30 @@
 - [x] Upload implementado com título, categoria, tipo, tamanho e armazenamento seguro; limite de 20 MB aplicado no cliente e no servidor.
 - [x] Documentos exibidos e baixáveis na página de detalhe do projeto, com estado vazio institucional.
 - [x] Permissão administrativa, formatos aceitos, responsividade desktop/mobile e regressão técnica validados; 25 testes Vitest aprovados e `pnpm check` sem erros.
+
+## Correção dos botões do back-office
+
+- [ ] Reproduzir a inatividade dos botões e localizar a causa nos componentes de abas, overlay ou handlers.
+- [ ] Corrigir a navegação das abas e manter o conteúdo dos formulários preservado.
+- [ ] Testar todas as abas em desktop/mobile, validar console e publicar a correção.
+
+## Correção dos botões do back-office — diagnóstico confirmado
+
+- [x] Reproduzir e verificar as sete abas publicadas: Cadastro, Atualizar projeto, Evidências, Documentos e materiais, Histórico, Diagnóstico e Usuários.
+- [x] Confirmar via DOM que cada trigger altera `aria-selected` corretamente e que a troca de aba funciona.
+- [x] Confirmar console sem novos erros DOM durante a interação.
+- [x] Identificar que as marcações amarelas, contornos pontilhados e números da captura pertencem à camada externa de inspeção visual e interceptam o clique coordenado.
+- [ ] Validar no navegador normal, sem a camada de inspeção visual ativa, após recarregar a página.
+
+## Continuidade — acessibilidade dos botões
+
+- [ ] Revalidar as abas com foco por teclado e clique em sessão sem camada de inspeção visual.
+- [ ] Ajustar a prioridade de interação das abas sem mascarar a camada externa nem alterar os handlers do React.
+- [ ] Executar testes de regressão e confirmar a navegação nas sete abas.
+
+## Correção dos botões — validação após ajuste de camada
+
+- [x] Reforçar `TabsList` e `TabsTrigger` com prioridade de camada, `pointer-events` explícito e foco acessível.
+- [x] Reiniciar o servidor para eliminar estado HMR histórico e validar a aplicação limpa.
+- [x] Executar 25 testes Vitest aprovados e `pnpm check` sem erros TypeScript.
+- [ ] Confirmar os cliques manuais no navegador comum, fora da camada de inspeção visual, e publicar o ajuste se necessário.
