@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { AlertTriangle, RotateCcw } from "lucide-react";
 import { Component, ReactNode } from "react";
-import { recoverFromDomRemovalError } from "@/_core/domRecovery";
 
 interface Props {
   children: ReactNode;
@@ -19,9 +18,6 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    if (recoverFromDomRemovalError(error)) {
-      return { hasError: false, error: null };
-    }
     return { hasError: true, error };
   }
 

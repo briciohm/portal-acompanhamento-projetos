@@ -431,3 +431,18 @@
 - [x] Auditar a desmontagem DOM e instalar a proteção idempotente antes da montagem do React.
 - [x] Criar e aprovar os testes de regressão do domRecovery; suíte total: 23 testes aprovados.
 - [x] Confirmar `pnpm check` sem erros TypeScript, console da sessão sem novas exceções e `/admin` renderizando normalmente no preview.
+
+## Correção definitiva do erro removeChild
+
+- [ ] Reproduzir o erro recorrente na versão publicada e rastrear qual script ou componente muta o DOM fora do React.
+- [ ] Remover a causa raiz, eliminando a necessidade de mascarar `removeChild` com monkey patch ou recarregamento automático.
+- [ ] Criar testes de regressão para troca de abas, portais, edição e salvamento de projeto.
+- [ ] Validar a correção na versão publicada em múltiplas sessões e monitorar os logs sem novos erros.
+
+## Correção definitiva do erro removeChild — rodada de causa raiz
+
+- [x] Reproduzir o cenário recorrente de uso do Admin e rastrear a interação entre mutações, abas e overlays.
+- [x] Remover o Toaster global do App e montá-lo localmente no Admin, evitando overlay compartilhado durante atualizações.
+- [x] Manter Select inline, painéis de abas montados e ausência do monkey patch/reload automático de `removeChild`.
+- [x] Adicionar teste de regressão para impedir o retorno do Toaster global; suíte total: 25 testes aprovados e `pnpm check` sem erros.
+- [ ] Validar a correção na URL publicada após o novo checkpoint, incluindo salvamento real e monitoramento de logs.

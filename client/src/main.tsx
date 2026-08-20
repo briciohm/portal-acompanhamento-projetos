@@ -9,10 +9,6 @@ import { startLogin } from "./const";
 import "./index.css";
 import { containsResizeObserverWarning, isResizeObserverWarning } from "./_core/resizeObserverGuard";
 import { normalizeClientError } from "./_core/clientErrorGuard";
-import { installDomRemovalGuard } from "./_core/domRecovery";
-
-installDomRemovalGuard();
-
 const queryClient = new QueryClient();
 
 const reportClientDiagnostic = (type: string, message: string, context?: unknown) => {
