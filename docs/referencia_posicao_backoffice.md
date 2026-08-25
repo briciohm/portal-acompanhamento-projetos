@@ -9,3 +9,7 @@ Após a implementação, o botão aparece no canto superior direito do hero, na 
 ## Validação do rótulo da visão
 
 O rótulo exibido abaixo do hero foi confirmado como “VISÃO GERAL” em desktop e mobile, mantendo o alinhamento, o espaçamento e a identidade visual da Home.
+
+## Validação dos filtros e gráficos
+
+A Home foi conferida em desktop e mobile. A Visão Geral apresenta quatro ações: projetos cadastrados, projetos em andamento, projetos concluídos e Gráficos. Os três primeiros mantêm a carteira como destino dos filtros, enquanto Gráficos aponta para a seção `#graficos`; os dashboards e a carteira permanecem visíveis e responsivos.

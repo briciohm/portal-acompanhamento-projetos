@@ -544,3 +544,12 @@
 - [x] Alterar o rótulo “Visão macro” para “Visão Geral” abaixo do hero da página inicial.
 - [x] Preservar a hierarquia visual, navegação e demais conteúdos da seção.
 - [x] Validar desktop/mobile, executar testes e publicar o ajuste.
+
+
+## Filtros funcionais e botão de gráficos na Visão Geral — 2026-08-25
+
+- [x] Fazer “Projetos cadastrados” exibir todos os projetos cadastrados na carteira.
+- [x] Fazer “Projetos em andamento” exibir somente projetos ativos, respeitando progresso e status.
+- [x] Fazer “Projetos concluídos” exibir somente projetos concluídos, incluindo progresso de 100%.
+- [x] Adicionar botão “Gráficos” e direcioná-lo ao painel de dashboards da Home.
+- [x] Validar estados ativos, rolagem/navegação, acessibilidade, desktop/mobile, testes e publicação.
