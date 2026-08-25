@@ -561,3 +561,21 @@
 - [x] Exibir os dashboards somente após o clique no botão “Gráficos”, com rolagem até a seção.
 - [x] Adicionar uma ação clara para fechar os gráficos e retornar à carteira.
 - [x] Validar estado inicial, abertura/fechamento, acessibilidade, desktop/mobile, testes e publicação.
+
+
+## Seção SETORES e navegação por departamento — 2026-08-25
+
+- [x] Renomear a seção “Nível 1” para “SETORES”.
+- [x] Substituir o card “Projetos Estratégicos da Secretaria da Educação” por “DPAT — Divisão de Patrimônio”.
+- [x] Exibir botões setoriais personalizados para DPAT, DPGDOC, DTRAN e DZEL, com sigla em destaque, nome abaixo e ícone simples à esquerda.
+- [x] Fazer cada botão direcionar para os projetos vinculados ao respectivo setor.
+- [x] Validar dados, navegação, acessibilidade, identidade visual, desktop/mobile, testes e publicação.
+
+
+## Implementação confirmada da seção SETORES — 2026-08-25
+
+- [x] Garantir a troca de “Nível 1” por “SETORES”.
+- [x] Substituir o card “Projetos Estratégicos da Secretaria da Educação” por DPAT — Divisão de Patrimônio.
+- [x] Criar botões personalizados para DPAT, DPGDOC, DTRAN e DZEL, com sigla em destaque, nome abaixo e ícone simples à esquerda.
+- [x] Direcionar cada botão para os projetos vinculados ao setor correspondente.
+- [x] Validar visual, dados, navegação, acessibilidade, desktop/mobile, testes e publicação.
