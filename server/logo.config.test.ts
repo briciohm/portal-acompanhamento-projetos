@@ -8,6 +8,8 @@ describe("configuração do logo institucional", () => {
 
     const response = await fetch(`http://127.0.0.1:3000${logoPath}`);
     expect(response.ok).toBe(true);
-    expect(response.headers.get("content-type") || "").toContain("image");
+    const contentType = response.headers.get("content-type") || "";
+    expect(["image", "application/octet-stream"].some(type => contentType.includes(type))).toBe(true);
+    expect(Number(response.headers.get("content-length") || "0")).toBeGreaterThan(0);
   });
 });

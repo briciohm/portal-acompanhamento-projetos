@@ -494,3 +494,24 @@
 - [x] Reiniciar o servidor para eliminar estado HMR histórico e validar a aplicação limpa.
 - [x] Executar 25 testes Vitest aprovados e `pnpm check` sem erros TypeScript.
 - [ ] Confirmar os cliques manuais no navegador comum, fora da camada de inspeção visual, e publicar o ajuste se necessário.
+
+## Autoria e copyright do desenvolvedor
+
+- [x] Definir o nome exato e o texto do aviso de autoria/copyright do desenvolvedor.
+- [x] Inserir o aviso no rodapé e documentar a autoria no projeto sem interferir na identidade institucional.
+- [x] Validar a exibição em desktop/mobile e publicar a atualização.
+
+## Autoria confirmada
+
+- [x] Usar o nome completo “Fabricio Gustavo Ferreira” no aviso de autoria.
+- [x] Inserir `© 2026 Fabricio Gustavo Ferreira — Desenvolvedor do Portal de Acompanhamento de Projetos (DPAT)` no rodapé e registrar a autoria na documentação.
+- [x] Validar desktop/mobile, testes e publicação do crédito.
+
+
+## Autoria e copyright do desenvolvedor — 2026-08-25
+
+- [x] Adicionar ao rodapé institucional o crédito “© 2026 Fabricio Gustavo Ferreira — Desenvolvedor do Portal de Acompanhamento de Projetos (DPAT)”.
+- [x] Registrar a autoria e as observações de titularidade em docs/autoria_e_copyright.md.
+- [x] Validar a exibição do crédito na Home em desktop e mobile, preservando legibilidade e responsividade.
+- [x] Executar a suíte Vitest completa: 25 testes aprovados em 9 arquivos.
+- [x] Executar pnpm check sem erros TypeScript.
