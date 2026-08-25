@@ -579,3 +579,13 @@
 - [x] Criar botões personalizados para DPAT, DPGDOC, DTRAN e DZEL, com sigla em destaque, nome abaixo e ícone simples à esquerda.
 - [x] Direcionar cada botão para os projetos vinculados ao setor correspondente.
 - [x] Validar visual, dados, navegação, acessibilidade, desktop/mobile, testes e publicação.
+
+
+## Ocultação reversível de projetos e áreas — 2026-08-25
+
+- [x] Adicionar estado persistente de ocultação para projetos e áreas, sem exclusão física.
+- [x] Excluir itens ocultos das consultas e visões públicas, dashboards e filtros da Home.
+- [x] Exibir no Back-Office filtros para itens ativos e ocultos.
+- [x] Permitir editar, ocultar e reativar projetos e áreas no Back-Office.
+- [x] Preservar documentos, KPIs, cronogramas e demais relações ao ocultar um projeto.
+- [x] Aplicar permissões administrativas, testes de regressão, validação responsiva e publicação.

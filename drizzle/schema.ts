@@ -19,6 +19,7 @@ export const areas = mysqlTable("project_areas", {
   code: varchar("code", { length: 32 }).notNull().unique(),
   description: text("description"),
   accent: varchar("accent", { length: 16 }).default("#e30613").notNull(),
+  isHidden: boolean("isHidden").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -34,6 +35,7 @@ export const projects = mysqlTable("projects", {
   progress: int("progress").default(0).notNull(),
   isManual: boolean("isManual").default(false).notNull(),
   manualObservation: text("manualObservation"),
+  isHidden: boolean("isHidden").default(false).notNull(),
   nextSteps: text("nextSteps"),
   startDate: timestamp("startDate"),
   targetDate: timestamp("targetDate"),

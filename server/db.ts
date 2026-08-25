@@ -45,23 +45,38 @@ export async function getUserByOpenId(openId: string) {
   return result[0];
 }
 
-export async function listAreas() {
+export async function listAreas(includeHidden = false) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(areas).orderBy(asc(areas.name));
+  const query = db.select().from(areas);
+  return includeHidden ? query.orderBy(asc(areas.name)) : query.where(eq(areas.isHidden, false)).orderBy(asc(areas.name));
 }
 
-export async function listProjects(areaId?: number) {
-  const db = await getDb();
-  if (!db) return [];
-  const query = areaId ? db.select().from(projects).where(eq(projects.areaId, areaId)) : db.select().from(projects);
-  return query.orderBy(desc(projects.updatedAt));
-}
-
-export async function getProjectById(id: number) {
+export async function getAreaById(id: number, includeHidden = false) {
   const db = await getDb();
   if (!db) return undefined;
-  const project = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  const filters = [eq(areas.id, id), includeHidden ? undefined : eq(areas.isHidden, false)].filter(Boolean) as any[];
+  const result = await db.select().from(areas).where(and(...filters)).limit(1);
+  return result[0];
+}
+
+export async function listProjects(areaId?: number, includeHidden = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (areaId !== undefined && !includeHidden && !(await getAreaById(areaId))) return [];
+  const filters = [
+    areaId === undefined ? undefined : eq(projects.areaId, areaId),
+    includeHidden ? undefined : eq(projects.isHidden, false),
+  ].filter(Boolean) as any[];
+  const query = db.select().from(projects);
+  return filters.length ? query.where(and(...filters)).orderBy(desc(projects.updatedAt)) : query.orderBy(desc(projects.updatedAt));
+}
+
+export async function getProjectById(id: number, includeHidden = false) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const filters = [eq(projects.id, id), includeHidden ? undefined : eq(projects.isHidden, false)].filter(Boolean) as any[];
+  const project = await db.select().from(projects).where(and(...filters)).limit(1);
   return project[0];
 }
 
@@ -79,19 +94,20 @@ export function calculateStageProgress(stages: Array<{ progressStatus: number }>
 export async function syncProjectProgressFromStages(projectId: number) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const project = await getProjectById(projectId);
+  const project = await getProjectById(projectId, true);
   if (!project || project.isManual) return project;
   const stages = await db.select({ progressStatus: projectStages.progressStatus }).from(projectStages).where(eq(projectStages.projectId, projectId));
   const progress = calculateStageProgress(stages);
   await db.update(projects).set({ progress, status: progress >= 100 ? "concluído" : project.status === "concluído" ? "andamento" : project.status }).where(eq(projects.id, projectId));
-  return getProjectById(projectId);
+  return getProjectById(projectId, true);
 }
 
-export async function getProjectDetail(id: number) {
+export async function getProjectDetail(id: number, includeHidden = false) {
   const db = await getDb();
   if (!db) return undefined;
-  const project = await getProjectById(id);
+  const project = await getProjectById(id, includeHidden);
   if (!project) return undefined;
+  if (!includeHidden && !(await getAreaById(project.areaId))) return undefined;
   const [metrics, stages, milestones, photos, documents, statusHistory] = await Promise.all([
     db.select().from(projectMetrics).where(eq(projectMetrics.projectId, id)).orderBy(asc(projectMetrics.recordedAt)),
     db.select().from(projectStages).where(eq(projectStages.projectId, id)).orderBy(asc(projectStages.orderIndex)),
@@ -107,7 +123,8 @@ export async function getExecutiveSummary() {
   const db = await getDb();
   if (!db) return { areas: [], projects: [], totals: { projects: 0, active: 0, completed: 0, averageProgress: 0 } };
   const [areaRows, allProjectRows] = await Promise.all([listAreas(), listProjects()]);
-  const projectRows = allProjectRows.filter((p) => p.status !== "pausado").map((project) => project.progress >= 100 && project.status !== "concluído" ? { ...project, status: "concluído" as const } : project);
+  const visibleAreaIds = new Set(areaRows.map((area) => area.id));
+  const projectRows = allProjectRows.filter((project) => visibleAreaIds.has(project.areaId) && project.status !== "pausado").map((project) => project.progress >= 100 && project.status !== "concluído" ? { ...project, status: "concluído" as const } : project);
   const active = projectRows.filter((p) => p.progress < 100 && p.status !== "concluído").length;
   const completed = projectRows.filter((p) => p.progress >= 100 || p.status === "concluído").length;
   const averageProgress = projectRows.length ? Math.round(projectRows.reduce((sum, p) => sum + p.progress, 0) / projectRows.length) : 0;
@@ -128,6 +145,17 @@ export async function createProject(input: typeof projects.$inferInsert) {
   return { id: Number(result[0].insertId) };
 }
 
+export async function updateArea(id: number, input: Partial<typeof areas.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  await db.update(areas).set(input).where(eq(areas.id, id));
+  return getAreaById(id, true);
+}
+
+export async function setAreaHidden(id: number, isHidden: boolean) {
+  return updateArea(id, { isHidden });
+}
+
 export async function updateProject(id: number, input: Partial<typeof projects.$inferInsert>) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
@@ -138,7 +166,14 @@ export async function updateProject(id: number, input: Partial<typeof projects.$
       ? { ...input, status: "concluído" as const }
       : input;
   await db.update(projects).set(normalizedInput).where(eq(projects.id, id));
-  return normalizedInput.isManual === false ? syncProjectProgressFromStages(id) : getProjectById(id);
+  return normalizedInput.isManual === false ? syncProjectProgressFromStages(id) : getProjectById(id, true);
+}
+
+export async function setProjectHidden(id: number, isHidden: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  await db.update(projects).set({ isHidden }).where(eq(projects.id, id));
+  return getProjectById(id, true);
 }
 
 export async function createMetric(input: typeof projectMetrics.$inferInsert) {

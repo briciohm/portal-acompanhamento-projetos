@@ -6,7 +6,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { storagePut } from "./storage";
 import { areas, projectMetrics, projectMilestones, projectPhotos, projectStages, projects } from "../drizzle/schema";
-import { createArea, createClientDiagnosticEvent, createDocument, createManagedUser, createMetric, createMilestone, createPhoto, createProject, createStage, getExecutiveSummary, getProjectDetail, getRecurringDiagnosticAlerts, listAreas, listClientDiagnosticEvents, listFilteredClientDiagnosticEvents, listFilteredStageStatusHistory, listProjects, listStageStatusHistory, listUsers, updateManagedUser, updateProject, updateStage } from "./db";
+import { createArea, createClientDiagnosticEvent, createDocument, createManagedUser, createMetric, createMilestone, createPhoto, createProject, createStage, getExecutiveSummary, getProjectDetail, getRecurringDiagnosticAlerts, listAreas, listClientDiagnosticEvents, listFilteredClientDiagnosticEvents, listFilteredStageStatusHistory, listProjects, listStageStatusHistory, listUsers, setAreaHidden, setProjectHidden, updateArea, updateManagedUser, updateProject, updateStage } from "./db";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito ao back-office." });
@@ -25,7 +25,7 @@ export const appRouter = router({
       return { success: true } as const;
     }),
   }),
-  dashboard: router({
+    dashboard: router({
     summary: publicProcedure.query(() => getExecutiveSummary()),
     areas: publicProcedure.query(() => listAreas()),
     projects: publicProcedure.input(z.object({ areaId: z.number().optional() }).optional()).query(({ input }) => listProjects(input?.areaId)),
@@ -34,6 +34,12 @@ export const appRouter = router({
     reportClientDiagnostic: publicProcedure.input(z.object({ type: z.string().min(1).max(64), message: z.string().min(1).max(4000), route: z.string().max(240).optional(), context: z.string().max(4000).optional() })).mutation(({ input }) => createClientDiagnosticEvent(input)),
   }),
   admin: router({
+    areas: adminProcedure.query(() => listAreas(true)),
+    projects: adminProcedure.input(z.object({ areaId: z.number().optional(), includeHidden: z.boolean().default(true) }).optional()).query(({ input }) => listProjects(input?.areaId, input?.includeHidden ?? true)),
+    toggleAreaVisibility: adminProcedure.input(z.object({ id: z.number(), isHidden: z.boolean() })).mutation(({ input }) => setAreaHidden(input.id, input.isHidden)),
+    toggleProjectVisibility: adminProcedure.input(z.object({ id: z.number(), isHidden: z.boolean() })).mutation(({ input }) => setProjectHidden(input.id, input.isHidden)),
+    updateArea: adminProcedure.input(z.object({ id: z.number(), data: z.object({ name: z.string().min(2).optional(), code: z.string().min(2).optional(), description: z.string().optional(), accent: z.string().optional() }) })).mutation(({ input }) => updateArea(input.id, input.data)),
+    project: adminProcedure.input(z.object({ id: z.number() })).query(({ input }) => getProjectDetail(input.id, true)),
     createArea: adminProcedure.input(z.object({ name: z.string().min(2), code: z.string().min(2), description: z.string().optional(), accent: z.string().optional() })).mutation(({ input }) => createArea(input)),
     createProject: adminProcedure.input(z.object({ areaId: z.number(), name: z.string().min(2), code: z.string().min(2), summary: z.string().optional(), status: statusSchema.optional(), owner: z.string().optional(), progress: z.number().min(0).max(100).optional(), nextSteps: z.string().optional(), startDate: z.date().optional(), targetDate: z.date().optional() })).mutation(({ input }) => createProject(input)),
     updateProject: adminProcedure.input(z.object({ id: z.number(), data: z.object({ name: z.string().min(2).optional(), summary: z.string().optional(), status: statusSchema.optional(), owner: z.string().optional(), progress: z.number().min(0).max(100).optional(), isManual: z.boolean().optional(), manualObservation: z.string().optional(), nextSteps: z.string().optional(), startDate: z.date().optional(), targetDate: z.date().optional() }).superRefine((data, ctx) => { if (data.isManual === true && !data.manualObservation?.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["manualObservation"], message: "A observação é obrigatória para o progresso manual." }); }) })).mutation(({ input }) => updateProject(input.id, input.data)),
