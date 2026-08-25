@@ -537,3 +537,10 @@
 - [x] Mover o botão de Back-Office para próximo da marcação verde, no canto superior direito do bloco principal da Home.
 - [x] Manter a rota `/admin`, contraste, foco acessível e comportamento responsivo.
 - [x] Validar desktop/mobile, executar testes e publicar o ajuste.
+
+
+## Renomeação da seção de visão da Home — 2026-08-25
+
+- [x] Alterar o rótulo “Visão macro” para “Visão Geral” abaixo do hero da página inicial.
+- [x] Preservar a hierarquia visual, navegação e demais conteúdos da seção.
+- [x] Validar desktop/mobile, executar testes e publicar o ajuste.

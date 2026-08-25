@@ -5,3 +5,7 @@ A imagem fornecida indica que o botão deve ficar no canto superior direito da s
 ## Validação visual
 
 Após a implementação, o botão aparece no canto superior direito do hero, na mesma região indicada pela marcação verde. Em desktop ele permanece acima do indicador de progresso; em mobile fica abaixo do cabeçalho e acima do título, sem sobreposição ou transbordamento.
+
+## Validação do rótulo da visão
+
+O rótulo exibido abaixo do hero foi confirmado como “VISÃO GERAL” em desktop e mobile, mantendo o alinhamento, o espaçamento e a identidade visual da Home.
