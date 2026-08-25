@@ -515,3 +515,11 @@
 - [x] Validar a exibição do crédito na Home em desktop e mobile, preservando legibilidade e responsividade.
 - [x] Executar a suíte Vitest completa: 25 testes aprovados em 9 arquivos.
 - [x] Executar pnpm check sem erros TypeScript.
+
+
+## Atualização do título institucional da Home — 2026-08-25
+
+- [x] Substituir na página inicial “DIVISÃO DE PATRIMÔNIO (DPAT)” por “COORDENADORIA GERAL DE SUPORTE ADMINISTRATIVO”.
+- [x] Confirmar se o texto compartilhado em outros cabeçalhos deve permanecer inalterado e preservar o restante da identidade visual.
+- [x] Validar a Home em desktop/mobile, executar testes e publicar o ajuste.
+- [x] Usar o texto final confirmado: “COORDENADORIA GERAL DE SUPORTE ADMINISTRATIVO (COGESPA)” na página inicial.
