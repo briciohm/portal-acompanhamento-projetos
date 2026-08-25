@@ -553,3 +553,11 @@
 - [x] Fazer “Projetos concluídos” exibir somente projetos concluídos, incluindo progresso de 100%.
 - [x] Adicionar botão “Gráficos” e direcioná-lo ao painel de dashboards da Home.
 - [x] Validar estados ativos, rolagem/navegação, acessibilidade, desktop/mobile, testes e publicação.
+
+
+## Exibição sob demanda dos gráficos — 2026-08-25
+
+- [x] Ocultar os dashboards no carregamento inicial da Home.
+- [x] Exibir os dashboards somente após o clique no botão “Gráficos”, com rolagem até a seção.
+- [x] Adicionar uma ação clara para fechar os gráficos e retornar à carteira.
+- [x] Validar estado inicial, abertura/fechamento, acessibilidade, desktop/mobile, testes e publicação.
