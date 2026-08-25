@@ -36,5 +36,5 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 export function AdminLink() {
-  return <Link href="/admin" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-[#e30613] hover:underline"><Shield className="h-3.5 w-3.5" />Back-office</Link>;
+  return <Link href="/admin" aria-label="Abrir Back-Office" className="inline-flex min-h-10 items-center gap-2 border border-[#e30613] bg-[#e30613] px-4 py-2.5 text-xs font-bold uppercase tracking-[.14em] text-white shadow-sm transition-colors hover:border-[#c80511] hover:bg-[#c80511] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e30613] focus-visible:ring-offset-2"><Shield className="h-3.5 w-3.5" />Back-Office</Link>;
 }

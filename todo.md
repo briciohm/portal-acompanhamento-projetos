@@ -523,3 +523,10 @@
 - [x] Confirmar se o texto compartilhado em outros cabeçalhos deve permanecer inalterado e preservar o restante da identidade visual.
 - [x] Validar a Home em desktop/mobile, executar testes e publicar o ajuste.
 - [x] Usar o texto final confirmado: “COORDENADORIA GERAL DE SUPORTE ADMINISTRATIVO (COGESPA)” na página inicial.
+
+
+## Acesso ao Back-Office na Home — 2026-08-25
+
+- [x] Criar um botão de acesso direto ao Back-Office na página inicial, apontando para `/admin`.
+- [x] Preservar a identidade visual, acessibilidade e responsividade do botão.
+- [x] Validar a navegação, executar testes e publicar o ajuste.
