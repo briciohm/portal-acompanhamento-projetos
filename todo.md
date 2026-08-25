@@ -530,3 +530,10 @@
 - [x] Criar um botão de acesso direto ao Back-Office na página inicial, apontando para `/admin`.
 - [x] Preservar a identidade visual, acessibilidade e responsividade do botão.
 - [x] Validar a navegação, executar testes e publicar o ajuste.
+
+
+## Reposicionamento do Back-Office no cabeçalho da Home — 2026-08-25
+
+- [x] Mover o botão de Back-Office para próximo da marcação verde, no canto superior direito do bloco principal da Home.
+- [x] Manter a rota `/admin`, contraste, foco acessível e comportamento responsivo.
+- [x] Validar desktop/mobile, executar testes e publicar o ajuste.
