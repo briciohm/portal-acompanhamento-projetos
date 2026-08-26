@@ -277,22 +277,29 @@ export async function createManagedUser(input: { actorUserId: number; openId: st
   return user;
 }
 
-export async function recordUserProfileAudit(input: { actorUserId: number; targetUserId: number; action: "create" | "update"; previousProfile: UserProfile | null; newProfile: UserProfile; previousAreaIds: number[]; newAreaIds: number[]; previousIsActive: boolean | null; newIsActive: boolean }) {
+export async function recordUserProfileAudit(input: { actorUserId: number; targetUserId?: number | null; action: "create" | "update" | "blocked"; previousProfile?: UserProfile | null; newProfile?: UserProfile | null; previousAreaIds?: number[]; newAreaIds?: number[]; previousIsActive?: boolean | null; newIsActive?: boolean | null; reason?: string }) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  await db.insert(userProfileAuditLogs).values({ actorUserId: input.actorUserId, targetUserId: input.targetUserId, action: input.action, previousProfile: input.previousProfile, newProfile: input.newProfile, previousAreaIds: JSON.stringify(input.previousAreaIds), newAreaIds: JSON.stringify(input.newAreaIds), previousIsActive: input.previousIsActive, newIsActive: input.newIsActive });
+  await db.insert(userProfileAuditLogs).values({ actorUserId: input.actorUserId, targetUserId: input.targetUserId ?? null, action: input.action, previousProfile: input.previousProfile ?? null, newProfile: input.newProfile ?? null, previousAreaIds: JSON.stringify(input.previousAreaIds ?? []), newAreaIds: JSON.stringify(input.newAreaIds ?? []), previousIsActive: input.previousIsActive ?? null, newIsActive: input.newIsActive ?? null, reason: input.reason ?? null });
 }
 
-export async function listUserProfileAuditLogs(scope?: { userId: number; profile: UserProfile }, limit = 200) {
+export async function listUserProfileAuditLogs(filters?: { scope?: { userId: number; profile: UserProfile }; actorUserId?: number; action?: "create" | "update" | "blocked"; from?: Date; to?: Date }, limit = 200) {
   const db = await getDb();
   if (!db) return [];
-  const visibleUsers = scope?.profile === "gestor_setor" ? await listUsers(scope) : null;
+  const visibleUsers = filters?.scope?.profile === "gestor_setor" ? await listUsers(filters.scope) : null;
   const visibleTargetIds = visibleUsers?.map(user => user.id) ?? null;
   if (visibleTargetIds && visibleTargetIds.length === 0) return [];
-  const logs = await db.select().from(userProfileAuditLogs).where(visibleTargetIds ? inArray(userProfileAuditLogs.targetUserId, visibleTargetIds) : undefined).orderBy(desc(userProfileAuditLogs.createdAt)).limit(Math.min(Math.max(limit, 1), 500));
-  const userIds = Array.from(new Set(logs.flatMap(log => [log.actorUserId, log.targetUserId])));
+  const conditions = [
+    visibleTargetIds ? inArray(userProfileAuditLogs.targetUserId, visibleTargetIds) : undefined,
+    filters?.actorUserId === undefined ? undefined : eq(userProfileAuditLogs.actorUserId, filters.actorUserId),
+    filters?.action === undefined ? undefined : eq(userProfileAuditLogs.action, filters.action),
+    filters?.from === undefined ? undefined : gte(userProfileAuditLogs.createdAt, filters.from),
+    filters?.to === undefined ? undefined : lte(userProfileAuditLogs.createdAt, filters.to),
+  ].filter(Boolean) as any[];
+  const logs = await db.select().from(userProfileAuditLogs).where(conditions.length ? and(...conditions) : undefined).orderBy(desc(userProfileAuditLogs.createdAt)).limit(Math.min(Math.max(limit, 1), 500));
+  const userIds = Array.from(new Set(logs.flatMap(log => [log.actorUserId, log.targetUserId].filter((id): id is number => id !== null))));
   const userRows = userIds.length ? await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(inArray(users.id, userIds)) : [];
-  return logs.map(log => ({ ...log, actor: userRows.find(user => user.id === log.actorUserId) ?? null, target: userRows.find(user => user.id === log.targetUserId) ?? null }));
+  return logs.map(log => ({ ...log, actor: userRows.find(user => user.id === log.actorUserId) ?? null, target: log.targetUserId === null ? null : userRows.find(user => user.id === log.targetUserId) ?? null }));
 }
 
 export async function userHasAreaAccess(userId: number, profile: UserProfile, areaId: number) {

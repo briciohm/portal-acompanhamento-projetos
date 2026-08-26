@@ -37,14 +37,15 @@ export const userAreaAssignments = mysqlTable("user_area_assignments", {
 export const userProfileAuditLogs = mysqlTable("user_profile_audit_logs", {
   id: int("id").autoincrement().primaryKey(),
   actorUserId: int("actorUserId").notNull(),
-  targetUserId: int("targetUserId").notNull(),
-  action: mysqlEnum("action", ["create", "update"]).notNull(),
+  targetUserId: int("targetUserId"),
+  action: mysqlEnum("action", ["create", "update", "blocked"]).notNull(),
   previousProfile: varchar("previousProfile", { length: 32 }),
-  newProfile: varchar("newProfile", { length: 32 }).notNull(),
+  newProfile: varchar("newProfile", { length: 32 }),
   previousAreaIds: text("previousAreaIds"),
   newAreaIds: text("newAreaIds"),
   previousIsActive: boolean("previousIsActive"),
-  newIsActive: boolean("newIsActive").notNull(),
+  newIsActive: boolean("newIsActive"),
+  reason: text("reason"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

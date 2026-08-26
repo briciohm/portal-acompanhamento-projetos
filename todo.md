@@ -688,3 +688,12 @@
 - [x] Aplicar a mesma validação de escopo nas operações de criação e alteração de usuários.
 - [x] Adicionar testes de matriz, hierarquia e regras de acesso; integração de auditoria e escopo validada por TypeScript/build.
 - [x] Executar TypeScript, testes, build e QA desktop/mobile antes do checkpoint.
+
+## Documentação e auditoria avançada
+
+- [x] Criar documentação não oficial de uso dos quatro perfis de usuário.
+- [x] Adicionar filtros por período, autor e tipo de ação na auditoria de perfis.
+- [x] Registrar tentativas bloqueadas de elevação de privilégio na auditoria.
+- [x] Exibir tentativas bloqueadas com indicação clara na tela de auditoria.
+- [x] Validar filtros e registros de bloqueio por integração, TypeScript, build e QA visual.
+- [x] Executar TypeScript, testes, build e QA desktop/mobile antes do checkpoint.
