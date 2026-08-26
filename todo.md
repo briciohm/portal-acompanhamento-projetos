@@ -606,3 +606,13 @@
 - [x] Garantir identidade única por ocorrência, preservando deduplicação sem colisões entre eventos simultâneos.
 - [x] Adicionar teste de regressão para múltiplas ocorrências do mesmo erro/rota.
 - [x] Validar carregamento do `/admin`, logs, responsividade, suíte completa e publicação.
+
+
+## Rodada de QA e correção de bugs — 2026-08-26
+
+- [x] Inspecionar logs recentes do cliente, rede e servidor e registrar erros reais.
+- [x] Reproduzir os problemas nas rotas Home, áreas, projetos e Back-Office.
+- [x] Corrigir bugs encontrados sem mascarar falhas de API ou alterar dados indevidamente.
+- [x] Adicionar ou atualizar testes de regressão para cada correção aplicável.
+- [x] Executar Vitest, `pnpm check` e build de produção.
+- [x] Validar Home e Back-Office em desktop/mobile, revisar logs finais e publicar.
