@@ -639,3 +639,12 @@
 - [x] Escrever testes Vitest para filtragem, preparação de linhas e estados derivados da lista.
 - [x] Validar desktop, mobile, TypeScript e build após as mudanças.
 - [x] Criar e validar skill reutilizável para evolução e QA do portal DPAT/COGESPA.
+
+## Modelo automático de código de projetos
+
+- [x] Definir helper para gerar códigos no padrão SIGLA-00001 por setor.
+- [x] Gerar o próximo código disponível no servidor ao cadastrar um projeto.
+- [x] Exibir o código sugerido no formulário e permitir confirmação sem digitação manual.
+- [x] Validar formato e evitar colisões preservando códigos legados.
+- [x] Adicionar testes Vitest para geração, incremento e compatibilidade.
+- [x] Executar TypeScript, testes, build e QA visual antes do checkpoint.

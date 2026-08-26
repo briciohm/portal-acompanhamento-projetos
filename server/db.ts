@@ -2,6 +2,7 @@ import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
 import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, users } from "../drizzle/schema";
+import { nextProjectCode } from "../shared/projectCode";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -138,11 +139,19 @@ export async function createArea(input: typeof areas.$inferInsert) {
   return { id: Number(result[0].insertId) };
 }
 
-export async function createProject(input: typeof projects.$inferInsert) {
+export async function getNextProjectCode(areaId: number) {
+  const area = await getAreaById(areaId, true);
+  if (!area) throw new Error("Setor não encontrado.");
+  const existingProjects = await listProjects(areaId, true);
+  return nextProjectCode(area.shortCode || area.code, existingProjects.map(project => project.code));
+}
+
+export async function createProject(input: Omit<typeof projects.$inferInsert, "code"> & { code?: string }) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const result = await db.insert(projects).values(input);
-  return { id: Number(result[0].insertId) };
+  const code = input.code?.trim() || await getNextProjectCode(input.areaId);
+  const result = await db.insert(projects).values({ ...input, code });
+  return { id: Number(result[0].insertId), code };
 }
 
 export async function updateArea(id: number, input: Partial<typeof areas.$inferInsert>) {
