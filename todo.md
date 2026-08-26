@@ -677,3 +677,14 @@
 - [x] Filtrar na interface os perfis que o usuário atual pode conceder.
 - [x] Validar criação e atualização de usuários com testes de autorização hierárquica.
 - [x] Executar TypeScript, testes, build e QA antes do checkpoint.
+
+## Auditoria, matriz de permissões e escopo setorial
+
+- [x] Criar tabela não destrutiva de auditoria para criações e alterações de perfis.
+- [x] Registrar autor, usuário-alvo, ação, perfis anterior/novo, setores e data da operação.
+- [x] Exibir histórico de auditoria de perfis no Back-Office.
+- [x] Criar matriz visual de permissões por perfil no formulário de usuários.
+- [x] Filtrar no servidor os usuários visíveis ao Gestor de Setor pelos setores vinculados.
+- [x] Aplicar a mesma validação de escopo nas operações de criação e alteração de usuários.
+- [x] Adicionar testes de matriz, hierarquia e regras de acesso; integração de auditoria e escopo validada por TypeScript/build.
+- [x] Executar TypeScript, testes, build e QA desktop/mobile antes do checkpoint.

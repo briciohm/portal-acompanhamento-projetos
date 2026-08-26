@@ -34,6 +34,20 @@ export const userAreaAssignments = mysqlTable("user_area_assignments", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const userProfileAuditLogs = mysqlTable("user_profile_audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  actorUserId: int("actorUserId").notNull(),
+  targetUserId: int("targetUserId").notNull(),
+  action: mysqlEnum("action", ["create", "update"]).notNull(),
+  previousProfile: varchar("previousProfile", { length: 32 }),
+  newProfile: varchar("newProfile", { length: 32 }).notNull(),
+  previousAreaIds: text("previousAreaIds"),
+  newAreaIds: text("newAreaIds"),
+  previousIsActive: boolean("previousIsActive"),
+  newIsActive: boolean("newIsActive").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
   areaId: int("areaId").notNull(),

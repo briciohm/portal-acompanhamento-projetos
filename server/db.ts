@@ -1,7 +1,7 @@
-import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
-import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, userAreaAssignments, users } from "../drizzle/schema";
+import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, userAreaAssignments, userProfileAuditLogs, users } from "../drizzle/schema";
 import type { UserProfile } from "../shared/userRoles";
 import { roleForProfile } from "../shared/userRoles";
 import { nextProjectCode } from "../shared/projectCode";
@@ -238,14 +238,24 @@ export async function listFilteredStageStatusHistory(input: { projectId?: number
   return db.select().from(projectStageStatusHistory).where(filters.length ? and(...filters) : undefined).orderBy(desc(projectStageStatusHistory.changedAt)).limit(Math.min(Math.max(input.limit ?? 500, 1), 500));
 }
 
-export async function listUsers() {
+export async function getUserAreaIds(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select({ areaId: userAreaAssignments.areaId }).from(userAreaAssignments).where(eq(userAreaAssignments.userId, userId));
+  return rows.map(row => row.areaId);
+}
+
+export async function listUsers(scope?: { userId: number; profile: UserProfile }) {
   const db = await getDb();
   if (!db) return [];
   const [userRows, assignments] = await Promise.all([
     db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, profile: users.profile, isActive: users.isActive, createdAt: users.createdAt, lastSignedIn: users.lastSignedIn }).from(users).orderBy(asc(users.name)),
     db.select({ userId: userAreaAssignments.userId, areaId: userAreaAssignments.areaId }).from(userAreaAssignments),
   ]);
-  return userRows.map(user => ({ ...user, areaIds: assignments.filter(item => item.userId === user.id).map(item => item.areaId) }));
+  const mapped = userRows.map(user => ({ ...user, areaIds: assignments.filter(item => item.userId === user.id).map(item => item.areaId) }));
+  if (!scope || scope.profile !== "gestor_setor") return mapped;
+  const actorAreaIds = new Set(assignments.filter(item => item.userId === scope.userId).map(item => item.areaId));
+  return mapped.filter(user => user.areaIds.some(areaId => actorAreaIds.has(areaId)));
 }
 
 export async function getManagedUserProfile(userId: number): Promise<UserProfile | null> {
@@ -256,12 +266,33 @@ export async function getManagedUserProfile(userId: number): Promise<UserProfile
   return (rows[0].profile || (rows[0].role === "admin" ? "admin_geral" : "consulta")) as UserProfile;
 }
 
-export async function createManagedUser(input: { openId: string; name?: string; email?: string; profile?: UserProfile; areaIds?: number[] }) {
+export async function createManagedUser(input: { actorUserId: number; openId: string; name?: string; email?: string; profile?: UserProfile; areaIds?: number[] }) {
   const profile = input.profile ?? "consulta";
   await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: roleForProfile(profile), profile });
   const user = await getUserByOpenId(input.openId);
-  if (user) await replaceUserAreaAssignments(user.id, profile, input.areaIds ?? []);
+  if (!user) return user;
+  const areaIds = Array.from(new Set(input.areaIds ?? []));
+  await replaceUserAreaAssignments(user.id, profile, areaIds);
+  await recordUserProfileAudit({ actorUserId: input.actorUserId, targetUserId: user.id, action: "create", previousProfile: null, newProfile: profile, previousAreaIds: [], newAreaIds: areaIds, previousIsActive: null, newIsActive: user.isActive });
   return user;
+}
+
+export async function recordUserProfileAudit(input: { actorUserId: number; targetUserId: number; action: "create" | "update"; previousProfile: UserProfile | null; newProfile: UserProfile; previousAreaIds: number[]; newAreaIds: number[]; previousIsActive: boolean | null; newIsActive: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  await db.insert(userProfileAuditLogs).values({ actorUserId: input.actorUserId, targetUserId: input.targetUserId, action: input.action, previousProfile: input.previousProfile, newProfile: input.newProfile, previousAreaIds: JSON.stringify(input.previousAreaIds), newAreaIds: JSON.stringify(input.newAreaIds), previousIsActive: input.previousIsActive, newIsActive: input.newIsActive });
+}
+
+export async function listUserProfileAuditLogs(scope?: { userId: number; profile: UserProfile }, limit = 200) {
+  const db = await getDb();
+  if (!db) return [];
+  const visibleUsers = scope?.profile === "gestor_setor" ? await listUsers(scope) : null;
+  const visibleTargetIds = visibleUsers?.map(user => user.id) ?? null;
+  if (visibleTargetIds && visibleTargetIds.length === 0) return [];
+  const logs = await db.select().from(userProfileAuditLogs).where(visibleTargetIds ? inArray(userProfileAuditLogs.targetUserId, visibleTargetIds) : undefined).orderBy(desc(userProfileAuditLogs.createdAt)).limit(Math.min(Math.max(limit, 1), 500));
+  const userIds = Array.from(new Set(logs.flatMap(log => [log.actorUserId, log.targetUserId])));
+  const userRows = userIds.length ? await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(inArray(users.id, userIds)) : [];
+  return logs.map(log => ({ ...log, actor: userRows.find(user => user.id === log.actorUserId) ?? null, target: userRows.find(user => user.id === log.targetUserId) ?? null }));
 }
 
 export async function userHasAreaAccess(userId: number, profile: UserProfile, areaId: number) {
@@ -301,14 +332,19 @@ export async function replaceUserAreaAssignments(userId: number, profile: UserPr
   }
 }
 
-export async function updateManagedUser(id: number, input: { profile?: UserProfile; areaIds?: number[]; isActive?: boolean }) {
+export async function updateManagedUser(id: number, input: { actorUserId: number; profile?: UserProfile; areaIds?: number[]; isActive?: boolean }) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const current = await db.select({ profile: users.profile, role: users.role }).from(users).where(eq(users.id, id)).limit(1);
+  const current = await db.select({ profile: users.profile, role: users.role, isActive: users.isActive }).from(users).where(eq(users.id, id)).limit(1);
   if (!current[0]) throw new Error("Usuário não encontrado.");
-  const profile = input.profile ?? current[0].profile;
+  const previousProfile = (current[0].profile || (current[0].role === "admin" ? "admin_geral" : "consulta")) as UserProfile;
+  const previousAreaIds = await getUserAreaIds(id);
+  const profile = input.profile ?? previousProfile;
+  const areaIds = input.areaIds ?? previousAreaIds;
+  const isActive = input.isActive ?? current[0].isActive;
   await db.update(users).set({ ...(input.isActive === undefined ? {} : { isActive: input.isActive }), profile, role: roleForProfile(profile) }).where(eq(users.id, id));
-  await replaceUserAreaAssignments(id, profile, input.areaIds ?? []);
+  await replaceUserAreaAssignments(id, profile, areaIds);
+  await recordUserProfileAudit({ actorUserId: input.actorUserId, targetUserId: id, action: "update", previousProfile, newProfile: profile, previousAreaIds, newAreaIds: profile === "gestor_setor" ? Array.from(new Set(areaIds)) : [], previousIsActive: current[0].isActive, newIsActive: isActive });
   return listUsers().then(rows => rows.find(user => user.id === id));
 }
 
