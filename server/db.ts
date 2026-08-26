@@ -248,6 +248,14 @@ export async function listUsers() {
   return userRows.map(user => ({ ...user, areaIds: assignments.filter(item => item.userId === user.id).map(item => item.areaId) }));
 }
 
+export async function getManagedUserProfile(userId: number): Promise<UserProfile | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const rows = await db.select({ profile: users.profile, role: users.role }).from(users).where(eq(users.id, userId)).limit(1);
+  if (!rows[0]) return null;
+  return (rows[0].profile || (rows[0].role === "admin" ? "admin_geral" : "consulta")) as UserProfile;
+}
+
 export async function createManagedUser(input: { openId: string; name?: string; email?: string; profile?: UserProfile; areaIds?: number[] }) {
   const profile = input.profile ?? "consulta";
   await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: roleForProfile(profile), profile });

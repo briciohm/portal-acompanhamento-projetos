@@ -20,6 +20,21 @@ export function roleForProfile(profile: UserProfile) {
   return profile === "admin_geral" ? "admin" as const : "user" as const;
 }
 
+export const USER_PROFILE_LEVELS: Record<UserProfile, number> = {
+  consulta: 1,
+  editor_projetos: 2,
+  gestor_setor: 3,
+  admin_geral: 4,
+};
+
 export function canManageContent(profile: UserProfile) {
   return profile !== "consulta";
+}
+
+export function canAssignProfile(actorProfile: UserProfile, targetProfile: UserProfile) {
+  return USER_PROFILE_LEVELS[targetProfile] < USER_PROFILE_LEVELS[actorProfile];
+}
+
+export function assignableProfiles(actorProfile: UserProfile): UserProfile[] {
+  return USER_PROFILES.filter(profile => canAssignProfile(actorProfile, profile));
 }

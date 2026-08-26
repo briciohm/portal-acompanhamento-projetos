@@ -668,3 +668,12 @@
 - [x] Permitir atribuição de um ou mais setores aos usuários compatíveis.
 - [x] Preservar a proteção contra remoção ou desativação do administrador principal.
 - [x] Cobrir o modelo com testes Vitest e QA técnico/visual.
+
+## Hierarquia de criação de perfis
+
+- [x] Definir níveis estritos entre Administrador Geral, Gestor de Setor, Editor de Projetos e Consulta.
+- [x] Impedir criação ou atribuição do mesmo perfil do criador.
+- [x] Impedir elevação para perfil igual ou superior no servidor.
+- [x] Filtrar na interface os perfis que o usuário atual pode conceder.
+- [x] Validar criação e atualização de usuários com testes de autorização hierárquica.
+- [x] Executar TypeScript, testes, build e QA antes do checkpoint.

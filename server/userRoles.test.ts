@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { USER_PROFILES, USER_PROFILE_LABELS, canManageContent, roleForProfile } from "../shared/userRoles";
+import { assignableProfiles, canAssignProfile, USER_PROFILES, USER_PROFILE_LABELS, canManageContent, roleForProfile } from "../shared/userRoles";
 
 describe("perfis de usuários", () => {
   it("expõe os quatro perfis institucionais", () => {
@@ -18,5 +18,16 @@ describe("perfis de usuários", () => {
     expect(canManageContent("gestor_setor")).toBe(true);
     expect(canManageContent("editor_projetos")).toBe(true);
     expect(canManageContent("consulta")).toBe(false);
+  });
+
+  it("permite somente perfis estritamente inferiores, sem espelhamento", () => {
+    expect(assignableProfiles("admin_geral")).toEqual(["gestor_setor", "editor_projetos", "consulta"]);
+    expect(assignableProfiles("gestor_setor")).toEqual(["editor_projetos", "consulta"]);
+    expect(assignableProfiles("editor_projetos")).toEqual(["consulta"]);
+    expect(assignableProfiles("consulta")).toEqual([]);
+    expect(canAssignProfile("gestor_setor", "gestor_setor")).toBe(false);
+    expect(canAssignProfile("gestor_setor", "admin_geral")).toBe(false);
+    expect(canAssignProfile("gestor_setor", "editor_projetos")).toBe(true);
+    expect(canAssignProfile("editor_projetos", "consulta")).toBe(true);
   });
 });
