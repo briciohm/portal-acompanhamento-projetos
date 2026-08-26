@@ -7,6 +7,7 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  profile: mysqlEnum("profile", ["admin_geral", "gestor_setor", "editor_projetos", "consulta"]).default("consulta").notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -24,6 +25,13 @@ export const areas = mysqlTable("project_areas", {
   isHidden: boolean("isHidden").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const userAreaAssignments = mysqlTable("user_area_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  areaId: int("areaId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const projects = mysqlTable("projects", {

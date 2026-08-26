@@ -648,3 +648,23 @@
 - [x] Validar formato e evitar colisões preservando códigos legados.
 - [x] Adicionar testes Vitest para geração, incremento e compatibilidade.
 - [x] Executar TypeScript, testes, build e QA visual antes do checkpoint.
+
+## Perfis e permissões de usuários
+
+- [x] Revisar o modelo atual de usuários e a gestão de papéis no Back-Office.
+- [x] Definir perfis de acesso e ações permitidas por perfil.
+- [x] Implementar atribuição de perfil com proteção contra perda do administrador principal.
+- [x] Aplicar as permissões no servidor e refletir o estado na interface.
+- [x] Adicionar testes de autorização, atribuição e proteção de acesso.
+- [x] Executar TypeScript, testes, build e QA visual antes do checkpoint.
+
+## Perfis confirmados pelo usuário
+
+- [x] Incluir Administrador Geral como perfil de acesso completo.
+- [x] Incluir Gestor de Setor com vínculo a um ou mais setores.
+- [x] Incluir Editor de Projetos para edição operacional sem gestão de usuários/configurações.
+- [x] Incluir Consulta com acesso somente leitura.
+- [x] Definir e aplicar permissões por ação e abrangência de setor.
+- [x] Permitir atribuição de um ou mais setores aos usuários compatíveis.
+- [x] Preservar a proteção contra remoção ou desativação do administrador principal.
+- [x] Cobrir o modelo com testes Vitest e QA técnico/visual.

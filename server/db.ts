@@ -1,7 +1,9 @@
 import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
-import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, users } from "../drizzle/schema";
+import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, userAreaAssignments, users } from "../drizzle/schema";
+import type { UserProfile } from "../shared/userRoles";
+import { roleForProfile } from "../shared/userRoles";
 import { nextProjectCode } from "../shared/projectCode";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -35,6 +37,10 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (user.role !== undefined || user.openId === ENV.ownerOpenId) {
     values.role = user.role ?? "admin";
     updateSet.role = values.role;
+  }
+  if (user.profile !== undefined || user.openId === ENV.ownerOpenId) {
+    values.profile = user.profile ?? "admin_geral";
+    updateSet.profile = values.profile;
   }
   await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
 }
@@ -235,19 +241,67 @@ export async function listFilteredStageStatusHistory(input: { projectId?: number
 export async function listUsers() {
   const db = await getDb();
   if (!db) return [];
-  return db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, isActive: users.isActive, createdAt: users.createdAt, lastSignedIn: users.lastSignedIn }).from(users).orderBy(asc(users.name));
+  const [userRows, assignments] = await Promise.all([
+    db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, profile: users.profile, isActive: users.isActive, createdAt: users.createdAt, lastSignedIn: users.lastSignedIn }).from(users).orderBy(asc(users.name)),
+    db.select({ userId: userAreaAssignments.userId, areaId: userAreaAssignments.areaId }).from(userAreaAssignments),
+  ]);
+  return userRows.map(user => ({ ...user, areaIds: assignments.filter(item => item.userId === user.id).map(item => item.areaId) }));
 }
 
-export async function createManagedUser(input: { openId: string; name?: string; email?: string; role?: "user" | "admin" }) {
-  await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: input.role ?? "user" });
-  return getUserByOpenId(input.openId);
+export async function createManagedUser(input: { openId: string; name?: string; email?: string; profile?: UserProfile; areaIds?: number[] }) {
+  const profile = input.profile ?? "consulta";
+  await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: roleForProfile(profile), profile });
+  const user = await getUserByOpenId(input.openId);
+  if (user) await replaceUserAreaAssignments(user.id, profile, input.areaIds ?? []);
+  return user;
 }
 
-export async function updateManagedUser(id: number, input: { role?: "user" | "admin"; isActive?: boolean }) {
+export async function userHasAreaAccess(userId: number, profile: UserProfile, areaId: number) {
+  if (profile !== "gestor_setor") return true;
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  await db.update(users).set(input).where(eq(users.id, id));
-  return db.select({ id: users.id, openId: users.openId, name: users.name, email: users.email, role: users.role, isActive: users.isActive }).from(users).where(eq(users.id, id)).limit(1).then(rows => rows[0]);
+  const rows = await db.select({ id: userAreaAssignments.id }).from(userAreaAssignments).where(and(eq(userAreaAssignments.userId, userId), eq(userAreaAssignments.areaId, areaId))).limit(1);
+  return Boolean(rows[0]);
+}
+
+export async function assertUserCanManageStage(userId: number, profile: UserProfile, stageId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const rows = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  if (!rows[0]) throw new Error("Etapa não encontrada.");
+  await assertUserCanManageProject(userId, profile, rows[0].projectId);
+}
+
+export async function assertUserCanManageProject(userId: number, profile: UserProfile, projectId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const rows = await db.select({ areaId: projects.areaId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (!rows[0]) throw new Error("Projeto não encontrado.");
+  if (!(await userHasAreaAccess(userId, profile, rows[0].areaId))) throw new Error("Seu perfil não possui acesso a este setor.");
+}
+
+export async function assertUserCanManageArea(userId: number, profile: UserProfile, areaId: number) {
+  if (!(await userHasAreaAccess(userId, profile, areaId))) throw new Error("Seu perfil não possui acesso a este setor.");
+}
+
+export async function replaceUserAreaAssignments(userId: number, profile: UserProfile, areaIds: number[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  await db.delete(userAreaAssignments).where(eq(userAreaAssignments.userId, userId));
+  if (profile === "gestor_setor" && areaIds.length) {
+    await db.insert(userAreaAssignments).values(Array.from(new Set(areaIds)).map(areaId => ({ userId, areaId })));
+  }
+}
+
+export async function updateManagedUser(id: number, input: { profile?: UserProfile; areaIds?: number[]; isActive?: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const current = await db.select({ profile: users.profile, role: users.role }).from(users).where(eq(users.id, id)).limit(1);
+  if (!current[0]) throw new Error("Usuário não encontrado.");
+  const profile = input.profile ?? current[0].profile;
+  await db.update(users).set({ ...(input.isActive === undefined ? {} : { isActive: input.isActive }), profile, role: roleForProfile(profile) }).where(eq(users.id, id));
+  await replaceUserAreaAssignments(id, profile, input.areaIds ?? []);
+  return listUsers().then(rows => rows.find(user => user.id === id));
 }
 
 export async function listClientDiagnosticEvents(limit = 100) {
