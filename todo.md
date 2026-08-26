@@ -589,3 +589,12 @@
 - [x] Permitir editar, ocultar e reativar projetos e áreas no Back-Office.
 - [x] Preservar documentos, KPIs, cronogramas e demais relações ao ocultar um projeto.
 - [x] Aplicar permissões administrativas, testes de regressão, validação responsiva e publicação.
+
+
+## Edição administrativa dos setores — 2026-08-26
+
+- [x] Adicionar campos persistentes de sigla, nome exibido e ícone para DPAT, DPGDOC, DTRAN e DZEL.
+- [x] Permitir editar sigla, nome e ícone dos quatro setores no Back-Office.
+- [x] Fazer a Home carregar esses dados e manter a navegação para os projetos do setor.
+- [x] Preservar ocultação/reativação e permissões administrativas dos setores.
+- [x] Validar migração, dados, visual, acessibilidade, desktop/mobile, testes e publicação.

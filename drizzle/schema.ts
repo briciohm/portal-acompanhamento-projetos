@@ -17,6 +17,8 @@ export const areas = mysqlTable("project_areas", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 160 }).notNull(),
   code: varchar("code", { length: 32 }).notNull().unique(),
+  shortCode: varchar("shortCode", { length: 32 }).default("").notNull(),
+  icon: varchar("icon", { length: 32 }).default("folder").notNull(),
   description: text("description"),
   accent: varchar("accent", { length: 16 }).default("#e30613").notNull(),
   isHidden: boolean("isHidden").default(false).notNull(),

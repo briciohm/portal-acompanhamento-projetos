@@ -41,6 +41,16 @@ describe("admin access control", () => {
     if (projects[0]) expect(projects[0]).toHaveProperty("isHidden");
   });
 
+  it("exposes editable sector presentation fields to administrators", async () => {
+    const caller = appRouter.createCaller(contextWithRole("admin"));
+    const areas = await caller.admin.areas();
+    expect(Array.isArray(areas)).toBe(true);
+    if (areas[0]) {
+      expect(areas[0]).toHaveProperty("shortCode");
+      expect(areas[0]).toHaveProperty("icon");
+    }
+  });
+
   it("allows an administrator to update an existing project without remount errors", async () => {
     const caller = appRouter.createCaller(contextWithRole("admin"));
     const result = await caller.admin.updateProject({
