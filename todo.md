@@ -598,3 +598,11 @@
 - [x] Fazer a Home carregar esses dados e manter a navegação para os projetos do setor.
 - [x] Preservar ocultação/reativação e permissões administrativas dos setores.
 - [x] Validar migração, dados, visual, acessibilidade, desktop/mobile, testes e publicação.
+
+
+## Correção de chaves duplicadas no diagnóstico do Back-Office — 2026-08-26
+
+- [x] Localizar o componente que renderiza os erros com a chave `api-query-error-/admin`.
+- [x] Garantir identidade única por ocorrência, preservando deduplicação sem colisões entre eventos simultâneos.
+- [x] Adicionar teste de regressão para múltiplas ocorrências do mesmo erro/rota.
+- [x] Validar carregamento do `/admin`, logs, responsividade, suíte completa e publicação.
