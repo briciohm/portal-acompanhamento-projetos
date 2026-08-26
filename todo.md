@@ -616,3 +616,26 @@
 - [x] Adicionar ou atualizar testes de regressão para cada correção aplicável.
 - [x] Executar Vitest, `pnpm check` e build de produção.
 - [x] Validar Home e Back-Office em desktop/mobile, revisar logs finais e publicar.
+
+
+## Pesquisa, exportação e feedback no Back-Office + habilidade reutilizável — 2026-08-26
+
+- [x] Adicionar busca textual e filtros por status, setor e responsável na lista de projetos do Back-Office.
+- [x] Exportar a lista filtrada de projetos em formato Excel.
+- [x] Exportar a lista filtrada de projetos em formato PDF.
+- [x] Adicionar animações de carregamento durante consultas e exportações.
+- [x] Exibir notificações visuais de sucesso ao ocultar ou reativar projetos.
+- [x] Criar e validar uma habilidade reutilizável para o fluxo de evolução e QA do portal DPAT.
+- [x] Executar testes, `pnpm check`, build, validação desktop/mobile, revisar logs e publicar.
+
+## Back-Office — pesquisa, filtros e exportação
+
+- [x] Adicionar pesquisa por código, nome, resumo, responsável e setor na gestão de projetos.
+- [x] Adicionar filtros por status, setor e responsável na gestão de projetos.
+- [x] Exportar a lista filtrada de projetos para Excel com colunas executivas.
+- [x] Exportar a lista filtrada de projetos para PDF com identidade visual institucional.
+- [x] Exibir carregamento e desabilitar ações durante ocultação/reativação de itens.
+- [x] Exibir notificações de sucesso e erro nas ações de visibilidade e exportação.
+- [x] Escrever testes Vitest para filtragem, preparação de linhas e estados derivados da lista.
+- [x] Validar desktop, mobile, TypeScript e build após as mudanças.
+- [x] Criar e validar skill reutilizável para evolução e QA do portal DPAT/COGESPA.
