@@ -697,3 +697,9 @@
 - [x] Exibir tentativas bloqueadas com indicação clara na tela de auditoria.
 - [x] Validar filtros e registros de bloqueio por integração, TypeScript, build e QA visual.
 - [x] Executar TypeScript, testes, build e QA desktop/mobile antes do checkpoint.
+
+## Copyright institucional
+
+- [x] Atualizar o rodapé para: “Copyright © 2026 Gufs Tech. Todos os direitos reservados. Desenvolvido e mantido por Fabrício Gustavo Ferreira.”
+- [x] Validar a exibição do copyright em desktop e mobile.
+- [x] Executar testes e salvar checkpoint da atualização.
