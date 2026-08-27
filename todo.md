@@ -703,3 +703,10 @@
 - [x] Atualizar o rodapé para: “Copyright © 2026 Gufs Tech. Todos os direitos reservados. Desenvolvido e mantido por Fabrício Gustavo Ferreira.”
 - [x] Validar a exibição do copyright em desktop e mobile.
 - [x] Executar testes e salvar checkpoint da atualização.
+
+## Correção da consulta de auditoria — 2026-08-27
+
+- [x] Identificar por que `user_profile_audit_logs` falha ao carregar no `/admin`.
+- [x] Alinhar tabela, migração e consulta de auditoria sem apagar registros.
+- [x] Validar a consulta de regressão diretamente no banco e manter a suíte Vitest existente aprovada.
+- [x] Validar TypeScript, testes, build, logs e `/admin` antes do checkpoint.
