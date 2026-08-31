@@ -710,3 +710,12 @@
 - [x] Alinhar tabela, migração e consulta de auditoria sem apagar registros.
 - [x] Validar a consulta de regressão diretamente no banco e manter a suíte Vitest existente aprovada.
 - [x] Validar TypeScript, testes, build, logs e `/admin` antes do checkpoint.
+
+## Documentação de perfis — materiais de distribuição
+
+- [x] Adicionar resumo executivo com pontos de contato funcionais para suporte técnico.
+- [x] Gerar PDF da documentação em formato adequado para impressão.
+- [x] Verificar texto, paginação e legibilidade do PDF.
+- [x] Preparar conteúdo da apresentação com base no guia de perfis.
+- [x] Gerar apresentação com até 12 slides e revisar o resultado.
+- [x] Entregar Markdown, PDF e apresentação finalizados.
