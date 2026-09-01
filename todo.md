@@ -719,3 +719,11 @@
 - [x] Preparar conteúdo da apresentação com base no guia de perfis.
 - [x] Gerar apresentação com até 12 slides e revisar o resultado.
 - [x] Entregar Markdown, PDF e apresentação finalizados.
+
+## Correção do fluxo de conclusão no Back-Office
+
+- [x] Reproduzir o bloqueio no campo “Selecione o projeto”.
+- [x] Corrigir a seleção do projeto e o salvamento do status concluído.
+- [x] Garantir progresso de 100% e indicação de concluído após o salvamento.
+- [x] Adicionar testes de regressão para seleção, conclusão e permissões.
+- [x] Executar Vitest, TypeScript, build, logs e QA desktop/mobile.

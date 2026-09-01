@@ -171,17 +171,29 @@ export async function setAreaHidden(id: number, isHidden: boolean) {
   return updateArea(id, { isHidden });
 }
 
+export function normalizeProjectUpdate(input: Partial<typeof projects.$inferInsert>) {
+  const explicitlyConcluding = input.isManual === false && input.status === "concluído";
+  const normalizedInput = explicitlyConcluding
+    ? { ...input, progress: 100, status: "concluído" as const, manualObservation: null }
+    : input.isManual === false
+      ? { ...input, manualObservation: null }
+      : input.progress !== undefined && input.progress >= 100 && input.status === undefined
+        ? { ...input, status: "concluído" as const }
+        : input;
+  return { explicitlyConcluding, normalizedInput };
+}
+
 export async function updateProject(id: number, input: Partial<typeof projects.$inferInsert>) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
   if (input.isManual && !input.manualObservation?.trim()) throw new Error("A observação é obrigatória para o progresso manual.");
-  const normalizedInput = input.isManual === false
-    ? { ...input, manualObservation: null }
-    : input.progress !== undefined && input.progress >= 100 && input.status === undefined
-      ? { ...input, status: "concluído" as const }
-      : input;
+  const { explicitlyConcluding, normalizedInput } = normalizeProjectUpdate(input);
   await db.update(projects).set(normalizedInput).where(eq(projects.id, id));
-  return normalizedInput.isManual === false ? syncProjectProgressFromStages(id) : getProjectById(id, true);
+  return explicitlyConcluding
+    ? getProjectById(id, true)
+    : normalizedInput.isManual === false
+      ? syncProjectProgressFromStages(id)
+      : getProjectById(id, true);
 }
 
 export async function setProjectHidden(id: number, isHidden: boolean) {
