@@ -10,8 +10,16 @@ describe("project completion update", () => {
       isManual: false,
       status: "concluído",
       progress: 100,
+      completionConfirmed: true,
       manualObservation: null,
     });
+  });
+
+  it("clears explicit completion when the user intentionally reopens the project", () => {
+    const result = normalizeProjectUpdate({ isManual: false, status: "andamento" });
+
+    expect(result.explicitlyConcluding).toBe(false);
+    expect(result.normalizedInput).toMatchObject({ status: "andamento", completionConfirmed: false });
   });
 
   it("keeps automatic synchronization for non-completion updates", () => {

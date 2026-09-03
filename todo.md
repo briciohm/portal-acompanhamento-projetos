@@ -727,3 +727,12 @@
 - [x] Garantir progresso de 100% e indicação de concluído após o salvamento.
 - [x] Adicionar testes de regressão para seleção, conclusão e permissões.
 - [x] Executar Vitest, TypeScript, build, logs e QA desktop/mobile.
+
+## Correção definitiva do fluxo de conclusão de projetos
+
+- [x] Reproduzir e documentar a divergência entre o status global selecionado e o progresso calculado pelas etapas no Back-Office.
+- [x] Corrigir a sincronização automática para preservar uma conclusão global explícita até que uma alteração de etapas justifique nova recalculação.
+- [x] Garantir que o formulário administrativo mantenha o projeto selecionado e recarregue os dados atualizados após salvar status/progresso.
+- [x] Adicionar teste de regressão cobrindo conclusão explícita com etapas ainda não alinhadas e atualização posterior de etapa.
+- [x] Executar Vitest, checagem TypeScript, build e QA desktop/mobile do fluxo de atualização.
+- [x] Revisar logs de cliente e servidor após o teste para confirmar ausência de novos erros reais.

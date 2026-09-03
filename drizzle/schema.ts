@@ -60,6 +60,7 @@ export const projects = mysqlTable("projects", {
   progress: int("progress").default(0).notNull(),
   isManual: boolean("isManual").default(false).notNull(),
   manualObservation: text("manualObservation"),
+  completionConfirmed: boolean("completionConfirmed").default(false).notNull(),
   isHidden: boolean("isHidden").default(false).notNull(),
   nextSteps: text("nextSteps"),
   startDate: timestamp("startDate"),

@@ -103,6 +103,9 @@ export async function syncProjectProgressFromStages(projectId: number) {
   if (!db) throw new Error("Banco de dados indisponível");
   const project = await getProjectById(projectId, true);
   if (!project || project.isManual) return project;
+  // A conclusão confirmada é uma decisão explícita do usuário e não deve ser
+  // revertida por uma sincronização incidental de etapas.
+  if (project.completionConfirmed) return project;
   const stages = await db.select({ progressStatus: projectStages.progressStatus }).from(projectStages).where(eq(projectStages.projectId, projectId));
   const progress = calculateStageProgress(stages);
   await db.update(projects).set({ progress, status: progress >= 100 ? "concluído" : project.status === "concluído" ? "andamento" : project.status }).where(eq(projects.id, projectId));
@@ -172,14 +175,17 @@ export async function setAreaHidden(id: number, isHidden: boolean) {
 }
 
 export function normalizeProjectUpdate(input: Partial<typeof projects.$inferInsert>) {
-  const explicitlyConcluding = input.isManual === false && input.status === "concluído";
+  const explicitlyConcluding = input.status === "concluído";
+  const explicitlyReopening = input.status !== undefined && input.status !== "concluído";
   const normalizedInput = explicitlyConcluding
-    ? { ...input, progress: 100, status: "concluído" as const, manualObservation: null }
+    ? { ...input, progress: 100, status: "concluído" as const, completionConfirmed: true, manualObservation: input.isManual === false ? null : input.manualObservation }
     : input.isManual === false
-      ? { ...input, manualObservation: null }
-      : input.progress !== undefined && input.progress >= 100 && input.status === undefined
-        ? { ...input, status: "concluído" as const }
-        : input;
+      ? { ...input, completionConfirmed: explicitlyReopening ? false : input.completionConfirmed, manualObservation: null }
+      : explicitlyReopening
+        ? { ...input, completionConfirmed: false }
+        : input.progress !== undefined && input.progress >= 100 && input.status === undefined
+          ? { ...input, status: "concluído" as const }
+          : input;
   return { explicitlyConcluding, normalizedInput };
 }
 

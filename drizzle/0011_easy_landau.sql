@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `completionConfirmed` boolean DEFAULT false NOT NULL;
