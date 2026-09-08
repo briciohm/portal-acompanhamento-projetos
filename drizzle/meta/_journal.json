@@ -85,6 +85,13 @@
       "when": 1788441139266,
       "tag": "0011_easy_landau",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1788898044558,
+      "tag": "0012_cold_sabretooth",
+      "breakpoints": true
     }
   ]
 }

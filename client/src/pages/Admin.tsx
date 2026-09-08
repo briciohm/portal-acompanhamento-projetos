@@ -23,7 +23,7 @@ export default function Admin() {
   const { user, loading } = useAuth();
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-[#e30613]" /></div>;
   if (!user) return <AccessGate />;
-  if (!(user as any).isActive || !["admin_geral", "gestor_setor", "editor_projetos", "consulta"].includes((user as any).profile || (user.role === "admin" ? "admin_geral" : "consulta"))) return <AccessGate message="Seu usuário não possui um perfil ativo para acessar o back-office." />;
+  if (!(user as any).isActive || !["admin_master", "admin_geral", "gestor_setor", "editor_projetos", "consulta"].includes((user as any).profile || (user.role === "admin" ? "admin_geral" : "consulta"))) return <AccessGate message="Seu usuário não possui um perfil ativo para acessar o back-office." />;
   return <AdminContent />;
 }
 

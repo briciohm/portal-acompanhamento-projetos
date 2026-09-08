@@ -2,8 +2,7 @@ import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
 import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, userAreaAssignments, userProfileAuditLogs, users } from "../drizzle/schema";
-import type { UserProfile } from "../shared/userRoles";
-import { roleForProfile } from "../shared/userRoles";
+import { canUseMasterProfile, roleForProfile, type UserProfile } from "../shared/userRoles";
 import { nextProjectCode } from "../shared/projectCode";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -286,6 +285,7 @@ export async function getManagedUserProfile(userId: number): Promise<UserProfile
 
 export async function createManagedUser(input: { actorUserId: number; openId: string; name?: string; email?: string; profile?: UserProfile; areaIds?: number[] }) {
   const profile = input.profile ?? "consulta";
+  if (!canUseMasterProfile(input.email, profile)) throw new Error("O perfil Administrador Master é exclusivo da conta proprietária.");
   await upsertUser({ openId: input.openId, name: input.name, email: input.email, role: roleForProfile(profile), profile });
   const user = await getUserByOpenId(input.openId);
   if (!user) return user;
@@ -360,11 +360,12 @@ export async function replaceUserAreaAssignments(userId: number, profile: UserPr
 export async function updateManagedUser(id: number, input: { actorUserId: number; profile?: UserProfile; areaIds?: number[]; isActive?: boolean }) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível");
-  const current = await db.select({ profile: users.profile, role: users.role, isActive: users.isActive }).from(users).where(eq(users.id, id)).limit(1);
+  const current = await db.select({ profile: users.profile, role: users.role, email: users.email, isActive: users.isActive }).from(users).where(eq(users.id, id)).limit(1);
   if (!current[0]) throw new Error("Usuário não encontrado.");
   const previousProfile = (current[0].profile || (current[0].role === "admin" ? "admin_geral" : "consulta")) as UserProfile;
   const previousAreaIds = await getUserAreaIds(id);
   const profile = input.profile ?? previousProfile;
+  if (!canUseMasterProfile(current[0].email, profile)) throw new Error("O perfil Administrador Master é exclusivo da conta proprietária.");
   const areaIds = input.areaIds ?? previousAreaIds;
   const isActive = input.isActive ?? current[0].isActive;
   await db.update(users).set({ ...(input.isActive === undefined ? {} : { isActive: input.isActive }), profile, role: roleForProfile(profile) }).where(eq(users.id, id));

@@ -736,3 +736,13 @@
 - [x] Adicionar teste de regressão cobrindo conclusão explícita com etapas ainda não alinhadas e atualização posterior de etapa.
 - [x] Executar Vitest, checagem TypeScript, build e QA desktop/mobile do fluxo de atualização.
 - [x] Revisar logs de cliente e servidor após o teste para confirmar ausência de novos erros reais.
+
+## Perfil Administrador Master exclusivo
+
+- [x] Adicionar o perfil `admin_master` acima de `admin_geral` na hierarquia compartilhada.
+- [x] Restringir a atribuição e o uso de `admin_master` exclusivamente ao e-mail `gustavocvc0810@gmail.com`.
+- [x] Atualizar regras de criação, alteração, acesso e proteção do usuário proprietário.
+- [x] Exibir o novo perfil no Back-Office e ajustar a matriz visual de permissões.
+- [x] Registrar a atribuição exclusiva em auditoria e atualizar a documentação de perfis.
+- [x] Adicionar testes de regressão para exclusividade, hierarquia e bloqueio de elevação.
+- [x] Executar migração, Vitest, TypeScript, build, QA responsivo e salvar checkpoint publicado.

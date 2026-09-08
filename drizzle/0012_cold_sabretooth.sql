@@ -1,0 +1,1 @@
+ALTER TABLE `users` MODIFY COLUMN `profile` enum('admin_master','admin_geral','gestor_setor','editor_projetos','consulta') NOT NULL DEFAULT 'consulta';
