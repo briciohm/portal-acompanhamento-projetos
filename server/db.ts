@@ -1,9 +1,10 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
-import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, userAreaAssignments, userProfileAuditLogs, users } from "../drizzle/schema";
+import { areas, clientDiagnosticEvents, InsertUser, projectDocuments, projectMetrics, projectMilestones, projectPhotos, projectStageStatusHistory, projectStages, projects, systemSettings, systemSettingsAuditLogs, userAreaAssignments, userProfileAuditLogs, users } from "../drizzle/schema";
 import { canUseMasterProfile, roleForProfile, type UserProfile } from "../shared/userRoles";
 import { nextProjectCode } from "../shared/projectCode";
+import { ADVANCED_SETTING_DEFINITIONS, ADVANCED_SETTING_KEYS, parseAdvancedSettingValue, type AdvancedSettingKey } from "../shared/advancedSettings";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -318,6 +319,47 @@ export async function listUserProfileAuditLogs(filters?: { scope?: { userId: num
   const userIds = Array.from(new Set(logs.flatMap(log => [log.actorUserId, log.targetUserId].filter((id): id is number => id !== null))));
   const userRows = userIds.length ? await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(inArray(users.id, userIds)) : [];
   return logs.map(log => ({ ...log, actor: userRows.find(user => user.id === log.actorUserId) ?? null, target: log.targetUserId === null ? null : userRows.find(user => user.id === log.targetUserId) ?? null }));
+}
+
+export async function listAdvancedSettings() {
+  const db = await getDb();
+  if (!db) return ADVANCED_SETTING_KEYS.map(key => ({ key, value: ADVANCED_SETTING_DEFINITIONS[key].defaultValue, updatedBy: null, updatedAt: null }));
+  const existing = await db.select().from(systemSettings);
+  const byKey = new Map(existing.map(setting => [setting.key, setting]));
+  const missing = ADVANCED_SETTING_KEYS.filter(key => !byKey.has(key));
+  if (missing.length) {
+    await db.insert(systemSettings).values(missing.map(key => ({ key, value: String(ADVANCED_SETTING_DEFINITIONS[key].defaultValue), description: ADVANCED_SETTING_DEFINITIONS[key].description })));
+    const refreshed = await db.select().from(systemSettings);
+    return ADVANCED_SETTING_KEYS.map(key => ({ ...refreshed.find(setting => setting.key === key), key, value: parseAdvancedSettingValue(refreshed.find(setting => setting.key === key)?.value, ADVANCED_SETTING_DEFINITIONS[key].defaultValue) }));
+  }
+  return ADVANCED_SETTING_KEYS.map(key => ({ ...byKey.get(key), key, value: parseAdvancedSettingValue(byKey.get(key)?.value, ADVANCED_SETTING_DEFINITIONS[key].defaultValue) }));
+}
+
+export async function getAdvancedSettingValue(key: AdvancedSettingKey) {
+  const db = await getDb();
+  if (!db) return ADVANCED_SETTING_DEFINITIONS[key].defaultValue;
+  const row = (await db.select({ value: systemSettings.value }).from(systemSettings).where(eq(systemSettings.key, key)).limit(1))[0];
+  return parseAdvancedSettingValue(row?.value, ADVANCED_SETTING_DEFINITIONS[key].defaultValue);
+}
+
+export async function updateAdvancedSetting(input: { key: AdvancedSettingKey; value: boolean; changedBy: number; reason: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const definition = ADVANCED_SETTING_DEFINITIONS[input.key];
+  const current = (await db.select().from(systemSettings).where(eq(systemSettings.key, input.key)).limit(1))[0];
+  const previousValue = current?.value ?? String(definition.defaultValue);
+  await db.insert(systemSettings).values({ key: input.key, value: String(input.value), description: definition.description, updatedBy: input.changedBy }).onDuplicateKeyUpdate({ set: { value: String(input.value), description: definition.description, updatedBy: input.changedBy } });
+  await db.insert(systemSettingsAuditLogs).values({ settingKey: input.key, previousValue, newValue: String(input.value), changedBy: input.changedBy, reason: input.reason.trim() });
+  return { key: input.key, value: input.value };
+}
+
+export async function listAdvancedSettingsAudit(limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  const logs = await db.select().from(systemSettingsAuditLogs).orderBy(desc(systemSettingsAuditLogs.createdAt)).limit(Math.min(Math.max(limit, 1), 200));
+  const userIds = Array.from(new Set(logs.map(log => log.changedBy)));
+  const userRows = userIds.length ? await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(inArray(users.id, userIds)) : [];
+  return logs.map(log => ({ ...log, setting: ADVANCED_SETTING_DEFINITIONS[log.settingKey as AdvancedSettingKey] ?? null, actor: userRows.find(user => user.id === log.changedBy) ?? null }));
 }
 
 export async function userHasAreaAccess(userId: number, profile: UserProfile, areaId: number) {

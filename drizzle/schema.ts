@@ -14,6 +14,23 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
+export const systemSettings = mysqlTable("system_settings", {
+  key: varchar("key", { length: 100 }).primaryKey(),
+  value: varchar("value", { length: 32 }).notNull(),
+  description: text("description"),
+  updatedBy: int("updatedBy"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export const systemSettingsAuditLogs = mysqlTable("system_settings_audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  settingKey: varchar("settingKey", { length: 100 }).notNull(),
+  previousValue: varchar("previousValue", { length: 32 }),
+  newValue: varchar("newValue", { length: 32 }).notNull(),
+  changedBy: int("changedBy").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const areas = mysqlTable("project_areas", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 160 }).notNull(),
@@ -142,6 +159,8 @@ export const projectDocuments = mysqlTable("project_documents", {
 });
 
 export type User = typeof users.$inferSelect;
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type SystemSettingsAuditLog = typeof systemSettingsAuditLogs.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Area = typeof areas.$inferSelect;
 export type Project = typeof projects.$inferSelect;

@@ -746,3 +746,14 @@
 - [x] Registrar a atribuição exclusiva em auditoria e atualizar a documentação de perfis.
 - [x] Adicionar testes de regressão para exclusividade, hierarquia e bloqueio de elevação.
 - [x] Executar migração, Vitest, TypeScript, build, QA responsivo e salvar checkpoint publicado.
+
+## Painel de configurações avançadas do Administrador Master
+
+- [x] Mapear recursos críticos existentes e definir o escopo seguro do painel Master.
+- [x] Criar persistência para configurações avançadas e histórico específico de alterações.
+- [x] Implementar autorização exclusiva server-side para `admin_master`.
+- [x] Implementar leitura e atualização das configurações no Back-Office.
+- [x] Adicionar confirmações, validações e proteção contra alterações acidentais em recursos críticos.
+- [x] Adicionar auditoria detalhada com autor, recurso, valores anterior/novo e data.
+- [x] Adicionar testes de autorização, persistência, auditoria e regressão do painel.
+- [x] Executar migração, Vitest, TypeScript, build, QA responsivo e salvar checkpoint publicado.
