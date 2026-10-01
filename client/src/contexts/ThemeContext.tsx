@@ -16,6 +16,10 @@ interface ThemeProviderProps {
   switchable?: boolean;
 }
 
+export function resolveTheme(defaultTheme: Theme, stored: string | null): Theme {
+  return stored === "dark" || stored === "light" ? stored : defaultTheme;
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "light",
@@ -24,7 +28,7 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
       const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      return resolveTheme(defaultTheme, stored);
     }
     return defaultTheme;
   });
@@ -36,6 +40,7 @@ export function ThemeProvider({
     } else {
       root.classList.remove("dark");
     }
+    root.dataset.theme = theme;
 
     if (switchable) {
       localStorage.setItem("theme", theme);

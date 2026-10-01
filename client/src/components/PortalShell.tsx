@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function InstitutionalHeader({ section = "PORTAL EXECUTIVO" }: { section?: string }) {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ export function InstitutionalHeader({ section = "PORTAL EXECUTIVO" }: { section?
         <span className="min-w-0 leading-tight"><strong className="block text-xs sm:text-sm">Governo do Estado</strong><strong className="block text-xs sm:text-sm">de São Paulo</strong></span>
       </Link>
       <div className="relative z-10 max-w-[145px] text-center leading-tight sm:max-w-none"><span className="block text-[9px] font-bold uppercase tracking-[.16em] text-[#e30613] sm:text-[10px] sm:tracking-[.24em]">{section}</span><span className="text-[10px] font-semibold text-white/50 sm:text-xs">Acompanhamento de Projetos</span></div>
-      <div className="relative z-10 flex items-center gap-3 text-right"><div className="hidden sm:block"><span className="block text-xs font-bold">SÃO PAULO</span><span className="block text-[9px] uppercase tracking-widest text-white/40">Governo do Estado</span></div>{user ? <UserRound className="h-5 w-5 text-white/60" aria-label="Usuário autenticado" /> : null}</div>
+      <div className="relative z-10 flex items-center gap-3 text-right"><div className="hidden sm:block"><span className="block text-xs font-bold">SÃO PAULO</span><span className="block text-[9px] uppercase tracking-widest text-white/40">Governo do Estado</span></div>{user ? <UserRound className="h-5 w-5 text-white/60" aria-label="Usuário autenticado" /> : null}<ThemeToggle /></div>
     </header>
   );
 }
