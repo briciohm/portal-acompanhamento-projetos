@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assignableProfiles, canAssignProfile, canManageContent, canUseMasterProfile, isMasterAccount, MASTER_ACCOUNT_EMAIL, roleForProfile, USER_PROFILES, USER_PROFILE_LABELS, USER_PROFILE_PERMISSION_MATRIX } from "../shared/userRoles";
+import { assignableProfiles, canAccessGovernance, canAssignProfile, canManageContent, canUseMasterProfile, isMasterAccount, MASTER_ACCOUNT_EMAIL, roleForProfile, USER_PROFILES, USER_PROFILE_LABELS, USER_PROFILE_PERMISSION_MATRIX } from "../shared/userRoles";
 
 describe("perfis de usuários", () => {
   it("expõe os cinco perfis institucionais com Master no topo", () => {
@@ -29,6 +29,14 @@ describe("perfis de usuários", () => {
     expect(canManageContent("gestor_setor")).toBe(true);
     expect(canManageContent("editor_projetos")).toBe(true);
     expect(canManageContent("consulta")).toBe(false);
+  });
+
+  it("restringe a Governança ao Administrador Geral e ao Master", () => {
+    expect(canAccessGovernance("admin_master")).toBe(true);
+    expect(canAccessGovernance("admin_geral")).toBe(true);
+    expect(canAccessGovernance("gestor_setor")).toBe(false);
+    expect(canAccessGovernance("editor_projetos")).toBe(false);
+    expect(canAccessGovernance("consulta")).toBe(false);
   });
 
   it("permite somente perfis estritamente inferiores e nunca replica o Master", () => {

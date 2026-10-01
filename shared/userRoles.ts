@@ -44,6 +44,10 @@ export function canManageContent(profile: UserProfile) {
   return profile !== "consulta";
 }
 
+export function canAccessGovernance(profile: UserProfile) {
+  return profile === "admin_geral" || profile === "admin_master";
+}
+
 export function canAssignProfile(actorProfile: UserProfile, targetProfile: UserProfile) {
   return targetProfile !== "admin_master" && USER_PROFILE_LEVELS[targetProfile] < USER_PROFILE_LEVELS[actorProfile];
 }
