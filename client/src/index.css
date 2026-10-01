@@ -133,3 +133,27 @@ button:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Back-office: navigation is intentionally quieter than the editorial content. */
+.admin-nav {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 0.85rem;
+  padding: 0.25rem;
+}
+.admin-nav > button {
+  color: rgba(255,255,255,.68);
+  border-color: transparent;
+  min-height: 2.25rem;
+  transition: background-color 180ms ease-out, color 180ms ease-out, transform 160ms ease-out;
+}
+.admin-nav > button:hover { color: #fff; background: rgba(255,255,255,.08); }
+.admin-nav > button[data-state="active"] {
+  color: #171717;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.16);
+}
+.admin-shell [data-slot="card"] {
+  border-color: rgba(255,255,255,.08);
+  border-radius: 1rem;
+  box-shadow: 0 14px 32px rgba(0,0,0,.12);
+}
