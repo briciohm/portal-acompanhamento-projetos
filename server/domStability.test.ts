@@ -15,9 +15,9 @@ describe("DOM stability safeguards", () => {
     expect(source).toContain("<SelectPrimitive.Content");
   });
 
-  it("keeps tab panels mounted during administrative navigation", () => {
+  it("unmounts inactive tab panels during administrative navigation", () => {
     const source = readClientFile("client/src/components/ui/tabs.tsx");
-    expect(source).toContain("forceMount");
+    expect(source).not.toContain("forceMount");
   });
 
   it("does not install or import the previous global removeChild guard", () => {
