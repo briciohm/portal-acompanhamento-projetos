@@ -349,40 +349,56 @@ function AdminContent() {
           <span id="cadastro" className="sr-only">
             Cadastro
           </span>
-          <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,.12)] lg:grid-cols-[1fr_auto]">
-            <div>
+          <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,.12)] lg:grid-cols-[minmax(0,1fr)_minmax(0,auto)]">
+            <div className="min-w-0">
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[.2em] text-white/45">
                 Operação do conteúdo
               </p>
-              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-1 bg-transparent sm:flex sm:flex-wrap">
-                <TabsTrigger value="cadastro">Cadastro</TabsTrigger>
-                <TabsTrigger value="visibilidade">Visibilidade</TabsTrigger>
-                <TabsTrigger value="projeto">Atualizar projeto</TabsTrigger>
-                <TabsTrigger value="evidencias">Evidências</TabsTrigger>
+              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3 lg:flex lg:flex-wrap">
+                <TabsTrigger value="cadastro">
+                  <Plus className="h-4 w-4" />
+                  <span>Cadastro</span>
+                </TabsTrigger>
+                <TabsTrigger value="visibilidade">
+                  <Eye className="h-4 w-4" />
+                  <span>Visibilidade</span>
+                </TabsTrigger>
+                <TabsTrigger value="projeto">
+                  <Pencil className="h-4 w-4" />
+                  <span>Atualizar projeto</span>
+                </TabsTrigger>
+                <TabsTrigger value="evidencias">
+                  <Upload className="h-4 w-4" />
+                  <span>Evidências</span>
+                </TabsTrigger>
                 <TabsTrigger value="documentos">
-                  Documentos e materiais
+                  <ScrollText className="h-4 w-4" />
+                  <span>Documentos e materiais</span>
                 </TabsTrigger>
               </TabsList>
             </div>
-            <div className="lg:border-l lg:border-white/10 lg:pl-3">
+            <div className="min-w-0 lg:border-l lg:border-white/10 lg:pl-3">
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[.2em] text-white/45">
                 Governança e acesso
               </p>
-              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-1 bg-transparent sm:flex">
+              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3">
                 {hasGovernanceAccess && (
                   <TabsTrigger value="governanca">
-                    <ShieldCheck className="mr-1.5 h-4 w-4" />
-                    Governança
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>Governança</span>
                   </TabsTrigger>
                 )}
                 {currentProfile === "admin_master" && (
                   <TabsTrigger value="avancado">
-                    <LockKeyhole className="mr-1.5 h-4 w-4" />
-                    Avançado
+                    <LockKeyhole className="h-4 w-4" />
+                    <span>Avançado</span>
                   </TabsTrigger>
                 )}
                 {currentProfile !== "consulta" && (
-                  <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+                  <TabsTrigger value="usuarios">
+                    <UserPlus className="h-4 w-4" />
+                    <span>Usuários</span>
+                  </TabsTrigger>
                 )}
               </TabsList>
             </div>
