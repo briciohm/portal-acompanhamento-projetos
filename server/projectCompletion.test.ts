@@ -3,7 +3,10 @@ import { normalizeProjectUpdate } from "./db";
 
 describe("project completion update", () => {
   it("preserves explicit completion in automatic mode", () => {
-    const result = normalizeProjectUpdate({ isManual: false, status: "concluído" });
+    const result = normalizeProjectUpdate({
+      isManual: false,
+      status: "concluído",
+    });
 
     expect(result.explicitlyConcluding).toBe(true);
     expect(result.normalizedInput).toMatchObject({
@@ -16,17 +19,30 @@ describe("project completion update", () => {
   });
 
   it("clears explicit completion when the user intentionally reopens the project", () => {
-    const result = normalizeProjectUpdate({ isManual: false, status: "andamento" });
+    const result = normalizeProjectUpdate({
+      isManual: false,
+      status: "andamento",
+    });
 
     expect(result.explicitlyConcluding).toBe(false);
-    expect(result.normalizedInput).toMatchObject({ status: "andamento", completionConfirmed: false });
+    expect(result.normalizedInput).toMatchObject({
+      status: "andamento",
+      completionConfirmed: false,
+    });
   });
 
   it("keeps automatic synchronization for non-completion updates", () => {
-    const result = normalizeProjectUpdate({ isManual: false, status: "andamento" });
+    const result = normalizeProjectUpdate({
+      isManual: false,
+      status: "andamento",
+    });
 
     expect(result.explicitlyConcluding).toBe(false);
-    expect(result.normalizedInput).toMatchObject({ isManual: false, status: "andamento", manualObservation: null });
+    expect(result.normalizedInput).toMatchObject({
+      isManual: false,
+      status: "andamento",
+      manualObservation: null,
+    });
     expect(result.normalizedInput.progress).toBeUndefined();
   });
 
@@ -34,6 +50,9 @@ describe("project completion update", () => {
     const result = normalizeProjectUpdate({ progress: 100 });
 
     expect(result.explicitlyConcluding).toBe(false);
-    expect(result.normalizedInput).toMatchObject({ progress: 100, status: "concluído" });
+    expect(result.normalizedInput).toMatchObject({
+      progress: 100,
+      status: "concluído",
+    });
   });
 });

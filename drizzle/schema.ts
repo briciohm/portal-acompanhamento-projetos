@@ -1,4 +1,13 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import {
+  int,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+  decimal,
+  boolean,
+} from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -7,7 +16,15 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  profile: mysqlEnum("profile", ["admin_master", "admin_geral", "gestor_setor", "editor_projetos", "consulta"]).default("consulta").notNull(),
+  profile: mysqlEnum("profile", [
+    "admin_master",
+    "admin_geral",
+    "gestor_setor",
+    "editor_projetos",
+    "consulta",
+  ])
+    .default("consulta")
+    .notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -21,15 +38,18 @@ export const systemSettings = mysqlTable("system_settings", {
   updatedBy: int("updatedBy"),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
-export const systemSettingsAuditLogs = mysqlTable("system_settings_audit_logs", {
-  id: int("id").autoincrement().primaryKey(),
-  settingKey: varchar("settingKey", { length: 100 }).notNull(),
-  previousValue: varchar("previousValue", { length: 32 }),
-  newValue: varchar("newValue", { length: 32 }).notNull(),
-  changedBy: int("changedBy").notNull(),
-  reason: text("reason"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+export const systemSettingsAuditLogs = mysqlTable(
+  "system_settings_audit_logs",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    settingKey: varchar("settingKey", { length: 100 }).notNull(),
+    previousValue: varchar("previousValue", { length: 32 }),
+    newValue: varchar("newValue", { length: 32 }).notNull(),
+    changedBy: int("changedBy").notNull(),
+    reason: text("reason"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  }
+);
 
 export const areas = mysqlTable("project_areas", {
   id: int("id").autoincrement().primaryKey(),
@@ -72,7 +92,15 @@ export const projects = mysqlTable("projects", {
   name: varchar("name", { length: 200 }).notNull(),
   code: varchar("code", { length: 32 }).notNull().unique(),
   summary: text("summary"),
-  status: mysqlEnum("status", ["estruturação", "andamento", "execução", "concluído", "pausado"]).default("andamento").notNull(),
+  status: mysqlEnum("status", [
+    "estruturação",
+    "andamento",
+    "execução",
+    "concluído",
+    "pausado",
+  ])
+    .default("andamento")
+    .notNull(),
   owner: varchar("owner", { length: 160 }),
   progress: int("progress").default(0).notNull(),
   isManual: boolean("isManual").default(false).notNull(),
@@ -101,21 +129,26 @@ export const projectStages = mysqlTable("project_stages", {
   projectId: int("projectId").notNull(),
   title: varchar("title", { length: 180 }).notNull(),
   description: text("description"),
-  status: mysqlEnum("status", ["pendente", "em andamento", "concluída"]).default("pendente").notNull(),
+  status: mysqlEnum("status", ["pendente", "em andamento", "concluída"])
+    .default("pendente")
+    .notNull(),
   progressStatus: int("progressStatus").default(0).notNull(),
   orderIndex: int("orderIndex").default(0).notNull(),
   dueDate: timestamp("dueDate"),
 });
 
-export const projectStageStatusHistory = mysqlTable("project_stage_status_history", {
-  id: int("id").autoincrement().primaryKey(),
-  projectId: int("projectId").notNull(),
-  stageId: int("stageId").notNull(),
-  previousStatus: int("previousStatus").notNull(),
-  nextStatus: int("nextStatus").notNull(),
-  changedBy: int("changedBy"),
-  changedAt: timestamp("changedAt").defaultNow().notNull(),
-});
+export const projectStageStatusHistory = mysqlTable(
+  "project_stage_status_history",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    projectId: int("projectId").notNull(),
+    stageId: int("stageId").notNull(),
+    previousStatus: int("previousStatus").notNull(),
+    nextStatus: int("nextStatus").notNull(),
+    changedBy: int("changedBy"),
+    changedAt: timestamp("changedAt").defaultNow().notNull(),
+  }
+);
 
 export const clientDiagnosticEvents = mysqlTable("client_diagnostic_events", {
   id: int("id").autoincrement().primaryKey(),
@@ -160,13 +193,15 @@ export const projectDocuments = mysqlTable("project_documents", {
 
 export type User = typeof users.$inferSelect;
 export type SystemSetting = typeof systemSettings.$inferSelect;
-export type SystemSettingsAuditLog = typeof systemSettingsAuditLogs.$inferSelect;
+export type SystemSettingsAuditLog =
+  typeof systemSettingsAuditLogs.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Area = typeof areas.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ProjectMetric = typeof projectMetrics.$inferSelect;
 export type ProjectStage = typeof projectStages.$inferSelect;
-export type ProjectStageStatusHistory = typeof projectStageStatusHistory.$inferSelect;
+export type ProjectStageStatusHistory =
+  typeof projectStageStatusHistory.$inferSelect;
 export type ClientDiagnosticEvent = typeof clientDiagnosticEvents.$inferSelect;
 export type ProjectMilestone = typeof projectMilestones.$inferSelect;
 export type ProjectPhoto = typeof projectPhotos.$inferSelect;

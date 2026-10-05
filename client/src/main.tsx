@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc";
-import { COOKIE_NAME, UNAUTHED_ERR_MSG } from '@shared/const';
+import { COOKIE_NAME, UNAUTHED_ERR_MSG } from "@shared/const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
@@ -7,19 +7,42 @@ import superjson from "superjson";
 import App from "./App";
 import { startLogin } from "./const";
 import "./index.css";
-import { containsResizeObserverWarning, isResizeObserverWarning } from "./_core/resizeObserverGuard";
+import {
+  containsResizeObserverWarning,
+  isResizeObserverWarning,
+} from "./_core/resizeObserverGuard";
 import { normalizeClientError } from "./_core/clientErrorGuard";
 const queryClient = new QueryClient();
 
-const reportClientDiagnostic = (type: string, message: string, context?: unknown) => {
+const reportClientDiagnostic = (
+  type: string,
+  message: string,
+  context?: unknown
+) => {
   if (typeof window === "undefined") return;
   try {
-    const safeContext = context === undefined ? undefined : JSON.stringify(context, (_key, value) => typeof value === "string" && value.length > 800 ? value.slice(0, 800) : value).slice(0, 4000);
+    const safeContext =
+      context === undefined
+        ? undefined
+        : JSON.stringify(context, (_key, value) =>
+            typeof value === "string" && value.length > 800
+              ? value.slice(0, 800)
+              : value
+          ).slice(0, 4000);
     void fetch("/api/trpc/dashboard.reportClientDiagnostic?batch=1", {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ 0: { json: { type, message: message.slice(0, 4000), route: window.location.pathname, context: safeContext } } }),
+      body: JSON.stringify({
+        0: {
+          json: {
+            type,
+            message: message.slice(0, 4000),
+            route: window.location.pathname,
+            context: safeContext,
+          },
+        },
+      }),
     }).catch(() => undefined);
   } catch {
     // Diagnostics must never interfere with the application.
@@ -52,17 +75,23 @@ if (typeof window !== "undefined") {
       const clientError = normalizeClientError(event.error, event.message);
       if (clientError) {
         originalConsoleError("[Client Error]", clientError);
-        reportClientDiagnostic("client-error", clientError instanceof Error ? clientError.message : clientError);
+        reportClientDiagnostic(
+          "client-error",
+          clientError instanceof Error ? clientError.message : clientError
+        );
       }
     },
-    true,
+    true
   );
 
   window.addEventListener("unhandledrejection", event => {
     const rejection = normalizeClientError(event.reason);
     if (rejection) {
       originalConsoleError("[Unhandled Promise Rejection]", rejection);
-      reportClientDiagnostic("unhandled-rejection", rejection instanceof Error ? rejection.message : rejection);
+      reportClientDiagnostic(
+        "unhandled-rejection",
+        rejection instanceof Error ? rejection.message : rejection
+      );
     }
   });
 }
@@ -83,7 +112,10 @@ queryClient.getQueryCache().subscribe(event => {
     const error = event.query.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Query Error]", error);
-    reportClientDiagnostic("api-query-error", error instanceof Error ? error.message : String(error));
+    reportClientDiagnostic(
+      "api-query-error",
+      error instanceof Error ? error.message : String(error)
+    );
   }
 });
 
@@ -92,7 +124,10 @@ queryClient.getMutationCache().subscribe(event => {
     const error = event.mutation.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Mutation Error]", error);
-    reportClientDiagnostic("api-mutation-error", error instanceof Error ? error.message : String(error));
+    reportClientDiagnostic(
+      "api-mutation-error",
+      error instanceof Error ? error.message : String(error)
+    );
   }
 });
 

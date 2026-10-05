@@ -1,5 +1,8 @@
 export function normalizeProjectPrefix(value: string | null | undefined) {
-  const normalized = (value ?? "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const normalized = (value ?? "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
   return normalized || "PROJ";
 }
 

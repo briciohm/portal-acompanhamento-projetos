@@ -23,18 +23,27 @@ function contextWithRole(role: "admin" | "user"): TrpcContext {
 describe("admin access control", () => {
   it("blocks non-admin users from the back-office procedures", async () => {
     const caller = appRouter.createCaller(contextWithRole("user"));
-    await expect(caller.admin.createArea({ name: "Área teste", code: "TESTE" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(
+      caller.admin.createArea({ name: "Área teste", code: "TESTE" })
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("blocks non-admin users from changing project and area visibility", async () => {
     const caller = appRouter.createCaller(contextWithRole("user"));
-    await expect(caller.admin.toggleProjectVisibility({ id: 90001, isHidden: true })).rejects.toMatchObject({ code: "FORBIDDEN" });
-    await expect(caller.admin.toggleAreaVisibility({ id: 1, isHidden: true })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(
+      caller.admin.toggleProjectVisibility({ id: 90001, isHidden: true })
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(
+      caller.admin.toggleAreaVisibility({ id: 1, isHidden: true })
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("exposes hidden-state fields through administrative collections", async () => {
     const caller = appRouter.createCaller(contextWithRole("admin"));
-    const [areas, projects] = await Promise.all([caller.admin.areas(), caller.admin.projects({ includeHidden: true })]);
+    const [areas, projects] = await Promise.all([
+      caller.admin.areas(),
+      caller.admin.projects({ includeHidden: true }),
+    ]);
     expect(Array.isArray(areas)).toBe(true);
     expect(Array.isArray(projects)).toBe(true);
     if (areas[0]) expect(areas[0]).toHaveProperty("isHidden");
@@ -56,7 +65,8 @@ describe("admin access control", () => {
     const result = await caller.admin.updateProject({
       id: 90001,
       data: {
-        summary: "Projeto cadastrado na carteira. O resumo executivo será elaborado após o recebimento ou localização do Plano de Ação correspondente.",
+        summary:
+          "Projeto cadastrado na carteira. O resumo executivo será elaborado após o recebimento ou localização do Plano de Ação correspondente.",
       },
     });
 

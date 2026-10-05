@@ -1,4 +1,7 @@
-export function normalizeClientError(error: unknown, message?: string | null): string | Error | null {
+export function normalizeClientError(
+  error: unknown,
+  message?: string | null
+): string | Error | null {
   if (error instanceof Error) return error;
   if (typeof error === "string" && error.trim()) return error.trim();
   if (typeof message === "string" && message.trim()) return message.trim();

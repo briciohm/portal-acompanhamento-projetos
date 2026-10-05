@@ -16,7 +16,10 @@ interface ThemeProviderProps {
   switchable?: boolean;
 }
 
-export function resolveTheme(defaultTheme: Theme, stored: string | null): Theme {
+export function resolveTheme(
+  defaultTheme: Theme,
+  stored: string | null
+): Theme {
   return stored === "dark" || stored === "light" ? stored : defaultTheme;
 }
 

@@ -9,8 +9,16 @@ describe("progress calculation", () => {
   });
 
   it("calculates the rounded average across all stages", () => {
-    expect(calculateStageProgress([{ progressStatus: 0 }, { progressStatus: 1 }, { progressStatus: 2 }])).toBe(50);
-    expect(calculateStageProgress([{ progressStatus: 1 }, { progressStatus: 2 }])).toBe(75);
+    expect(
+      calculateStageProgress([
+        { progressStatus: 0 },
+        { progressStatus: 1 },
+        { progressStatus: 2 },
+      ])
+    ).toBe(50);
+    expect(
+      calculateStageProgress([{ progressStatus: 1 }, { progressStatus: 2 }])
+    ).toBe(75);
   });
 
   it("returns zero when a project has no stages", () => {

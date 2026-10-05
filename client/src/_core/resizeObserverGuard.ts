@@ -11,8 +11,9 @@ function toErrorMessage(value: unknown) {
 export function isResizeObserverWarning(message: unknown) {
   const normalized = toErrorMessage(message);
   return (
-    normalized.startsWith("ResizeObserver loop completed with undelivered notifications") ||
-    normalized.startsWith("ResizeObserver loop limit exceeded")
+    normalized.startsWith(
+      "ResizeObserver loop completed with undelivered notifications"
+    ) || normalized.startsWith("ResizeObserver loop limit exceeded")
   );
 }
 

@@ -5,13 +5,20 @@ export type PortfolioProject = {
   status: string;
 };
 
-export function filterProjectsByPortfolio<T extends PortfolioProject>(projects: readonly T[], filter: PortfolioFilter): T[] {
+export function filterProjectsByPortfolio<T extends PortfolioProject>(
+  projects: readonly T[],
+  filter: PortfolioFilter
+): T[] {
   if (filter === "completed") {
-    return projects.filter(project => project.progress >= 100 || project.status === "concluído");
+    return projects.filter(
+      project => project.progress >= 100 || project.status === "concluído"
+    );
   }
 
   if (filter === "active") {
-    return projects.filter(project => project.progress < 100 && project.status !== "concluído");
+    return projects.filter(
+      project => project.progress < 100 && project.status !== "concluído"
+    );
   }
 
   return [...projects];
@@ -40,12 +47,17 @@ function normalize(value: string | null | undefined) {
     .replace(/[^A-Z0-9]/g, "");
 }
 
-export function filterProjectsBySector<T extends SectorProject>(projects: readonly T[], sector: SectorFilter): T[] {
+export function filterProjectsBySector<T extends SectorProject>(
+  projects: readonly T[],
+  sector: SectorFilter
+): T[] {
   if (sector === "all") return [...projects];
 
   const aliases = sectorAliases[sector];
   return projects.filter(project => {
-    const values = [project.code, project.areaCode, project.areaName].map(normalize);
+    const values = [project.code, project.areaCode, project.areaName].map(
+      normalize
+    );
     return aliases.some(alias => values.some(value => value.includes(alias)));
   });
 }

@@ -1,9 +1,34 @@
-import { CalendarDays, CheckCircle2, Clock3, Download, FileText, Image as ImageIcon, Loader2, MapPin, Target } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  Download,
+  FileText,
+  Image as ImageIcon,
+  Loader2,
+  MapPin,
+  Target,
+} from "lucide-react";
 import { useState } from "react";
 import { useRoute } from "wouter";
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { trpc } from "@/lib/trpc";
-import { InstitutionalHeader, InstitutionalFooter, NavigationBar, StatusBadge } from "@/components/PortalShell";
+import {
+  InstitutionalHeader,
+  InstitutionalFooter,
+  NavigationBar,
+  StatusBadge,
+} from "@/components/PortalShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
@@ -11,23 +36,414 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function ProjectView() {
   const [, params] = useRoute("/projeto/:id");
-  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; title?: string | null } | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<{
+    url: string;
+    title?: string | null;
+  } | null>(null);
   const projectId = Number(params?.id);
-  const { data, isLoading, error } = trpc.dashboard.project.useQuery({ id: projectId }, { enabled: Number.isFinite(projectId), retry: false });
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-[#e30613]" /></div>;
-  if (!Number.isFinite(projectId) || error) return <div className="min-h-screen p-10 text-center"><h1 className="text-2xl font-black">Não foi possível carregar este projeto</h1><p className="mt-2 text-sm text-neutral-500">Volte ao painel executivo e tente novamente.</p></div>;
-  if (!data) return <div className="p-10 text-center"><h1 className="text-2xl font-black">Projeto não encontrado</h1></div>;
+  const { data, isLoading, error } = trpc.dashboard.project.useQuery(
+    { id: projectId },
+    { enabled: Number.isFinite(projectId), retry: false }
+  );
+  if (isLoading)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-[#e30613]" />
+      </div>
+    );
+  if (!Number.isFinite(projectId) || error)
+    return (
+      <div className="min-h-screen p-10 text-center">
+        <h1 className="text-2xl font-black">
+          Não foi possível carregar este projeto
+        </h1>
+        <p className="mt-2 text-sm text-neutral-500">
+          Volte ao painel executivo e tente novamente.
+        </p>
+      </div>
+    );
+  if (!data)
+    return (
+      <div className="p-10 text-center">
+        <h1 className="text-2xl font-black">Projeto não encontrado</h1>
+      </div>
+    );
   const { project, metrics, stages, milestones, photos, documents } = data;
-  const metricChart = metrics.map(metric => ({ label: metric.label, valor: Number(metric.value), meta: metric.target ? Number(metric.target) : undefined }));
-  const timeline = milestones.map(item => ({ date: new Date(item.milestoneDate).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }), marco: item.title }));
-  return <div className="min-h-screen bg-[#080808] text-white institutional-pattern"><InstitutionalHeader section={project.name} /><main className="mx-auto max-w-[1500px] px-5 py-10 md:px-10"><section className="mb-10 grid gap-8 rounded-2xl bg-[#171717] p-6 text-white shadow-xl md:p-8 lg:grid-cols-[1.35fr_.65fr]"><div><p className="text-xs font-bold uppercase tracking-[.24em] text-[#e30613]">Nível 2 · Visão do projeto</p><div className="mt-3 flex flex-wrap items-center gap-3"><div><h1 className="text-4xl font-black uppercase tracking-tight md:text-5xl">{project.name}</h1><p className="mt-2 text-sm font-bold uppercase tracking-[.18em] text-white/55">{project.code}</p></div><StatusBadge status={project.status} /></div><p className="mt-5 text-sm font-bold text-white/85">Responsável: {project.owner || "Não informado"}</p><p className="mt-3 max-w-3xl text-base leading-7 text-white/70">{project.summary || "Resumo executivo ainda não cadastrado."}</p></div><Card className="border-black/10 bg-[#171717] text-white"><CardContent className="p-6"><p className="text-xs uppercase tracking-[.2em] text-white/50">Progresso atual</p><p className="mt-3 text-6xl font-black text-[#e30613]"><ProgressIndicator progress={project.progress} isManual={project.isManual} manualObservation={project.manualObservation} className="text-[#e30613]" /></p><Progress value={project.progress} className="mt-5 bg-white/10 [&>div]:bg-[#e30613]" /><div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-5 text-sm"><div><span className="block text-xs text-white/50">Responsável</span><strong>{project.owner || "Não informado"}</strong></div><div><span className="block text-xs text-white/50">Meta</span><strong>{project.targetDate ? new Date(project.targetDate).toLocaleDateString("pt-BR") : "A definir"}</strong></div></div></CardContent></Card></section>
-      <section className="grid gap-6 xl:grid-cols-2"><ChartCard title="Evolução dos indicadores" icon={<Target />}><div className="h-64">{metricChart.length ? <ResponsiveContainer width="100%" height="100%"><LineChart data={metricChart} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}><CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" /><XAxis dataKey="label" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} /><Tooltip /><Line type="monotone" dataKey="valor" stroke="#e30613" strokeWidth={3} dot={{ fill: "#e30613", r: 4 }} /></LineChart></ResponsiveContainer> : <EmptyChart text="Cadastre medições de KPI no back-office para visualizar a evolução." />}</div></ChartCard><ChartCard title="Comparativo de metas" icon={<BarChartIcon />}><div className="h-64">{metricChart.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={metricChart} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}><CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" /><XAxis dataKey="label" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} /><Tooltip /><Bar dataKey="valor" fill="#171717" radius={[4, 4, 0, 0]} /><Bar dataKey="meta" fill="#e30613" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer> : <EmptyChart text="Inclua valores e metas para gerar o comparativo." />}</div></ChartCard></section>
-      <section className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_.9fr]"><Card className="border-black/10"><CardHeader><CardTitle className="flex items-center gap-3 text-xl font-black"><CalendarDays className="h-5 w-5 text-[#e30613]" />Cronograma de etapas</CardTitle></CardHeader><CardContent>{stages.length ? <div className="space-y-5">{stages.map((stage, index) => <div key={stage.id} className="relative flex gap-4"><div className="flex flex-col items-center"><span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-black ${stage.status === "concluída" ? "bg-[#e30613] text-white" : "bg-neutral-100 text-neutral-500"}`}>{index + 1}</span>{index < stages.length - 1 ? <span className="h-full w-px bg-neutral-200" /> : null}</div><div className="pb-4"><div className="flex flex-wrap items-center gap-2"><h3 className="font-black">{stage.title}</h3><span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{stage.status}</span></div><p className="mt-3 text-sm leading-6 text-neutral-500">{stage.description || "Sem descrição."}</p><p className="mt-2 text-xs font-semibold text-neutral-400">Peso no progresso: {stage.progressStatus === 2 ? "100%" : stage.progressStatus === 1 ? "50%" : "0%"}</p>{stage.dueDate ? <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-neutral-500"><Clock3 className="h-3 w-3" />{new Date(stage.dueDate).toLocaleDateString("pt-BR")}</p> : null}</div></div>)}</div> : <EmptyChart text="As etapas cadastradas no back-office aparecerão aqui." />}</CardContent></Card><Card className="border-black/10"><CardHeader><CardTitle className="flex items-center gap-3 text-xl font-black"><MapPin className="h-5 w-5 text-[#e30613]" />Linha do tempo de marcos</CardTitle></CardHeader><CardContent>{timeline.length ? <div className="h-[290px]"><ResponsiveContainer width="100%" height="100%"><LineChart data={timeline} layout="vertical" margin={{ top: 10, right: 20, left: 0, bottom: 0 }}><CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" /><XAxis type="number" hide /><YAxis type="category" dataKey="date" width={58} tick={{ fontSize: 11 }} /><Tooltip /><Line dataKey="marco" stroke="#e30613" strokeWidth={3} dot={{ fill: "#171717", r: 5 }} /></LineChart></ResponsiveContainer></div> : <EmptyChart text="Cadastre marcos para montar a linha do tempo." />}</CardContent></Card></section>
-      <section className="mt-8"><Card className="border-black/10"><CardHeader><CardTitle className="flex items-center gap-3 text-xl font-black"><ImageIcon className="h-5 w-5 text-[#e30613]" />Galeria de fotos</CardTitle></CardHeader><CardContent>{photos.length ? <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">{photos.map(photo => <figure key={photo.id} className="group cursor-zoom-in overflow-hidden bg-neutral-100" onClick={() => setSelectedPhoto(photo)}><img loading="lazy" src={photo.url} alt={photo.title || "Registro do projeto"} className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-105" /><figcaption className="p-3"><p className="text-sm font-bold">{photo.title || "Registro visual"}</p><p className="mt-1 line-clamp-2 text-xs text-neutral-500">{photo.description}</p></figcaption></figure>)}</div> : <div className="flex flex-col items-center justify-center py-16 text-center"><ImageIcon className="h-10 w-10 text-neutral-300" /><p className="mt-4 font-bold">Nenhuma foto cadastrada</p><p className="mt-1 text-sm text-neutral-500">A galeria será atualizada pelo back-office.</p></div>}</CardContent></Card></section>
-      <section className="mt-8"><Card className="border-black/10"><CardHeader><CardTitle className="flex items-center gap-3 text-xl font-black"><FileText className="h-5 w-5 text-[#e30613]" />Documentos e materiais do projeto</CardTitle></CardHeader><CardContent>{documents.length ? <div className="grid gap-3 md:grid-cols-2">{documents.map(document => <a key={document.id} href={document.url} target="_blank" rel="noreferrer" className="group flex items-center justify-between gap-4 border border-neutral-200 bg-white p-4 text-neutral-900 transition hover:border-[#e30613] hover:shadow-sm"><div className="flex min-w-0 items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#fff0f1] text-[#e30613]"><FileText className="h-5 w-5" /></span><div className="min-w-0"><p className="truncate text-sm font-black">{document.title}</p><p className="mt-1 truncate text-xs text-neutral-500">{document.fileName}{document.category ? ` · ${document.category}` : ""}</p></div></div><Download className="h-4 w-4 shrink-0 text-neutral-400 transition group-hover:text-[#e30613]" /></a>)}</div> : <div className="flex flex-col items-center justify-center py-12 text-center"><FileText className="h-10 w-10 text-neutral-300" /><p className="mt-4 font-bold">Nenhum documento cadastrado</p><p className="mt-1 text-sm text-neutral-500">Os materiais serão adicionados pelo back-office.</p></div>}</CardContent></Card></section>
-      <section className="mt-8 border-l-4 border-[#e30613] bg-[#fff0f1] p-6"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#a0040d]">Próximos passos</p><p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#4f1b1e]">{project.nextSteps || "Nenhum próximo passo informado."}</p></section>
-    </main><InstitutionalFooter /><Dialog open={Boolean(selectedPhoto)} onOpenChange={() => setSelectedPhoto(null)}><DialogContent className="max-w-4xl border-0 bg-black p-2"><img src={selectedPhoto?.url} alt={selectedPhoto?.title || "Evidência ampliada"} className="max-h-[78vh] w-full object-contain" /></DialogContent></Dialog><NavigationBar backHref="/" nextHref="/#carteira" backLabel="Voltar ao painel" /></div>;
+  const metricChart = metrics.map(metric => ({
+    label: metric.label,
+    valor: Number(metric.value),
+    meta: metric.target ? Number(metric.target) : undefined,
+  }));
+  const timeline = milestones.map(item => ({
+    date: new Date(item.milestoneDate).toLocaleDateString("pt-BR", {
+      month: "short",
+      year: "2-digit",
+    }),
+    marco: item.title,
+  }));
+  return (
+    <div className="min-h-screen bg-[#080808] text-white institutional-pattern">
+      <InstitutionalHeader section={project.name} />
+      <main className="mx-auto max-w-[1500px] px-5 py-10 md:px-10">
+        <section className="mb-10 grid gap-8 rounded-2xl bg-[#171717] p-6 text-white shadow-xl md:p-8 lg:grid-cols-[1.35fr_.65fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.24em] text-[#e30613]">
+              Nível 2 · Visão do projeto
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <div>
+                <h1 className="text-4xl font-black uppercase tracking-tight md:text-5xl">
+                  {project.name}
+                </h1>
+                <p className="mt-2 text-sm font-bold uppercase tracking-[.18em] text-white/55">
+                  {project.code}
+                </p>
+              </div>
+              <StatusBadge status={project.status} />
+            </div>
+            <p className="mt-5 text-sm font-bold text-white/85">
+              Responsável: {project.owner || "Não informado"}
+            </p>
+            <p className="mt-3 max-w-3xl text-base leading-7 text-white/70">
+              {project.summary || "Resumo executivo ainda não cadastrado."}
+            </p>
+          </div>
+          <Card className="border-black/10 bg-[#171717] text-white">
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-[.2em] text-white/50">
+                Progresso atual
+              </p>
+              <p className="mt-3 text-6xl font-black text-[#e30613]">
+                <ProgressIndicator
+                  progress={project.progress}
+                  isManual={project.isManual}
+                  manualObservation={project.manualObservation}
+                  className="text-[#e30613]"
+                />
+              </p>
+              <Progress
+                value={project.progress}
+                className="mt-5 bg-white/10 [&>div]:bg-[#e30613]"
+              />
+              <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-5 text-sm">
+                <div>
+                  <span className="block text-xs text-white/50">
+                    Responsável
+                  </span>
+                  <strong>{project.owner || "Não informado"}</strong>
+                </div>
+                <div>
+                  <span className="block text-xs text-white/50">Meta</span>
+                  <strong>
+                    {project.targetDate
+                      ? new Date(project.targetDate).toLocaleDateString("pt-BR")
+                      : "A definir"}
+                  </strong>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+        <section className="grid gap-6 xl:grid-cols-2">
+          <ChartCard title="Evolução dos indicadores" icon={<Target />}>
+            <div className="h-64">
+              {metricChart.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={metricChart}
+                    margin={{ top: 10, right: 10, bottom: 0, left: -20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                    <XAxis dataKey="label" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="valor"
+                      stroke="#e30613"
+                      strokeWidth={3}
+                      dot={{ fill: "#e30613", r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart text="Cadastre medições de KPI no back-office para visualizar a evolução." />
+              )}
+            </div>
+          </ChartCard>
+          <ChartCard title="Comparativo de metas" icon={<BarChartIcon />}>
+            <div className="h-64">
+              {metricChart.length ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={metricChart}
+                    margin={{ top: 10, right: 10, bottom: 0, left: -20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                    <XAxis dataKey="label" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Bar dataKey="valor" fill="#171717" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="meta" fill="#e30613" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChart text="Inclua valores e metas para gerar o comparativo." />
+              )}
+            </div>
+          </ChartCard>
+        </section>
+        <section className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+          <Card className="border-black/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-xl font-black">
+                <CalendarDays className="h-5 w-5 text-[#e30613]" />
+                Cronograma de etapas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {stages.length ? (
+                <div className="space-y-5">
+                  {stages.map((stage, index) => (
+                    <div key={stage.id} className="relative flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-black ${stage.status === "concluída" ? "bg-[#e30613] text-white" : "bg-neutral-100 text-neutral-500"}`}
+                        >
+                          {index + 1}
+                        </span>
+                        {index < stages.length - 1 ? (
+                          <span className="h-full w-px bg-neutral-200" />
+                        ) : null}
+                      </div>
+                      <div className="pb-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-black">{stage.title}</h3>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                            {stage.status}
+                          </span>
+                        </div>
+                        <p className="mt-3 text-sm leading-6 text-neutral-500">
+                          {stage.description || "Sem descrição."}
+                        </p>
+                        <p className="mt-2 text-xs font-semibold text-neutral-400">
+                          Peso no progresso:{" "}
+                          {stage.progressStatus === 2
+                            ? "100%"
+                            : stage.progressStatus === 1
+                              ? "50%"
+                              : "0%"}
+                        </p>
+                        {stage.dueDate ? (
+                          <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-neutral-500">
+                            <Clock3 className="h-3 w-3" />
+                            {new Date(stage.dueDate).toLocaleDateString(
+                              "pt-BR"
+                            )}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyChart text="As etapas cadastradas no back-office aparecerão aqui." />
+              )}
+            </CardContent>
+          </Card>
+          <Card className="border-black/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-xl font-black">
+                <MapPin className="h-5 w-5 text-[#e30613]" />
+                Linha do tempo de marcos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {timeline.length ? (
+                <div className="h-[290px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={timeline}
+                      layout="vertical"
+                      margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                      <XAxis type="number" hide />
+                      <YAxis
+                        type="category"
+                        dataKey="date"
+                        width={58}
+                        tick={{ fontSize: 11 }}
+                      />
+                      <Tooltip />
+                      <Line
+                        dataKey="marco"
+                        stroke="#e30613"
+                        strokeWidth={3}
+                        dot={{ fill: "#171717", r: 5 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <EmptyChart text="Cadastre marcos para montar a linha do tempo." />
+              )}
+            </CardContent>
+          </Card>
+        </section>
+        <section className="mt-8">
+          <Card className="border-black/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-xl font-black">
+                <ImageIcon className="h-5 w-5 text-[#e30613]" />
+                Galeria de fotos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {photos.length ? (
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+                  {photos.map(photo => (
+                    <figure
+                      key={photo.id}
+                      className="group cursor-zoom-in overflow-hidden bg-neutral-100"
+                      onClick={() => setSelectedPhoto(photo)}
+                    >
+                      <img
+                        loading="lazy"
+                        src={photo.url}
+                        alt={photo.title || "Registro do projeto"}
+                        className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                      <figcaption className="p-3">
+                        <p className="text-sm font-bold">
+                          {photo.title || "Registro visual"}
+                        </p>
+                        <p className="mt-1 line-clamp-2 text-xs text-neutral-500">
+                          {photo.description}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <ImageIcon className="h-10 w-10 text-neutral-300" />
+                  <p className="mt-4 font-bold">Nenhuma foto cadastrada</p>
+                  <p className="mt-1 text-sm text-neutral-500">
+                    A galeria será atualizada pelo back-office.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
+        <section className="mt-8">
+          <Card className="border-black/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-xl font-black">
+                <FileText className="h-5 w-5 text-[#e30613]" />
+                Documentos e materiais do projeto
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {documents.length ? (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {documents.map(document => (
+                    <a
+                      key={document.id}
+                      href={document.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex items-center justify-between gap-4 border border-neutral-200 bg-white p-4 text-neutral-900 transition hover:border-[#e30613] hover:shadow-sm"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#fff0f1] text-[#e30613]">
+                          <FileText className="h-5 w-5" />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black">
+                            {document.title}
+                          </p>
+                          <p className="mt-1 truncate text-xs text-neutral-500">
+                            {document.fileName}
+                            {document.category ? ` · ${document.category}` : ""}
+                          </p>
+                        </div>
+                      </div>
+                      <Download className="h-4 w-4 shrink-0 text-neutral-400 transition group-hover:text-[#e30613]" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <FileText className="h-10 w-10 text-neutral-300" />
+                  <p className="mt-4 font-bold">Nenhum documento cadastrado</p>
+                  <p className="mt-1 text-sm text-neutral-500">
+                    Os materiais serão adicionados pelo back-office.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
+        <section className="mt-8 border-l-4 border-[#e30613] bg-[#fff0f1] p-6">
+          <p className="text-xs font-bold uppercase tracking-[.18em] text-[#a0040d]">
+            Próximos passos
+          </p>
+          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#4f1b1e]">
+            {project.nextSteps || "Nenhum próximo passo informado."}
+          </p>
+        </section>
+      </main>
+      <InstitutionalFooter />
+      <Dialog
+        open={Boolean(selectedPhoto)}
+        onOpenChange={() => setSelectedPhoto(null)}
+      >
+        <DialogContent className="max-w-4xl border-0 bg-black p-2">
+          <img
+            src={selectedPhoto?.url}
+            alt={selectedPhoto?.title || "Evidência ampliada"}
+            className="max-h-[78vh] w-full object-contain"
+          />
+        </DialogContent>
+      </Dialog>
+      <NavigationBar
+        backHref="/"
+        nextHref="/#carteira"
+        backLabel="Voltar ao painel"
+      />
+    </div>
+  );
 }
-function ChartCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) { return <Card className="border-black/10"><CardHeader><CardTitle className="flex items-center gap-3 text-xl font-black">{icon}<span>{title}</span></CardTitle></CardHeader><CardContent>{children}</CardContent></Card>; }
-function EmptyChart({ text }: { text: string }) { return <div className="flex h-full items-center justify-center text-center text-sm text-neutral-500">{text}</div>; }
-function BarChartIcon() { return <span className="text-[#e30613]">▮▮</span>; }
+function ChartCard({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className="border-black/10">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3 text-xl font-black">
+          {icon}
+          <span>{title}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+}
+function EmptyChart({ text }: { text: string }) {
+  return (
+    <div className="flex h-full items-center justify-center text-center text-sm text-neutral-500">
+      {text}
+    </div>
+  );
+}
+function BarChartIcon() {
+  return <span className="text-[#e30613]">▮▮</span>;
+}

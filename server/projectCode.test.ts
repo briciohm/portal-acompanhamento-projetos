@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatProjectCode, nextProjectCode, normalizeProjectPrefix } from "../shared/projectCode";
+import {
+  formatProjectCode,
+  nextProjectCode,
+  normalizeProjectPrefix,
+} from "../shared/projectCode";
 
 describe("project code model", () => {
   it("normalizes the department prefix", () => {
@@ -14,7 +18,14 @@ describe("project code model", () => {
   });
 
   it("increments only matching codes and preserves legacy codes", () => {
-    expect(nextProjectCode("DPAT", ["DPAT-001", "DPAT-00003", "DTRAN-00099", "DPAT-ABC"])).toBe("DPAT-00004");
+    expect(
+      nextProjectCode("DPAT", [
+        "DPAT-001",
+        "DPAT-00003",
+        "DTRAN-00099",
+        "DPAT-ABC",
+      ])
+    ).toBe("DPAT-00004");
     expect(nextProjectCode("DTRAN", ["DTRAN-00099"])).toBe("DTRAN-00100");
     expect(nextProjectCode("DZEL", [])).toBe("DZEL-00001");
   });

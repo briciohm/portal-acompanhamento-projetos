@@ -32,6 +32,6 @@ describe("DOM stability safeguards", () => {
     const admin = readClientFile("client/src/pages/Admin.tsx");
     expect(app).not.toContain("<Toaster");
     expect(admin).toContain('import { Toaster } from "@/components/ui/sonner"');
-    expect(admin).toContain("<Toaster position=\"top-right\" richColors />");
+    expect(admin).toContain('<Toaster position="top-right" richColors />');
   });
 });
