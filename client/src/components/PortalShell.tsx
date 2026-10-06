@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { profileOfUser, USER_PROFILE_LABELS } from "@shared/userRoles";
 
 export function InstitutionalHeader({
   section = "PORTAL EXECUTIVO",
@@ -62,10 +63,20 @@ export function InstitutionalHeader({
           </span>
         </div>
         {user ? (
-          <UserRound
-            className="h-5 w-5 text-white/60"
-            aria-label="Usuário autenticado"
-          />
+          <>
+            <div className="hidden max-w-[190px] text-right sm:block">
+              <span className="block truncate text-xs font-semibold">
+                {user.name || user.email || "Usuário autenticado"}
+              </span>
+              <span className="block truncate text-[9px] uppercase tracking-[.12em] text-white/45">
+                {USER_PROFILE_LABELS[profileOfUser(user)]}
+              </span>
+            </div>
+            <UserRound
+              className="h-5 w-5 text-white/60"
+              aria-label="Usuário autenticado"
+            />
+          </>
         ) : null}
         <ThemeToggle />
       </div>

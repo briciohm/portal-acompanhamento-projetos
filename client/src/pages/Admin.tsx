@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { toCsv } from "@/lib/adminTools";
 import { nextProjectCode } from "@shared/projectCode";
@@ -71,7 +70,10 @@ export default function Admin() {
   const profile = profileOfUser(user);
   if (!user.isActive || !USER_PROFILES.includes(profile))
     return (
-      <AccessGate message="Seu usuário não possui um perfil ativo para acessar o back-office." />
+      <AccessGate
+        message="Seu usuário não possui um perfil ativo para acessar o back-office."
+        canLogin={false}
+      />
     );
   return <AdminContent />;
 }
@@ -2709,8 +2711,10 @@ function EmptyAdmin({ text }: { text: string }) {
 }
 function AccessGate({
   message = "A área de gestão exige autenticação de administrador.",
+  canLogin = true,
 }: {
   message?: string;
+  canLogin?: boolean;
 }) {
   return (
     <div className="min-h-screen bg-[#171717] text-white">
@@ -2719,12 +2723,19 @@ function AccessGate({
         <LockKeyhole className="h-12 w-12 text-[#e30613]" />
         <h1 className="mt-6 text-3xl font-black">Acesso restrito</h1>
         <p className="mt-3 text-sm leading-6 text-white/60">{message}</p>
-        <Button
-          onClick={() => startLogin()}
-          className="mt-8 bg-[#e30613] hover:bg-[#c80511]"
-        >
-          Entrar como administrador
-        </Button>
+        {canLogin ? (
+          <Link href="/login">
+            <Button className="mt-8 bg-[#e30613] hover:bg-[#c80511]">
+              Entrar no sistema
+            </Button>
+          </Link>
+        ) : (
+          <Link href="/">
+            <Button className="mt-8 bg-[#e30613] hover:bg-[#c80511]">
+              Voltar ao portal
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );
