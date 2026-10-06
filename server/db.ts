@@ -13,6 +13,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from "./_core/env";
 import {
   areas,
+  authAuditLogs,
   clientDiagnosticEvents,
   InsertUser,
   projectDocuments,
@@ -717,6 +718,36 @@ export async function listUserProfileAuditLogs(
         ? null
         : (userRows.find(user => user.id === log.targetUserId) ?? null),
   }));
+}
+
+export async function recordAuthAudit(input: {
+  userId: number;
+  event: "login" | "logout";
+  userName?: string | null;
+  email?: string | null;
+  profile?: UserProfile | null;
+  loginMethod?: string | null;
+}) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(authAuditLogs).values({
+    userId: input.userId,
+    event: input.event,
+    userName: input.userName ?? null,
+    email: input.email ?? null,
+    profile: input.profile ?? null,
+    loginMethod: input.loginMethod ?? null,
+  });
+}
+
+export async function listAuthAuditLogs(limit = 200) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(authAuditLogs)
+    .orderBy(desc(authAuditLogs.createdAt))
+    .limit(Math.min(Math.max(limit, 1), 500));
 }
 
 export async function listAdvancedSettings() {

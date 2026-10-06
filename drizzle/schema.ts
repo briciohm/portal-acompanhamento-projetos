@@ -86,6 +86,17 @@ export const userProfileAuditLogs = mysqlTable("user_profile_audit_logs", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const authAuditLogs = mysqlTable("auth_audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  event: mysqlEnum("event", ["login", "logout"]).notNull(),
+  userName: text("userName"),
+  email: varchar("email", { length: 320 }),
+  profile: varchar("profile", { length: 32 }),
+  loginMethod: varchar("loginMethod", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
   areaId: int("areaId").notNull(),
@@ -192,6 +203,7 @@ export const projectDocuments = mysqlTable("project_documents", {
 });
 
 export type User = typeof users.$inferSelect;
+export type AuthAuditLog = typeof authAuditLogs.$inferSelect;
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type SystemSettingsAuditLog =
   typeof systemSettingsAuditLogs.$inferSelect;

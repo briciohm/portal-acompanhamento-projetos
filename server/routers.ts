@@ -34,6 +34,7 @@ import {
   getUserAreaIds,
   listAdvancedSettings,
   listAdvancedSettingsAudit,
+  listAuthAuditLogs,
   listAreas,
   listClientDiagnosticEvents,
   listFilteredClientDiagnosticEvents,
@@ -43,6 +44,7 @@ import {
   listUserProfileAuditLogs,
   listUsers,
   recordUserProfileAudit,
+  recordAuthAudit,
   setAreaHidden,
   setProjectHidden,
   updateAdvancedSetting,
@@ -150,7 +152,21 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
+    logout: publicProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user) {
+        try {
+          await recordAuthAudit({
+            userId: ctx.user.id,
+            event: "logout",
+            userName: ctx.user.name,
+            email: ctx.user.email,
+            profile: profileOf(ctx.user),
+            loginMethod: ctx.user.loginMethod,
+          });
+        } catch (error) {
+          console.warn("[Audit] Falha ao registrar logout:", error);
+        }
+      }
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
@@ -432,6 +448,7 @@ export const appRouter = router({
     advancedSettingsAudit: masterProcedure.query(() =>
       listAdvancedSettingsAudit()
     ),
+    authAudit: adminProcedure.query(() => listAuthAuditLogs()),
     updateAdvancedSetting: masterProcedure
       .input(
         z.object({

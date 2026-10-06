@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Home as HomeIcon,
+  LogOut,
   Shield,
   UserRound,
 } from "lucide-react";
@@ -17,7 +18,7 @@ export function InstitutionalHeader({
 }: {
   section?: string;
 }) {
-  const { user } = useAuth();
+  const { user, logout, loading } = useAuth();
   const logo = import.meta.env.VITE_APP_LOGO;
   return (
     <header className="institutional-header relative flex min-h-[78px] items-center justify-between gap-4 overflow-hidden border-b border-white/10 bg-[#080808] px-5 py-4 text-white md:px-10">
@@ -76,6 +77,20 @@ export function InstitutionalHeader({
               className="h-5 w-5 text-white/60"
               aria-label="Usuário autenticado"
             />
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => void logout()}
+              disabled={loading}
+              aria-label="Sair do sistema"
+              title="Sair do sistema"
+              className="h-9 gap-2 px-2 text-white/70 hover:bg-white/10 hover:text-white"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden text-[10px] font-bold uppercase tracking-[.12em] md:inline">
+                Sair
+              </span>
+            </Button>
           </>
         ) : null}
         <ThemeToggle />

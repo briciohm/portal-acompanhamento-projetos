@@ -27,4 +27,15 @@ describe("login screen contract", () => {
     expect(login).toContain("USER_PROFILE_LABELS[profile]");
     expect(shell).toContain("USER_PROFILE_LABELS[profileOfUser(user)]");
   });
+
+  it("audits both authentication events", () => {
+    const oauth = readProjectFile("server/_core/oauth.ts");
+    const router = readProjectFile("server/routers.ts");
+    const schema = readProjectFile("drizzle/schema.ts");
+    expect(oauth).toContain('event: "login"');
+    expect(oauth).toContain("recordAuthAudit");
+    expect(router).toContain('event: "logout"');
+    expect(router).toContain("recordAuthAudit");
+    expect(schema).toContain('mysqlTable("auth_audit_logs"');
+  });
 });

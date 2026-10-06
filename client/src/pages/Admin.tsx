@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Upload,
   UserPlus,
+  UserRound,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -155,6 +156,10 @@ function AdminContent() {
     profileAuditInput,
     { enabled: hasGovernanceAccess, retry: false }
   );
+  const { data: authAudit } = trpc.admin.authAudit.useQuery(undefined, {
+    enabled: hasGovernanceAccess,
+    retry: false,
+  });
   const createArea = trpc.admin.createArea.useMutation({
     onSuccess: () => {
       toast.success("Área cadastrada.");
@@ -529,6 +534,7 @@ function AdminContent() {
               <GovernancePanel
                 history={filteredHistory ?? []}
                 profileAudit={profileAudit ?? []}
+                authAudit={authAudit ?? []}
                 diagnosticEvents={diagnosticEvents ?? []}
                 diagnosticAlerts={diagnosticAlerts ?? []}
                 diagnosticLoading={diagnosticLoading}
@@ -1881,6 +1887,7 @@ function AdvancedSettingsPanel({
 function GovernancePanel({
   history,
   profileAudit,
+  authAudit,
   diagnosticEvents,
   diagnosticAlerts,
   diagnosticLoading,
@@ -1895,6 +1902,7 @@ function GovernancePanel({
 }: {
   history: any[];
   profileAudit: any[];
+  authAudit: any[];
   diagnosticEvents: any[];
   diagnosticAlerts: any[];
   diagnosticLoading: boolean;
@@ -1933,7 +1941,7 @@ function GovernancePanel({
         </div>
       </div>
       <Tabs defaultValue="auditoria" className="space-y-4">
-        <TabsList className="grid h-auto w-full grid-cols-1 bg-white sm:grid-cols-3">
+        <TabsList className="grid h-auto w-full grid-cols-1 bg-white sm:grid-cols-4">
           <TabsTrigger value="auditoria">
             <ScrollText className="mr-2 h-4 w-4" />
             Auditoria de perfis
@@ -1945,6 +1953,10 @@ function GovernancePanel({
           <TabsTrigger value="diagnostico">
             <AlertTriangle className="mr-2 h-4 w-4" />
             Diagnóstico de erros reais
+          </TabsTrigger>
+          <TabsTrigger value="acessos">
+            <UserRound className="mr-2 h-4 w-4" />
+            Acessos ao sistema
           </TabsTrigger>
         </TabsList>
         <TabsContent value="auditoria">
@@ -1981,8 +1993,83 @@ function GovernancePanel({
             setRouteFilter={value => setDiagnosticFilter("route", value)}
           />
         </TabsContent>
+        <TabsContent value="acessos">
+          <AuthAuditContent logs={authAudit} />
+        </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function AuthAuditContent({ logs }: { logs: any[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg font-black">
+          <UserRound className="h-5 w-5 text-[#e30613]" />
+          Acessos ao sistema
+        </CardTitle>
+        <p className="text-sm text-neutral-500">
+          Registro dos eventos de login e logout realizados pelos usuários.
+        </p>
+      </CardHeader>
+      <CardContent>
+        {logs.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead className="border-b text-xs uppercase tracking-[.12em] text-neutral-500">
+                <tr>
+                  <th className="px-3 py-3">Evento</th>
+                  <th className="px-3 py-3">Usuário</th>
+                  <th className="px-3 py-3">Perfil</th>
+                  <th className="px-3 py-3">Método</th>
+                  <th className="px-3 py-3">Data e hora</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {logs.map(log => (
+                  <tr key={log.id}>
+                    <td className="px-3 py-3">
+                      <span
+                        className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[.1em] ${
+                          log.event === "login"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-neutral-100 text-neutral-700"
+                        }`}
+                      >
+                        {log.event === "login" ? "Login" : "Logout"}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3">
+                      <p className="font-semibold">
+                        {log.userName || "Sem nome"}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {log.email || "E-mail não informado"}
+                      </p>
+                    </td>
+                    <td className="px-3 py-3 text-neutral-600">
+                      {log.profile
+                        ? (USER_PROFILE_LABELS[log.profile as UserProfile] ??
+                          log.profile)
+                        : "—"}
+                    </td>
+                    <td className="px-3 py-3 text-neutral-600">
+                      {log.loginMethod || "—"}
+                    </td>
+                    <td className="px-3 py-3 text-neutral-600">
+                      {new Date(log.createdAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyAdmin text="Nenhum login ou logout foi registrado ainda." />
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
