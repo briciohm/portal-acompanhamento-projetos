@@ -84,6 +84,12 @@ function AdminContent() {
   const currentProfile = currentUser ? profileOfUser(currentUser) : "consulta";
   const hasGovernanceAccess = canAccessGovernance(currentProfile);
   const utils = trpc.useUtils();
+  const [activeTab, setActiveTab] = useState("cadastro");
+  const isProjectTabActive = ["projeto", "evidencias", "documentos"].includes(
+    activeTab
+  );
+  const isGovernanceTabActive = activeTab === "governanca";
+  const isUsersTabActive = activeTab === "usuarios";
   const {
     data: areas,
     isLoading: areasLoading,
@@ -99,9 +105,12 @@ function AdminContent() {
     () => projects?.find(item => String(item.id) === selectedProject),
     [projects, selectedProject]
   );
-  const { data: projectDetail } = trpc.admin.project.useQuery(
+  const projectDetailQuery = trpc.admin.project.useQuery(
     { id: Number(selectedProject) },
-    { enabled: Boolean(selectedProject), retry: false }
+    {
+      enabled: Boolean(selectedProject) && isProjectTabActive,
+      retry: false,
+    }
   );
   const [historyProjectFilter, setHistoryProjectFilter] = useState("");
   const [historyUserFilter, setHistoryUserFilter] = useState("");
@@ -109,20 +118,22 @@ function AdminContent() {
   const [historyTo, setHistoryTo] = useState("");
   const [diagnosticTypeFilter, setDiagnosticTypeFilter] = useState("");
   const [diagnosticRouteFilter, setDiagnosticRouteFilter] = useState("");
-  const { data: diagnosticEvents, isLoading: diagnosticLoading } =
-    trpc.admin.diagnosticEvents.useQuery(
-      {
-        limit: 200,
-        type: diagnosticTypeFilter || undefined,
-        route: diagnosticRouteFilter || undefined,
-      },
-      { enabled: hasGovernanceAccess, retry: false }
-    );
-  const { data: diagnosticAlerts } = trpc.admin.diagnosticAlerts.useQuery(
-    { days: 7, threshold: 3 },
-    { enabled: hasGovernanceAccess, retry: false }
+  const diagnosticEventsQuery = trpc.admin.diagnosticEvents.useQuery(
+    {
+      limit: 200,
+      type: diagnosticTypeFilter || undefined,
+      route: diagnosticRouteFilter || undefined,
+    },
+    {
+      enabled: hasGovernanceAccess && isGovernanceTabActive,
+      retry: false,
+    }
   );
-  const { data: filteredHistory } = trpc.admin.stageHistoryFiltered.useQuery(
+  const diagnosticAlertsQuery = trpc.admin.diagnosticAlerts.useQuery(
+    { days: 7, threshold: 3 },
+    { enabled: hasGovernanceAccess && isGovernanceTabActive, retry: false }
+  );
+  const filteredHistoryQuery = trpc.admin.stageHistoryFiltered.useQuery(
     {
       projectId: historyProjectFilter
         ? Number(historyProjectFilter)
@@ -132,9 +143,12 @@ function AdminContent() {
       to: historyTo ? new Date(`${historyTo}T23:59:59`) : undefined,
       limit: 500,
     },
-    { enabled: hasGovernanceAccess, retry: false }
+    { enabled: hasGovernanceAccess && isGovernanceTabActive, retry: false }
   );
-  const { data: managedUsers } = trpc.admin.users.useQuery(undefined, {
+  const managedUsersQuery = trpc.admin.users.useQuery(undefined, {
+    enabled:
+      currentProfile !== "consulta" &&
+      (isUsersTabActive || isGovernanceTabActive),
     retry: false,
   });
   const [auditActorFilter, setAuditActorFilter] = useState("");
@@ -152,12 +166,12 @@ function AdminContent() {
     }),
     [auditActorFilter, auditActionFilter, auditFrom, auditTo]
   );
-  const { data: profileAudit } = trpc.admin.profileAudit.useQuery(
+  const profileAuditQuery = trpc.admin.profileAudit.useQuery(
     profileAuditInput,
-    { enabled: hasGovernanceAccess, retry: false }
+    { enabled: hasGovernanceAccess && isGovernanceTabActive, retry: false }
   );
-  const { data: authAudit } = trpc.admin.authAudit.useQuery(undefined, {
-    enabled: hasGovernanceAccess,
+  const authAuditQuery = trpc.admin.authAudit.useQuery(undefined, {
+    enabled: hasGovernanceAccess && isGovernanceTabActive,
     retry: false,
   });
   const createArea = trpc.admin.createArea.useMutation({
@@ -293,12 +307,34 @@ function AdminContent() {
   });
   const advancedSettingsQuery = trpc.admin.advancedSettings.useQuery(
     undefined,
-    { enabled: currentProfile === "admin_master", retry: false }
+    {
+      enabled: currentProfile === "admin_master" && activeTab === "avancado",
+      retry: false,
+    }
   );
   const advancedSettingsAuditQuery = trpc.admin.advancedSettingsAudit.useQuery(
     undefined,
-    { enabled: currentProfile === "admin_master", retry: false }
+    {
+      enabled: currentProfile === "admin_master" && activeTab === "avancado",
+      retry: false,
+    }
   );
+  const governanceError = [
+    diagnosticEventsQuery.error,
+    diagnosticAlertsQuery.error,
+    filteredHistoryQuery.error,
+    profileAuditQuery.error,
+    authAuditQuery.error,
+  ].find(Boolean);
+  const retryGovernance = () => {
+    void Promise.all([
+      diagnosticEventsQuery.refetch(),
+      diagnosticAlertsQuery.refetch(),
+      filteredHistoryQuery.refetch(),
+      profileAuditQuery.refetch(),
+      authAuditQuery.refetch(),
+    ]);
+  };
   const updateAdvancedSetting = trpc.admin.updateAdvancedSetting.useMutation({
     onSuccess: () => {
       toast.success("Configuração crítica atualizada e auditada.");
@@ -352,7 +388,11 @@ function AdminContent() {
             <Button variant="outline">Ver portal executivo</Button>
           </Link>
         </div>
-        <Tabs defaultValue="cadastro" className="space-y-4">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-4"
+        >
           <span id="cadastro" className="sr-only">
             Cadastro
           </span>
@@ -461,7 +501,12 @@ function AdminContent() {
                 </SelectContent>
               </Select>
             </div>
-            {project ? (
+            {projectDetailQuery.error ? (
+              <QueryErrorNotice
+                error={projectDetailQuery.error}
+                onRetry={() => void projectDetailQuery.refetch()}
+              />
+            ) : project ? (
               <div className="grid gap-4 lg:grid-cols-2">
                 <UpdateForm
                   key={project.id}
@@ -478,14 +523,14 @@ function AdminContent() {
                     loading={createMetric.isPending}
                   />
                   <StageStatusForm
-                    stages={projectDetail?.stages ?? []}
+                    stages={projectDetailQuery.data?.stages ?? []}
                     onUpdate={(id, progressStatus) =>
                       updateStage.mutate({ id, data: { progressStatus } })
                     }
                     loading={updateStage.isPending}
                   />
                   <StageHistoryCard
-                    history={projectDetail?.statusHistory ?? []}
+                    history={projectDetailQuery.data?.statusHistory ?? []}
                   />
                   <StageForm
                     projectId={project.id}
@@ -531,15 +576,21 @@ function AdminContent() {
           </TabsContent>
           {hasGovernanceAccess && (
             <TabsContent value="governanca">
+              {governanceError ? (
+                <QueryErrorNotice
+                  error={governanceError}
+                  onRetry={retryGovernance}
+                />
+              ) : null}
               <GovernancePanel
-                history={filteredHistory ?? []}
-                profileAudit={profileAudit ?? []}
-                authAudit={authAudit ?? []}
-                diagnosticEvents={diagnosticEvents ?? []}
-                diagnosticAlerts={diagnosticAlerts ?? []}
-                diagnosticLoading={diagnosticLoading}
+                history={filteredHistoryQuery.data ?? []}
+                profileAudit={profileAuditQuery.data ?? []}
+                authAudit={authAuditQuery.data ?? []}
+                diagnosticEvents={diagnosticEventsQuery.data ?? []}
+                diagnosticAlerts={diagnosticAlertsQuery.data ?? []}
+                diagnosticLoading={diagnosticEventsQuery.isLoading}
                 projects={projects ?? []}
-                users={managedUsers ?? []}
+                users={managedUsersQuery.data ?? []}
                 historyFilters={{
                   project: historyProjectFilter,
                   user: historyUserFilter,
@@ -577,6 +628,21 @@ function AdminContent() {
           )}
           {currentProfile === "admin_master" && (
             <TabsContent value="avancado">
+              {advancedSettingsQuery.error ||
+              advancedSettingsAuditQuery.error ? (
+                <QueryErrorNotice
+                  error={
+                    advancedSettingsQuery.error ||
+                    advancedSettingsAuditQuery.error
+                  }
+                  onRetry={() => {
+                    void Promise.all([
+                      advancedSettingsQuery.refetch(),
+                      advancedSettingsAuditQuery.refetch(),
+                    ]);
+                  }}
+                />
+              ) : null}
               <AdvancedSettingsPanel
                 settings={advancedSettingsQuery.data ?? []}
                 audit={advancedSettingsAuditQuery.data ?? []}
@@ -592,9 +658,15 @@ function AdminContent() {
           )}
           {currentProfile !== "consulta" && (
             <TabsContent value="usuarios">
+              {managedUsersQuery.error ? (
+                <QueryErrorNotice
+                  error={managedUsersQuery.error}
+                  onRetry={() => void managedUsersQuery.refetch()}
+                />
+              ) : null}
               <UserManagement
                 actorProfile={currentProfile}
-                users={managedUsers ?? []}
+                users={managedUsersQuery.data ?? []}
                 areas={areas ?? []}
                 onCreate={(input: {
                   openId: string;
@@ -1192,7 +1264,13 @@ function UpdateForm({
   const [manualObservation, setManualObservation] = useState(
     project.manualObservation || ""
   );
-  const manualInvalid = isManual && !manualObservation.trim();
+  const numericProgress = Number(progress);
+  const manualInvalid =
+    isManual &&
+    (!manualObservation.trim() ||
+      !Number.isFinite(numericProgress) ||
+      numericProgress < 0 ||
+      numericProgress > 100);
   return (
     <Card>
       <CardHeader>
@@ -1295,7 +1373,7 @@ function UpdateForm({
               name,
               summary,
               status,
-              progress: Number(progress),
+              progress: numericProgress,
               isManual,
               manualObservation: isManual ? manualObservation : undefined,
               owner,
@@ -1322,6 +1400,11 @@ function MetricForm({
   const [label, setLabel] = useState("");
   const [value, setValue] = useState("");
   const [target, setTarget] = useState("");
+  const numericValue = Number(value);
+  const numericTarget = target ? Number(target) : undefined;
+  const invalidNumber =
+    !Number.isFinite(numericValue) ||
+    (numericTarget !== undefined && !Number.isFinite(numericTarget));
   return (
     <Card>
       <CardHeader>
@@ -1347,13 +1430,13 @@ function MetricForm({
         />
         <Button
           className="bg-[#171717] sm:col-span-3"
-          disabled={loading || !label || !value}
+          disabled={loading || !label.trim() || !value.trim() || invalidNumber}
           onClick={() =>
             onSubmit({
               projectId,
               label,
-              value: Number(value),
-              target: target ? Number(target) : undefined,
+              value: numericValue,
+              target: numericTarget,
             })
           }
         >
@@ -2645,6 +2728,8 @@ function DocumentForm({
         category: category.trim() || undefined,
         sizeBytes: file.size,
       });
+    reader.onerror = () =>
+      toast.error("Não foi possível ler o arquivo selecionado.");
     reader.readAsDataURL(file);
   };
   return (
@@ -2731,6 +2816,8 @@ function PhotoForm({
         title,
         description,
       });
+    reader.onerror = () =>
+      toast.error("Não foi possível ler a imagem selecionada.");
     reader.readAsDataURL(file);
   };
   return (
@@ -2792,6 +2879,39 @@ function EmptyAdmin({ text }: { text: string }) {
     <Card className="border-dashed">
       <CardContent className="py-16 text-center text-sm text-neutral-500">
         {text}
+      </CardContent>
+    </Card>
+  );
+}
+function QueryErrorNotice({
+  error,
+  onRetry,
+}: {
+  error: unknown;
+  onRetry: () => void;
+}) {
+  const message = error instanceof Error ? error.message : "Erro inesperado";
+  return (
+    <Card className="mb-4 border-[#e30613]/30 bg-[#fffafa]">
+      <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+        <div className="flex items-start gap-3 text-sm text-[#6d1117]">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#e30613]" />
+          <div>
+            <p className="font-bold">Não foi possível carregar esta função.</p>
+            <p className="mt-1 break-words text-xs text-neutral-600">
+              {message}
+            </p>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onRetry}
+          className="shrink-0"
+        >
+          <RefreshCcw className="mr-2 h-3.5 w-3.5" />
+          Tentar novamente
+        </Button>
       </CardContent>
     </Card>
   );
