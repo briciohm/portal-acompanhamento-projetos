@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   Download,
@@ -55,9 +55,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+
+type AdminTabButtonProps = {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+};
+
+function AdminTabButton({ active, onClick, children }: AdminTabButtonProps) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`relative z-30 inline-flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md border px-2 py-2 text-sm font-medium transition-[color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e30613]/50 ${
+        active
+          ? "border-[#e30613]/30 bg-background text-foreground shadow-sm"
+          : "border-transparent text-muted-foreground hover:bg-background/70 hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+type AdminPanelProps = {
+  activeTab: string;
+  value: string;
+  className?: string;
+  children: ReactNode;
+};
+
+function AdminPanel({
+  activeTab,
+  value,
+  className = "",
+  children,
+}: AdminPanelProps) {
+  if (activeTab !== value) return null;
+  return (
+    <section role="tabpanel" className={`flex-1 outline-none ${className}`}>
+      {children}
+    </section>
+  );
+}
 
 export default function Admin() {
   const { user, loading } = useAuth();
@@ -85,6 +129,7 @@ function AdminContent() {
   const hasGovernanceAccess = canAccessGovernance(currentProfile);
   const utils = trpc.useUtils();
   const [activeTab, setActiveTab] = useState("cadastro");
+  const [governanceTab, setGovernanceTab] = useState("auditoria");
   const isProjectTabActive = ["projeto", "evidencias", "documentos"].includes(
     activeTab
   );
@@ -388,11 +433,7 @@ function AdminContent() {
             <Button variant="outline">Ver portal executivo</Button>
           </Link>
         </div>
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-4"
-        >
+        <div className="space-y-4">
           <span id="cadastro" className="sr-only">
             Cadastro
           </span>
@@ -401,56 +442,84 @@ function AdminContent() {
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[.2em] text-white/45">
                 Operação do conteúdo
               </p>
-              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3 lg:flex lg:flex-wrap">
-                <TabsTrigger value="cadastro">
+              <div className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3 lg:flex lg:flex-wrap">
+                <AdminTabButton
+                  active={activeTab === "cadastro"}
+                  onClick={() => setActiveTab("cadastro")}
+                >
                   <Plus className="h-4 w-4" />
                   <span>Cadastro</span>
-                </TabsTrigger>
-                <TabsTrigger value="visibilidade">
+                </AdminTabButton>
+                <AdminTabButton
+                  active={activeTab === "visibilidade"}
+                  onClick={() => setActiveTab("visibilidade")}
+                >
                   <Eye className="h-4 w-4" />
                   <span>Visibilidade</span>
-                </TabsTrigger>
-                <TabsTrigger value="projeto">
+                </AdminTabButton>
+                <AdminTabButton
+                  active={activeTab === "projeto"}
+                  onClick={() => setActiveTab("projeto")}
+                >
                   <Pencil className="h-4 w-4" />
                   <span>Atualizar projeto</span>
-                </TabsTrigger>
-                <TabsTrigger value="evidencias">
+                </AdminTabButton>
+                <AdminTabButton
+                  active={activeTab === "evidencias"}
+                  onClick={() => setActiveTab("evidencias")}
+                >
                   <Upload className="h-4 w-4" />
                   <span>Evidências</span>
-                </TabsTrigger>
-                <TabsTrigger value="documentos">
+                </AdminTabButton>
+                <AdminTabButton
+                  active={activeTab === "documentos"}
+                  onClick={() => setActiveTab("documentos")}
+                >
                   <ScrollText className="h-4 w-4" />
                   <span>Documentos e materiais</span>
-                </TabsTrigger>
-              </TabsList>
+                </AdminTabButton>
+              </div>
             </div>
             <div className="min-w-0 lg:border-l lg:border-white/10 lg:pl-3">
               <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-[.2em] text-white/45">
                 Governança e acesso
               </p>
-              <TabsList className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3">
+              <div className="admin-nav grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-3">
                 {hasGovernanceAccess && (
-                  <TabsTrigger value="governanca">
+                  <AdminTabButton
+                    active={activeTab === "governanca"}
+                    onClick={() => setActiveTab("governanca")}
+                  >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Governança</span>
-                  </TabsTrigger>
+                  </AdminTabButton>
                 )}
                 {currentProfile === "admin_master" && (
-                  <TabsTrigger value="avancado">
+                  <AdminTabButton
+                    active={activeTab === "avancado"}
+                    onClick={() => setActiveTab("avancado")}
+                  >
                     <LockKeyhole className="h-4 w-4" />
                     <span>Avançado</span>
-                  </TabsTrigger>
+                  </AdminTabButton>
                 )}
                 {currentProfile !== "consulta" && (
-                  <TabsTrigger value="usuarios">
+                  <AdminTabButton
+                    active={activeTab === "usuarios"}
+                    onClick={() => setActiveTab("usuarios")}
+                  >
                     <UserPlus className="h-4 w-4" />
                     <span>Usuários</span>
-                  </TabsTrigger>
+                  </AdminTabButton>
                 )}
-              </TabsList>
+              </div>
             </div>
           </div>
-          <TabsContent value="cadastro" className="grid gap-4 lg:grid-cols-2">
+          <AdminPanel
+            activeTab={activeTab}
+            value="cadastro"
+            className="grid gap-4 lg:grid-cols-2"
+          >
             <AreaForm
               onSubmit={input => createArea.mutate(input)}
               loading={createArea.isPending}
@@ -461,8 +530,8 @@ function AdminContent() {
               onSubmit={input => createProject.mutate(input)}
               loading={createProject.isPending}
             />
-          </TabsContent>
-          <TabsContent value="visibilidade">
+          </AdminPanel>
+          <AdminPanel activeTab={activeTab} value="visibilidade">
             <VisibilityManagement
               areas={areas ?? []}
               projects={projects ?? []}
@@ -481,8 +550,8 @@ function AdminContent() {
                 updateArea.isPending
               }
             />
-          </TabsContent>
-          <TabsContent value="projeto">
+          </AdminPanel>
+          <AdminPanel activeTab={activeTab} value="projeto">
             <div className="mb-5 max-w-xl">
               <Label>Selecione o projeto</Label>
               <Select
@@ -547,8 +616,8 @@ function AdminContent() {
             ) : (
               <EmptyAdmin text="Selecione um projeto para editar seu status e adicionar informações de acompanhamento." />
             )}
-          </TabsContent>
-          <TabsContent value="evidencias">
+          </AdminPanel>
+          <AdminPanel activeTab={activeTab} value="evidencias">
             <div className="max-w-2xl">
               {project ? (
                 <PhotoForm
@@ -560,8 +629,8 @@ function AdminContent() {
                 <EmptyAdmin text="Selecione um projeto na aba Atualizar projeto para enviar fotos." />
               )}
             </div>
-          </TabsContent>
-          <TabsContent value="documentos">
+          </AdminPanel>
+          <AdminPanel activeTab={activeTab} value="documentos">
             <div className="max-w-2xl">
               {project ? (
                 <DocumentForm
@@ -573,9 +642,9 @@ function AdminContent() {
                 <EmptyAdmin text="Selecione um projeto na aba Atualizar projeto para enviar documentos e materiais." />
               )}
             </div>
-          </TabsContent>
+          </AdminPanel>
           {hasGovernanceAccess && (
-            <TabsContent value="governanca">
+            <AdminPanel activeTab={activeTab} value="governanca">
               {governanceError ? (
                 <QueryErrorNotice
                   error={governanceError}
@@ -624,10 +693,10 @@ function AdminContent() {
                   if (key === "to") setAuditTo(value);
                 }}
               />
-            </TabsContent>
+            </AdminPanel>
           )}
           {currentProfile === "admin_master" && (
-            <TabsContent value="avancado">
+            <AdminPanel activeTab={activeTab} value="avancado">
               {advancedSettingsQuery.error ||
               advancedSettingsAuditQuery.error ? (
                 <QueryErrorNotice
@@ -654,10 +723,10 @@ function AdminContent() {
                   updateAdvancedSetting.mutate({ key, value, reason })
                 }
               />
-            </TabsContent>
+            </AdminPanel>
           )}
           {currentProfile !== "consulta" && (
-            <TabsContent value="usuarios">
+            <AdminPanel activeTab={activeTab} value="usuarios">
               {managedUsersQuery.error ? (
                 <QueryErrorNotice
                   error={managedUsersQuery.error}
@@ -685,9 +754,9 @@ function AdminContent() {
                 ) => updateUser.mutate({ id, ...data })}
                 loading={createUser.isPending || updateUser.isPending}
               />
-            </TabsContent>
+            </AdminPanel>
           )}
-        </Tabs>
+        </div>
         <InstitutionalFooter subtitle="Gestão autônoma de conteúdo e evidências." />
       </main>
       <NavigationBar
@@ -2004,6 +2073,8 @@ function GovernancePanel({
     value: string
   ) => void;
 }) {
+  const [governanceTab, setGovernanceTab] = useState("auditoria");
+
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-[#e30613]/25 bg-[#fffafa] p-5 text-neutral-900">
@@ -2023,34 +2094,46 @@ function GovernancePanel({
           <ShieldCheck className="h-8 w-8 text-[#e30613]" />
         </div>
       </div>
-      <Tabs defaultValue="auditoria" className="space-y-4">
-        <TabsList className="grid h-auto w-full grid-cols-1 bg-white sm:grid-cols-4">
-          <TabsTrigger value="auditoria">
+      <div className="space-y-4">
+        <div className="grid h-auto w-full grid-cols-1 gap-2 bg-white sm:grid-cols-4">
+          <AdminTabButton
+            active={governanceTab === "auditoria"}
+            onClick={() => setGovernanceTab("auditoria")}
+          >
             <ScrollText className="mr-2 h-4 w-4" />
             Auditoria de perfis
-          </TabsTrigger>
-          <TabsTrigger value="historico">
+          </AdminTabButton>
+          <AdminTabButton
+            active={governanceTab === "historico"}
+            onClick={() => setGovernanceTab("historico")}
+          >
             <RefreshCcw className="mr-2 h-4 w-4" />
             Histórico de alterações
-          </TabsTrigger>
-          <TabsTrigger value="diagnostico">
+          </AdminTabButton>
+          <AdminTabButton
+            active={governanceTab === "diagnostico"}
+            onClick={() => setGovernanceTab("diagnostico")}
+          >
             <AlertTriangle className="mr-2 h-4 w-4" />
             Diagnóstico de erros reais
-          </TabsTrigger>
-          <TabsTrigger value="acessos">
+          </AdminTabButton>
+          <AdminTabButton
+            active={governanceTab === "acessos"}
+            onClick={() => setGovernanceTab("acessos")}
+          >
             <UserRound className="mr-2 h-4 w-4" />
             Acessos ao sistema
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="auditoria">
+          </AdminTabButton>
+        </div>
+        <AdminPanel activeTab={governanceTab} value="auditoria">
           <ProfileAuditContent
             logs={profileAudit}
             users={users}
             filters={auditFilters}
             setFilter={setAuditFilter}
           />
-        </TabsContent>
-        <TabsContent value="historico">
+        </AdminPanel>
+        <AdminPanel activeTab={governanceTab} value="historico">
           <HistoryTools
             history={history}
             projects={projects}
@@ -2064,8 +2147,8 @@ function GovernancePanel({
             setFrom={value => setHistoryFilter("from", value)}
             setTo={value => setHistoryFilter("to", value)}
           />
-        </TabsContent>
-        <TabsContent value="diagnostico">
+        </AdminPanel>
+        <AdminPanel activeTab={governanceTab} value="diagnostico">
           <DiagnosticPanel
             events={diagnosticEvents}
             alerts={diagnosticAlerts}
@@ -2075,11 +2158,11 @@ function GovernancePanel({
             setTypeFilter={value => setDiagnosticFilter("type", value)}
             setRouteFilter={value => setDiagnosticFilter("route", value)}
           />
-        </TabsContent>
-        <TabsContent value="acessos">
+        </AdminPanel>
+        <AdminPanel activeTab={governanceTab} value="acessos">
           <AuthAuditContent logs={authAudit} />
-        </TabsContent>
-      </Tabs>
+        </AdminPanel>
+      </div>
     </div>
   );
 }

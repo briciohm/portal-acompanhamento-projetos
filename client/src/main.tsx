@@ -12,42 +12,8 @@ import {
   isResizeObserverWarning,
 } from "./_core/resizeObserverGuard";
 import { normalizeClientError } from "./_core/clientErrorGuard";
+import { reportClientDiagnostic } from "./_core/reportClientDiagnostic";
 const queryClient = new QueryClient();
-
-const reportClientDiagnostic = (
-  type: string,
-  message: string,
-  context?: unknown
-) => {
-  if (typeof window === "undefined") return;
-  try {
-    const safeContext =
-      context === undefined
-        ? undefined
-        : JSON.stringify(context, (_key, value) =>
-            typeof value === "string" && value.length > 800
-              ? value.slice(0, 800)
-              : value
-          ).slice(0, 4000);
-    void fetch("/api/trpc/dashboard.reportClientDiagnostic?batch=1", {
-      method: "POST",
-      credentials: "include",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        0: {
-          json: {
-            type,
-            message: message.slice(0, 4000),
-            route: window.location.pathname,
-            context: safeContext,
-          },
-        },
-      }),
-    }).catch(() => undefined);
-  } catch {
-    // Diagnostics must never interfere with the application.
-  }
-};
 
 // Chromium can emit this notification when a ResizeObserver callback causes
 // another layout pass in the same frame. It is not an application exception,

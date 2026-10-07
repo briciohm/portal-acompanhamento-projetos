@@ -9,7 +9,9 @@ const readAdmin = () =>
 describe("Back-Office resilience safeguards", () => {
   it("loads secondary data only when its function is selected", () => {
     const source = readAdmin();
-    expect(source).toContain("value={activeTab}");
+    expect(source).toContain("function AdminPanel");
+    expect(source).toContain("if (activeTab !== value) return null");
+    expect(source).toContain('active={activeTab === "cadastro"}');
     expect(source).toContain("hasGovernanceAccess && isGovernanceTabActive");
     expect(source).toContain('currentProfile !== "consulta"');
     expect(source).toContain("Boolean(selectedProject) && isProjectTabActive");
