@@ -220,10 +220,13 @@ function AdminContent() {
     retry: false,
   });
   const createArea = trpc.admin.createArea.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Área cadastrada.");
       utils.dashboard.summary.invalidate();
-      utils.dashboard.areas.invalidate();
+      await Promise.all([
+        utils.dashboard.areas.invalidate(),
+        utils.admin.areas.refetch(),
+      ]);
     },
     onError: e => toast.error(e.message),
   });
