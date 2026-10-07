@@ -11,8 +11,9 @@ function readClientFile(relativePath: string) {
 describe("DOM stability safeguards", () => {
   it("keeps Select content inline instead of mounting a body portal", () => {
     const source = readClientFile("client/src/components/ui/select.tsx");
-    expect(source).not.toContain("<SelectPrimitive.Portal>");
-    expect(source).toContain("<SelectPrimitive.Content");
+    expect(source).not.toContain("@radix-ui/react-select");
+    expect(source).not.toContain("Portal");
+    expect(source).toContain('role="listbox"');
   });
 
   it("unmounts inactive tab panels during administrative navigation", () => {

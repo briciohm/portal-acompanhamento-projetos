@@ -17,8 +17,10 @@ describe("removeChild regression safeguards", () => {
 
   it("keeps the Select content in the React-owned tree", () => {
     const select = read("client/src/components/ui/select.tsx");
-    expect(select).not.toContain("SelectPrimitive.Portal");
-    expect(select).toContain("<SelectPrimitive.Content");
+    expect(select).not.toContain("@radix-ui/react-select");
+    expect(select).not.toContain("Portal");
+    expect(select).toContain('role="listbox"');
+    expect(select).toContain("hidden={!open}");
   });
 
   it("keeps the global error boundary free of DOM monkey patches", () => {
