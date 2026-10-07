@@ -44,6 +44,18 @@ async function startServer() {
       createContext,
     })
   );
+  // Never let the SPA fallback answer an API request with index.html. A
+  // transient route miss during a dev-server restart must remain JSON so the
+  // client can report a real API error instead of failing with "Unexpected
+  // token '<'" while parsing the HTML document.
+  app.use("/api/trpc", (_req, res) => {
+    res.status(404).json({
+      error: {
+        code: "TRPC_API_NOT_FOUND",
+        message: "A rota tRPC solicitada não está disponível.",
+      },
+    });
+  });
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
