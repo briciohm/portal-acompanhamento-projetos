@@ -74,13 +74,6 @@ export default function ProjectView() {
     valor: Number(metric.value),
     meta: metric.target ? Number(metric.target) : undefined,
   }));
-  const timeline = milestones.map(item => ({
-    date: new Date(item.milestoneDate).toLocaleDateString("pt-BR", {
-      month: "short",
-      year: "2-digit",
-    }),
-    marco: item.title,
-  }));
   return (
     <div className="min-h-screen bg-[#080808] text-white institutional-pattern">
       <InstitutionalHeader section={project.name} />
@@ -259,31 +252,45 @@ export default function ProjectView() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {timeline.length ? (
-                <div className="h-[290px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={timeline}
-                      layout="vertical"
-                      margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-                      <XAxis type="number" hide />
-                      <YAxis
-                        type="category"
-                        dataKey="date"
-                        width={58}
-                        tick={{ fontSize: 11 }}
-                      />
-                      <Tooltip />
-                      <Line
-                        dataKey="marco"
-                        stroke="#e30613"
-                        strokeWidth={3}
-                        dot={{ fill: "#171717", r: 5 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+              {milestones.length ? (
+                <div className="relative max-h-[520px] overflow-y-auto pr-1">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {milestones.map((milestone, index) => (
+                      <article
+                        key={milestone.id}
+                        className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[#e30613]/50 hover:shadow-md"
+                      >
+                        <span className="absolute inset-y-0 left-0 w-1 bg-[#e30613]" />
+                        <div className="flex items-start justify-between gap-3 pl-2">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fff0f1] px-2.5 py-1 text-[10px] font-black uppercase tracking-[.12em] text-[#c80511]">
+                            <Clock3 className="h-3 w-3" />
+                            {new Date(
+                              milestone.milestoneDate
+                            ).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#171717] text-xs font-black text-white">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                        </div>
+                        <div className="mt-3 flex gap-2 pl-2">
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#e30613]" />
+                          <div>
+                            <h3 className="text-sm font-black leading-5 text-neutral-900">
+                              {milestone.title}
+                            </h3>
+                            <p className="mt-1.5 text-xs leading-5 text-neutral-500">
+                              {milestone.description ||
+                                "Marco registrado no projeto."}
+                            </p>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <EmptyChart text="Cadastre marcos para montar a linha do tempo." />
