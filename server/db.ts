@@ -30,6 +30,7 @@ import {
   users,
 } from "../drizzle/schema";
 import {
+  canCreateManagedUser,
   canUseMasterProfile,
   roleForProfile,
   type UserProfile,
@@ -597,6 +598,10 @@ export async function createManagedUser(input: {
   areaIds?: number[];
 }) {
   const profile = input.profile ?? "consulta";
+  if (!canCreateManagedUser(input.email))
+    throw new Error(
+      "O e-mail do novo usuário deve terminar com @servidor.educacao.sp.gov.br."
+    );
   if (!canUseMasterProfile(input.email, profile))
     throw new Error(
       "O perfil Administrador Master é exclusivo da conta proprietária."

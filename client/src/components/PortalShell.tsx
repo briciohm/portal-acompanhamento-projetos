@@ -137,7 +137,13 @@ export function InstitutionalFooter({
         <div className="h-px w-full max-w-[42rem] bg-white/20" />
         <p className="w-full text-[10px] uppercase tracking-[.12em] text-white/55 sm:text-right sm:text-[11px] sm:tracking-[.1em]">
           Copyright © 2026 Gufs Tech. Todos os direitos reservados.
-          Desenvolvido e mantido por Fabrício Gustavo Ferreira.
+          Desenvolvido e mantido por Fabrício Gustavo Ferreira. Contato:{" "}
+          <a
+            href="mailto:gustavocvc0810@gmail.com"
+            className="text-white underline decoration-white/40 underline-offset-2 transition hover:text-[#e30613]"
+          >
+            gustavocvc0810@gmail.com
+          </a>
         </p>
       </div>
     </footer>

@@ -1,4 +1,6 @@
 export const MASTER_ACCOUNT_EMAIL = "gustavocvc0810@gmail.com" as const;
+export const MANAGED_USER_EMAIL_DOMAIN =
+  "@servidor.educacao.sp.gov.br" as const;
 
 export const USER_PROFILES = [
   "admin_master",
@@ -107,6 +109,15 @@ export function assignableProfiles(actorProfile: UserProfile): UserProfile[] {
 
 export function isMasterAccount(email?: string | null) {
   return email?.trim().toLowerCase() === MASTER_ACCOUNT_EMAIL;
+}
+
+export function canCreateManagedUser(email?: string | null) {
+  const normalized = email?.trim().toLowerCase();
+  return Boolean(
+    normalized &&
+      (normalized.endsWith(MANAGED_USER_EMAIL_DOMAIN) ||
+        isMasterAccount(normalized))
+  );
 }
 
 export function canUseMasterProfile(

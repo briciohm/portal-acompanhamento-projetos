@@ -55,6 +55,7 @@ import {
 } from "./db";
 import {
   canAssignProfile,
+  canCreateManagedUser,
   profileOfUser,
   type UserProfile,
 } from "../shared/userRoles";
@@ -494,6 +495,19 @@ export const appRouter = router({
             code: "FORBIDDEN",
             message:
               "Você só pode criar perfis estritamente inferiores ao seu.",
+          });
+        }
+        if (!canCreateManagedUser(input.email)) {
+          await recordBlockedProfileAttempt({
+            actorUserId: ctx.user.id,
+            requestedProfile: input.profile,
+            reason:
+              "Tentativa de criar usuário com e-mail fora do domínio institucional autorizado.",
+          });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Novos usuários devem usar um e-mail @servidor.educacao.sp.gov.br.",
           });
         }
         if (ctx.profile === "gestor_setor") {

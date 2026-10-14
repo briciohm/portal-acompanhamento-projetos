@@ -3,6 +3,7 @@ import {
   assignableProfiles,
   canAccessGovernance,
   canAssignProfile,
+  canCreateManagedUser,
   canManageContent,
   canUseMasterProfile,
   isMasterAccount,
@@ -114,6 +115,19 @@ describe("perfis de usuários", () => {
     expect(canUseMasterProfile("outra pessoa@example.com", "admin_geral")).toBe(
       true
     );
+  });
+
+  it("restringe novos usuários ao domínio institucional e preserva a exceção Master", () => {
+    expect(canCreateManagedUser("servidor@servidor.educacao.sp.gov.br")).toBe(
+      true
+    );
+    expect(canCreateManagedUser(" SERVIDOR@SERVIDOR.EDUCACAO.SP.GOV.BR ")).toBe(
+      true
+    );
+    expect(canCreateManagedUser(MASTER_ACCOUNT_EMAIL)).toBe(true);
+    expect(canCreateManagedUser("pessoa@gmail.com")).toBe(false);
+    expect(canCreateManagedUser("servidor@educacao.sp.gov.br")).toBe(false);
+    expect(canCreateManagedUser(undefined)).toBe(false);
   });
 
   it("resolve o perfil efetivo com fallback compatível com o papel legado", () => {

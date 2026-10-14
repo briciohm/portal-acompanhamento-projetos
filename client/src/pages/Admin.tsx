@@ -25,6 +25,8 @@ import { nextProjectCode } from "@shared/projectCode";
 import {
   assignableProfiles,
   canAccessGovernance,
+  canCreateManagedUser,
+  MANAGED_USER_EMAIL_DOMAIN,
   profileOfUser,
   USER_PROFILES,
   USER_PROFILE_DESCRIPTIONS,
@@ -2426,6 +2428,7 @@ function UserManagement({
   }));
   const permissionMatrix = USER_PROFILE_PERMISSION_MATRIX;
   const firstAssignableProfile = profileOptions[0]?.value ?? "consulta";
+  const validManagedUserEmail = canCreateManagedUser(email);
   return (
     <div className="space-y-4">
       <Card className="border-[#e30613]/25">
@@ -2494,6 +2497,16 @@ function UserManagement({
                 value={email}
                 onChange={e => setEmail(e.target.value)}
               />
+              <p className="mt-1 text-xs text-neutral-500">
+                Novos usuários devem usar um e-mail com o domínio{" "}
+                <strong>{MANAGED_USER_EMAIL_DOMAIN}</strong>. A conta Master
+                proprietária permanece como exceção.
+              </p>
+              {email && !validManagedUserEmail ? (
+                <p className="mt-1 text-xs font-semibold text-red-600">
+                  Informe um e-mail institucional válido para continuar.
+                </p>
+              ) : null}
             </Field>
             <Field label="Perfil">
               <Select
@@ -2537,7 +2550,12 @@ function UserManagement({
             )}
             <Button
               disabled={
-                loading || !openId || !name || !email || !profileOptions.length
+                loading ||
+                !openId ||
+                !name ||
+                !email ||
+                !validManagedUserEmail ||
+                !profileOptions.length
               }
               onClick={() =>
                 onCreate({ openId, name, email, profile, areaIds })
