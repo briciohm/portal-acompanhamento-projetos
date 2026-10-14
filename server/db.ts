@@ -1112,6 +1112,30 @@ export async function createPhoto(input: typeof projectPhotos.$inferInsert) {
   return { id: Number(result[0].insertId) };
 }
 
+export async function updatePhoto(
+  id: number,
+  projectId: number,
+  input: Pick<typeof projectPhotos.$inferInsert, "title" | "description">
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const current = await db
+    .select({ id: projectPhotos.id })
+    .from(projectPhotos)
+    .where(
+      and(eq(projectPhotos.id, id), eq(projectPhotos.projectId, projectId))
+    )
+    .limit(1);
+  if (!current[0]) throw new Error("Foto não encontrada neste projeto.");
+  await db
+    .update(projectPhotos)
+    .set(input)
+    .where(
+      and(eq(projectPhotos.id, id), eq(projectPhotos.projectId, projectId))
+    );
+  return { id };
+}
+
 export async function createDocument(
   input: typeof projectDocuments.$inferInsert
 ) {
@@ -1119,4 +1143,34 @@ export async function createDocument(
   if (!db) throw new Error("Banco de dados indisponível");
   const result = await db.insert(projectDocuments).values(input);
   return { id: Number(result[0].insertId) };
+}
+
+export async function updateDocument(
+  id: number,
+  projectId: number,
+  input: Pick<typeof projectDocuments.$inferInsert, "title" | "category">
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível");
+  const current = await db
+    .select({ id: projectDocuments.id })
+    .from(projectDocuments)
+    .where(
+      and(
+        eq(projectDocuments.id, id),
+        eq(projectDocuments.projectId, projectId)
+      )
+    )
+    .limit(1);
+  if (!current[0]) throw new Error("Documento não encontrado neste projeto.");
+  await db
+    .update(projectDocuments)
+    .set(input)
+    .where(
+      and(
+        eq(projectDocuments.id, id),
+        eq(projectDocuments.projectId, projectId)
+      )
+    );
+  return { id };
 }

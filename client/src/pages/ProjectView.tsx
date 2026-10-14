@@ -23,19 +23,24 @@ import {
   YAxis,
 } from "recharts";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { profileOfUser } from "@shared/userRoles";
 import {
   InstitutionalHeader,
   InstitutionalFooter,
   NavigationBar,
   StatusBadge,
 } from "@/components/PortalShell";
+import { ProjectEditorialPanel } from "@/components/ProjectEditorialPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function ProjectView() {
   const [, params] = useRoute("/projeto/:id");
+  const { user } = useAuth();
   const [selectedPhoto, setSelectedPhoto] = useState<{
     url: string;
     title?: string | null;
@@ -69,6 +74,20 @@ export default function ProjectView() {
       </div>
     );
   const { project, metrics, stages, milestones, photos, documents } = data;
+  const canEditProject = Boolean(user && profileOfUser(user) !== "consulta");
+  const organizedPhotos = [...photos].sort((a, b) => {
+    const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return bDate - aDate;
+  });
+  const organizedDocuments = [...documents].sort((a, b) => {
+    const categoryA = a.category || "Sem categoria";
+    const categoryB = b.category || "Sem categoria";
+    return `${categoryA} ${a.title}`.localeCompare(
+      `${categoryB} ${b.title}`,
+      "pt-BR"
+    );
+  });
   const metricChart = metrics.map(metric => ({
     label: metric.label,
     valor: Number(metric.value),
@@ -76,6 +95,7 @@ export default function ProjectView() {
   }));
   return (
     <div className="min-h-screen bg-[#080808] text-white institutional-pattern">
+      <Toaster position="top-right" richColors />
       <InstitutionalHeader section={project.name} />
       <main className="mx-auto max-w-[1500px] px-5 py-10 md:px-10">
         <section className="mb-10 grid gap-8 rounded-2xl bg-[#171717] p-6 text-white shadow-xl md:p-8 lg:grid-cols-[1.35fr_.65fr]">
@@ -309,7 +329,7 @@ export default function ProjectView() {
             <CardContent>
               {photos.length ? (
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-                  {photos.map(photo => (
+                  {organizedPhotos.map(photo => (
                     <figure
                       key={photo.id}
                       className="group cursor-zoom-in overflow-hidden bg-neutral-100"
@@ -355,7 +375,7 @@ export default function ProjectView() {
             <CardContent>
               {documents.length ? (
                 <div className="grid gap-3 md:grid-cols-2">
-                  {documents.map(document => (
+                  {organizedDocuments.map(document => (
                     <a
                       key={document.id}
                       href={document.url}
@@ -393,6 +413,13 @@ export default function ProjectView() {
             </CardContent>
           </Card>
         </section>
+        {canEditProject ? (
+          <ProjectEditorialPanel
+            projectId={project.id}
+            photos={photos}
+            documents={documents}
+          />
+        ) : null}
         <section className="mt-8 border-l-4 border-[#e30613] bg-[#fff0f1] p-6">
           <p className="text-xs font-bold uppercase tracking-[.18em] text-[#a0040d]">
             Próximos passos

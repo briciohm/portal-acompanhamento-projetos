@@ -49,7 +49,9 @@ import {
   setProjectHidden,
   updateAdvancedSetting,
   updateArea,
+  updateDocument,
   updateManagedUser,
+  updatePhoto,
   updateProject,
   updateStage,
 } from "./db";
@@ -726,6 +728,52 @@ export const appRouter = router({
           storageKey: stored.key,
           url: stored.url,
         });
+      }),
+    updatePhoto: editorProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          projectId: z.number(),
+          data: z.object({
+            title: z.string().max(160).optional(),
+            description: z.string().optional(),
+          }),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        await assertAdvancedFeature(
+          "allow_project_edits",
+          "As edições de projetos estão bloqueadas pelo Administrador Master."
+        );
+        await assertUserCanManageProject(
+          ctx.user.id,
+          ctx.profile,
+          input.projectId
+        );
+        return updatePhoto(input.id, input.projectId, input.data);
+      }),
+    updateDocument: editorProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          projectId: z.number(),
+          data: z.object({
+            title: z.string().min(1).max(200),
+            category: z.string().max(80).optional(),
+          }),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        await assertAdvancedFeature(
+          "allow_project_edits",
+          "As edições de projetos estão bloqueadas pelo Administrador Master."
+        );
+        await assertUserCanManageProject(
+          ctx.user.id,
+          ctx.profile,
+          input.projectId
+        );
+        return updateDocument(input.id, input.projectId, input.data);
       }),
   }),
 });
